@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animation-list xmlns:android="http://schemas.android.com/apk/res/android"
+    android:oneshot="true">
+    <item
+        android:drawable="@drawable/im_guide1"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide2"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide3"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide4"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide5"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide6"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide7"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide8"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide9"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide10"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide11"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide12"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide13"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide14"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide15"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide16"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide17"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide18"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide19"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide20"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide21"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide22"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide23"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide24"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide25"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide26"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide27"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide28"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide29"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide30"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide31"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide32"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide33"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide34"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide35"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide36"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide37"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide38"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide39"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide40"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide41"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide42"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide43"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide44"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide45"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide46"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide47"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide48"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide49"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide50"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide51"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide52"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide53"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide54"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide55"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide56"
+        android:duration="40" />
+    <item
+        android:drawable="@drawable/im_guide57"
+        android:duration="40" />
+
+</animation-list>

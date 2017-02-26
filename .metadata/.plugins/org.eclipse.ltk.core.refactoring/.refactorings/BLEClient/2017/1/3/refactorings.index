@@ -1,0 +1,6 @@
+1484534519120	Rename type 'BLEClientService'
+1484534642881	Delete element
+1484537954951	Delete element
+1484562812113	Rename type 'GattCallback'
+1484731236451	Convert local variable 'mBTConnectReceiver' to field
+1484741845518	Convert local variable 'mBTConnectReceiver' to field

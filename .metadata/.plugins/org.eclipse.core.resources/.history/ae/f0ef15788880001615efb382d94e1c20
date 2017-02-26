@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">RKCommonLibrary</string>
+    <string name="nlp_extra">nlp</string>
+</resources>

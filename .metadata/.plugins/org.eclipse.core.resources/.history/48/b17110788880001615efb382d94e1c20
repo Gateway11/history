@@ -1,0 +1,298 @@
+package com.rokid.rkcommonlibrary.rksysapi;
+
+import android.content.Context;
+
+import com.rokid.rkcommonlibrary.RKApplicationEX;
+import com.rokid.rkcommonlibrary.utils.RKLogUtil;
+
+import rokid.content.RokidContext;
+import rokid.os.IRKAccountManager;
+import rokid.os.IRKLumen;
+import rokid.os.IRKPowerManager;
+import rokid.os.RKConnectionUtil;
+import rokid.service.interfaces.RKSettingsInterface;
+import rokid.service.interfaces.RKVolumeManager;
+import rokid.service.interfaces.TTSInterface;
+
+/**
+ * Created by Bassam on 16/7/12.
+ */
+public class RKApiManager {
+    /**
+     * 当前类的实例对象
+     */
+    private static RKApiManager instance;
+    /**
+     * Rokid Content
+     */
+    private RokidContext mRKContent;
+    /**
+     * Rokid声音管理器
+     */
+    private RKVolumeManager mVolumeManager;
+    /**
+     * TTS管理器
+     */
+    private TTSInterface mTTSInterface;
+    /**
+     * 消息通道
+     */
+    private RKConnectionUtil mRKConnectionUtil;
+    /**
+     * 系统管理器
+     */
+    private IRKPowerManager mIRKPowerManager;
+    /**
+     * 灯光控制器
+     */
+    private IRKLumen mIRKLumen;
+    /**
+     * 账号控制器
+     */
+    private IRKAccountManager mIRKAccountManager;
+    /**
+     * 位置信息
+     */
+    private RKSettingsInterface mRKSettingsInterface;
+
+    public RKApiManager() {
+        mRKContent = RokidContext.getInstance();
+        Context context = RKApplicationEX.getInstance();
+        if (mRKContent != null && context != null) {
+            mVolumeManager = (RKVolumeManager) mRKContent.getSystemRemoteService(context,
+                    RokidContext
+                            .RK_VOLUME);
+            mTTSInterface = (TTSInterface) mRKContent.getSystemRemoteService(context, RokidContext
+                    .TTS_SERVICE);
+            mRKConnectionUtil = (RKConnectionUtil) mRKContent.getSystemRemoteService(context,
+                    RokidContext
+                            .CONNECTION_SERVICE);
+            mIRKPowerManager = (IRKPowerManager) mRKContent.getSystemRemoteService(context,
+                    RokidContext.RK_POWER_MANAGER);
+            mIRKLumen = (rokid.os.IRKLumen) mRKContent
+                    .getSystemRemoteService(context, rokid.content.RokidContext.LUMEN_SERVICE);
+            mIRKAccountManager = (IRKAccountManager) mRKContent.getSystemRemoteService(context,
+                    RokidContext.RK_ACCOUNT);
+            mRKSettingsInterface = (RKSettingsInterface) mRKContent.getSystemRemoteService
+                    (context, RokidContext.RK_SETTINGS);
+        } else {
+            RKLogUtil.e("could not fetch RokidContext or ApplicationContext…");
+        }
+    }
+
+    /**
+     * 单例方法调用
+     *
+     * @return
+     */
+    public static RKApiManager getInstance() {
+        if (instance == null) {
+            synchronized (RKApiManager.class) {
+                if (instance == null) {
+                    instance = new RKApiManager();
+                }
+            }
+        }
+        return instance;
+    }
+
+    /**
+     * 获得Rokid的Content实体,在需要调用Rokid SDK系统API的时候需要用到这个参数
+     *
+     * @return
+     */
+    public RokidContext getmRKContent() {
+        if (mRKContent == null) {
+            mRKContent = RokidContext.getInstance();
+        }
+        return mRKContent;
+    }
+
+    /**
+     * 获取声音管理器
+     *
+     * @return
+     */
+    public RKVolumeManager getmVolumeManager() {
+        if (mVolumeManager != null) {
+            return mVolumeManager;
+        }
+        if (mRKContent == null) {
+            getmRKContent();
+        }
+        if (mRKContent == null) {
+            RKLogUtil.e("could not fetch RokidContext");
+            return null;
+        }
+        Context context = RKApplicationEX.getInstance().getApplicationContext();
+        if (context == null) {
+            RKLogUtil.e("could not fetch ApplicationContext");
+            return null;
+        }
+        mVolumeManager = (RKVolumeManager) mRKContent
+                .getSystemRemoteService(context
+                        , RokidContext
+                                .RK_VOLUME);
+        return mVolumeManager;
+    }
+
+    /**
+     * 获取TTS管理器
+     *
+     * @return
+     */
+    public TTSInterface getmTTSInterface() {
+        if (mTTSInterface != null) {
+            return mTTSInterface;
+        }
+        if (mRKContent == null) {
+            getmRKContent();
+        }
+        if (mRKContent == null) {
+            RKLogUtil.e("could not fetch RokidContext");
+            return null;
+        }
+        Context context = RKApplicationEX.getInstance().getApplicationContext();
+        if (context == null) {
+            RKLogUtil.e("could not fetch ApplicationContext");
+            return null;
+        }
+        mTTSInterface = (TTSInterface) mRKContent
+                .getSystemRemoteService(context
+                        , RokidContext
+                                .TTS_SERVICE);
+        return mTTSInterface;
+    }
+
+    /**
+     * 获取系统连接控制器
+     *
+     * @return
+     */
+    public RKConnectionUtil getmRKConnectionUtil() {
+        if (mRKConnectionUtil != null) {
+            return mRKConnectionUtil;
+        }
+        if (mRKContent == null) {
+            getmRKContent();
+        }
+        if (mRKContent == null) {
+            RKLogUtil.e("could not fetch RokidContext");
+            return null;
+        }
+        Context context = RKApplicationEX.getInstance().getApplicationContext();
+        if (context == null) {
+            RKLogUtil.e("could not fetch ApplicationContext");
+            return null;
+        }
+        mRKConnectionUtil = (RKConnectionUtil) mRKContent.getSystemRemoteService(context,
+                RokidContext
+                        .CONNECTION_SERVICE);
+        return mRKConnectionUtil;
+    }
+
+    /**
+     * 获取系统管理器
+     *
+     * @return
+     */
+    public IRKPowerManager getmIRKPowerManager() {
+        if (mIRKPowerManager != null) {
+            return mIRKPowerManager;
+        }
+        if (mRKContent == null) {
+            getmRKContent();
+        }
+        if (mRKContent == null) {
+            RKLogUtil.e("could not fetch RokidContext");
+            return null;
+        }
+        Context context = RKApplicationEX.getInstance().getApplicationContext();
+        if (context == null) {
+            RKLogUtil.e("could not fetch ApplicationContext");
+            return null;
+        }
+        mIRKPowerManager = (IRKPowerManager) mRKContent.getSystemRemoteService(context,
+                RokidContext.RK_POWER_MANAGER);
+        return mIRKPowerManager;
+    }
+
+    /**
+     * 获取灯光控制器
+     *
+     * @return
+     */
+    public IRKLumen getmIRKLumen() {
+        if (mIRKLumen != null) {
+            return mIRKLumen;
+        }
+        if (mRKContent == null) {
+            getmRKContent();
+        }
+        if (mRKContent == null) {
+            RKLogUtil.e("could not fetch RokidContext");
+            return null;
+        }
+        Context context = RKApplicationEX.getInstance().getApplicationContext();
+        if (context == null) {
+            RKLogUtil.e("could not fetch ApplicationContext");
+            return null;
+        }
+        mIRKLumen = (rokid.os.IRKLumen) mRKContent
+                .getSystemRemoteService(context, rokid.content.RokidContext.LUMEN_SERVICE);
+        return mIRKLumen;
+    }
+
+    /**
+     * 获取账号管理器
+     *
+     * @return
+     */
+    public IRKAccountManager getmIRKAccountManager() {
+        if (mIRKAccountManager != null) {
+            return mIRKAccountManager;
+        }
+        if (mRKContent == null) {
+            getmRKContent();
+        }
+        if (mRKContent == null) {
+            RKLogUtil.e("could not fetch RokidContext");
+            return null;
+        }
+        Context context = RKApplicationEX.getInstance().getApplicationContext();
+        if (context == null) {
+            RKLogUtil.e("could not fetch ApplicationContext");
+            return null;
+        }
+        mIRKAccountManager = (IRKAccountManager) mRKContent.getSystemRemoteService(context,
+                RokidContext.RK_ACCOUNT);
+        return mIRKAccountManager;
+    }
+
+    /**
+     * 获取位置管理器
+     *
+     * @return
+     */
+    public RKSettingsInterface getmRKSettingsInterface() {
+        if (mRKSettingsInterface != null) {
+            return mRKSettingsInterface;
+        }
+        if (mRKContent == null) {
+            getmRKContent();
+        }
+        if (mRKContent == null) {
+            RKLogUtil.e("could not fetch RokidContext");
+            return null;
+        }
+        Context context = RKApplicationEX.getInstance().getApplicationContext();
+        if (context == null) {
+            RKLogUtil.e("could not fetch ApplicationContext");
+            return null;
+        }
+        mRKSettingsInterface = (RKSettingsInterface) mRKContent.getSystemRemoteService
+                (context, RokidContext.RK_SETTINGS);
+        return mRKSettingsInterface;
+    }
+
+}

@@ -1,0 +1,67 @@
+package com.rokid.server;
+
+import android.content.Context;
+import android.os.ServiceManager;
+import android.os.Process;
+import android.util.Slog;
+
+import com.rokid.server.core.RKAndroidBridge;
+import com.rokid.server.core.RKEventBus;
+import com.rokid.server.core.RKSecurityAccess;
+import com.rokid.server.incubator.RKIncubator;
+import com.rokid.server.pm.RKPackageMonitor;
+import com.rokid.server.power.RKPowerManagerService;
+
+
+public class RKSystemServer {
+	private static final String TAG = "Rokid Sys Serv";
+	private static final int SYSTEM_UID = 1000;
+	private static final int SYSTEM_GID = 1000;
+	private static final int[] SYSTEM_GIDS = {
+		3003, 1028, 1015, 3002, 3001
+	};
+
+	static {
+		Slog.i (TAG, "rokid system server on load");
+	   	System.loadLibrary("rokid_servers"); //rokid_servers
+	}
+
+	private static void startupSystemServices(Context ctx) {
+		RKEventBus eb;
+		RKPackageMonitor rkpm;
+		RKIncubator in;
+
+		eb = new RKEventBus();
+		eb.start();
+		ServiceManager.addService("rk_event_bus", eb, true);
+		ServiceManager.addService("droid_bridge", new RKAndroidBridge(ctx), true);
+		rkpm =  new RKPackageMonitor();
+		rkpm.start(ctx);
+		ServiceManager.addService("rkpm", rkpm, true);
+		ServiceManager.addService("security_access", new RKSecurityAccess(ctx), true);
+		in = new RKIncubator(ctx);
+		ServiceManager.addService("incubator", in, true);
+		ServiceManager.addService("rk_power_manager", new RKPowerManagerService(ctx), true);
+		in.initialize();
+	}
+
+	public static void run(final Context ctx) {
+		Slog.i(TAG, "\n" +
+				"###############\n" +
+				"# rokid world #\n" +
+				"###############\n");
+
+		if (ctx == null) {
+			Slog.e (TAG, "android system_process context is nil, rokid sys failed...");
+			return;
+		}
+		startupSystemServices(ctx);
+
+		//boot up startup
+		Process.start("com.rokid.startup.RKStartup", "startup", SYSTEM_UID, SYSTEM_GID, SYSTEM_GIDS,
+				0, 0, 0, null, "armeabi", null, null, null);
+		// Intent intent = new Intent();
+		// intent.setComponent(new ComponentName("com.rokid.rkstartup", "com.rokid.rkstartup.RKStartup"));
+		// ctx.startServiceAsUser(intent, UserHandle.OWNER);
+	}
+}

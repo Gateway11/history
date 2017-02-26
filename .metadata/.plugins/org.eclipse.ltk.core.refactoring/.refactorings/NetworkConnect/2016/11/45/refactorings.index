@@ -1,0 +1,11 @@
+1478150302449	Convert local variable 'mWifiManager' to field
+1478159760750	Convert local variable 'bt' to field
+1478164447521	Convert local variable 'et' to field
+1478258354079	Convert local variable 'mWifiManager' to field
+1478258515524	Convert local variable 'mWifiScanner' to field
+1478258997739	Rename type 'RKWifiHelper'
+1478259049737	Convert local variable 'mWifiConnectHelper' to field
+1478259147666	Convert local variable 'mAccessPoint' to field
+1478259853590	Delete element
+1478260111337	Convert local variable 'mWifiManager' to field
+1478261625203	Convert local variable 'mCurrendState' to field

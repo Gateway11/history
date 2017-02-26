@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          package="com.rokid.simple">
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"></uses-permission>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"></uses-permission>
+    <!-- 联网权限 -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- 往SDCard写入数据权限 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <!-- 录音权限 -->
+    <uses-permission android:name="android.permission.RECORD_AUDIO"/>
+    <!-- 在SDCard中创建与删除文件权限 -->
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
+    <application
+        android:name="com.rokid.rkcommonlibrary.RKApplicationEX"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/RokidAppTheme">
+        <activity android:name="com.rokid.simple.MainActivity"></activity>
+        <activity android:name="com.rokid.simple.TestAudioRecord"></activity>
+        <activity android:name=".OnClickEvenTestActivity">
+
+        </activity>
+        <activity
+            android:name="com.rokid.simple.MediaTestActivity"
+            android:exported="true"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+
+                <action android:name="com.rokid.simple.play"/>
+                <action android:name="com.rokid.simple.resume"/>
+                <action android:name="com.rokid.simple.restart"/>
+                <action android:name="com.rokid.simple.pause"/>
+                <action android:name="com.rokid.simple.stop"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

@@ -1,0 +1,17 @@
+package com.example.demo;
+
+public enum Test {
+	INSTANCE;
+	
+	public Test asInstance(){
+		return INSTANCE;
+	}
+	
+	private Test(){
+		
+	}
+	
+	public boolean get(){
+		return false;
+	}
+}

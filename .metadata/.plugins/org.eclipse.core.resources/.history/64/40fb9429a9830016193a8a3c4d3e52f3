@@ -1,0 +1,51 @@
+package com.rokid.server;
+
+
+interface IRKHomeBaseService {
+
+	/** process devices */
+
+    String registerDevice(String deviceInfo, in byte[] meta);
+    void removeDevice(long deviceId);
+    boolean updateDevice(String deviceInfo);
+    String getDevices(String key, String condition);
+    String getDeviceProfile(long deviceId);
+    
+    int controlDevices(String specs);
+    String getAllDevices();
+    void removeAllDevices();
+    long[] getAllDevicesId();
+    String getDeviceToken();
+    void startSearch();
+
+    IBinder getProxyForVendor(int vendor);
+    IBinder getProxyForRokidPackageName(String rokidPackageName);
+    
+    /** process scene */
+    
+    void saveOrRemoveHotwords(in List<String> params, String slot, boolean saveOrRemove);
+    void saveHotWords(in List<String> params, String slot);
+    VirtualScene registerScene(String sceneId, String name, in Vendor vendor, String trigger);
+    boolean registerScenes(in List<VirtualScene> scenes);
+    boolean updateVirtualScene(in VirtualScene virtualScene);
+    boolean removeVirtualDevice (in VirtualScene virtualScene);
+	VirtualScene getSceneById(long id);
+	List<VirtualScene> getAllScenes();
+	VirtualScene getSceneBySceneId(int vendorCode, String sceneId);
+	List<VirtualScene> getScenesByName(String sceneName);
+	List<VirtualScene> getScenesByVendorCode(int vendorCode);
+	List<VirtualScene> getScenesByTrigger(String sceneTrigger);
+	
+	/** int controlScenes(in List<VirtualScene> scenes); */
+	int controlScene(String trigger);
+	
+	
+	/** homebase triggers，by JiaYuan.Luo **/
+	void saveTrigger(String loginSessionId, String trigger, String etJson);
+	void updateTrigger(String oldTrigger, String trigger, String etJson);
+	
+	/** Orvibo user info **/
+	void saveOrviboUserInfo(String userName, String password);
+	OrviboUserInfo getOrviboUserInfo();
+	
+}

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<session version="1.0">
+<refactoring comment="Copy element &apos;res&apos; to &apos;Demo&apos;&#x0A;- Original project: &apos;Temp&apos;&#x0A;- Destination element: &apos;Demo&apos;&#x0A;- Original element: &apos;res&apos;" description="Copy folder" destination="=Demo" element1="res" files="0" flags="589830" folders="1" id="org.eclipse.jdt.ui.copy" policy="org.eclipse.jdt.ui.copyResources" stamp="1488031844238" units="0" version="1.0"/>
+</session>

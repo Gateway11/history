@@ -1,0 +1,270 @@
+package com.example.networkconnect;
+
+import java.util.List;
+
+import android.Manifest;
+import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.net.NetworkInfo;
+import android.net.NetworkInfo.DetailedState;
+import android.net.wifi.ScanResult;
+import android.net.wifi.SupplicantState;
+import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiConfiguration.AuthAlgorithm;
+import android.net.wifi.WifiConfiguration.KeyMgmt;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+
+public class MainActivity extends Activity implements OnClickListener {
+
+	private static final String SSID = "ROKID.TC";
+	private static final String PWD = "rokidguys";
+	private static final String CONNECT = "CONNECT";
+	private static final String DISCONNECT = "DISCONNECT";
+	private static String mCurrentState = DISCONNECT;
+	private static boolean connecting = false;
+	private static boolean disconnect = false;
+	private static boolean registered = false;
+	WifiConfiguration connectConfig = null;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+		mWifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+		bt = (TextView) findViewById(R.id.bt);
+		et = (EditText) findViewById(R.id.et);
+		((Button) findViewById(R.id.command)).setOnClickListener(this);
+		((Button) findViewById(R.id.disconnect)).setOnClickListener(this);
+		((Button) findViewById(R.id.connect)).setOnClickListener(this);
+	}
+
+	private void registerWifiReceiver() {
+		IntentFilter mIntentFilter = new IntentFilter();
+		mIntentFilter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
+		mIntentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+		mIntentFilter.addAction(WifiManager.SUPPLICANT_STATE_CHANGED_ACTION);
+		mIntentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+		mIntentFilter.addAction("android.net.wifi.WIFI_AP_STATE_CHANGED");
+		registerReceiver(receiver, mIntentFilter);
+		updateUI(DISCONNECT);
+	}
+
+	private BroadcastReceiver receiver = new BroadcastReceiver() {
+		public void onReceive(android.content.Context context,
+				android.content.Intent intent) {
+			if (intent.getAction()
+					.equals(WifiManager.WIFI_STATE_CHANGED_ACTION)) {
+				MainActivity.this.startScan();
+			} else if (intent.getAction().equals(
+					WifiManager.SCAN_RESULTS_AVAILABLE_ACTION)) {
+				if (disconnect)
+					return;
+				if (mCurrentState.equals(DISCONNECT)) {
+					MainActivity.this.connect();
+				}
+			} else if (intent.getAction().equals(
+					WifiManager.SUPPLICANT_STATE_CHANGED_ACTION)) {
+				SupplicantState state = (SupplicantState) intent
+						.getParcelableExtra(WifiManager.EXTRA_NEW_STATE);
+				int error = intent.getIntExtra(
+						WifiManager.EXTRA_SUPPLICANT_ERROR, 0);
+				MainActivity.this.onSupplicantConnectionStateChanged(state,
+						error);
+			} else if (intent.getAction().equals(
+					WifiManager.NETWORK_STATE_CHANGED_ACTION)) {
+				NetworkInfo info = (NetworkInfo) intent
+						.getParcelableExtra(WifiManager.EXTRA_NETWORK_INFO);
+				WifiInfo mWifiInfo = (WifiInfo) intent
+						.getParcelableExtra(WifiManager.EXTRA_WIFI_INFO);
+				MainActivity.this.onUpdateNetworkChanged(info, mWifiInfo);
+			}else if(intent.getAction().equals("android.net.wifi.WIFI_AP_STATE_CHANGED")){
+				int state = intent.getIntExtra("wifi_state", 14);
+                if (state == 14) {
+                    int reason = intent.getIntExtra("wifi_ap_error_code",0);
+                    handleWifiApStateChanged(state, reason);
+                } else {
+                    handleWifiApStateChanged(state, 0);
+                }
+			}
+		}
+	};
+	private WifiManager mWifiManager;
+
+	private void connect() {
+		List<WifiConfiguration> networks = mWifiManager.getConfiguredNetworks();
+		for (WifiConfiguration wifiConfiguration : networks) {
+			mWifiManager.removeNetwork(wifiConfiguration.networkId);
+		}
+		if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+			requestPermissions(
+					new String[] { Manifest.permission.ACCESS_COARSE_LOCATION },
+					0);
+		}
+		List<ScanResult> results = mWifiManager.getScanResults();
+		WifiConfiguration config = new WifiConfiguration();
+		ScanResult mResult = null;
+		for (ScanResult scanResult : results) {
+			if (scanResult.SSID.equals(SSID)) {
+				mResult = scanResult;
+				break;
+			}
+		}
+		if (mResult == null) {
+			mWifiManager.startScan();
+			Log.e("du", "SSID not find");
+			return;
+		}
+		config.SSID = "\"" + mResult.SSID + "\"";
+		switch (getSecurity(mResult)) {
+		case SECURITY_NONE: {
+			config.allowedKeyManagement.set(KeyMgmt.NONE);
+		}
+			break;
+		case SECURITY_WEP: {
+			config.allowedKeyManagement.set(KeyMgmt.NONE);
+			config.allowedAuthAlgorithms.set(AuthAlgorithm.OPEN);
+			config.allowedAuthAlgorithms.set(AuthAlgorithm.SHARED);
+			int len = PWD.length();
+			if ((len == 10) || (len == 26) || (len == 58)
+					&& PWD.matches("[0-9A-Fa-f]*")) {
+				config.wepKeys[0] = PWD;
+			} else {
+				config.wepKeys[0] = '"' + PWD + '"';
+			}
+			config.wepKeys[0] = PWD;
+		}
+			break;
+		case SECURITY_PSK: {
+			config.allowedKeyManagement.set(KeyMgmt.WPA_PSK);
+			if (PWD.matches("[0-9A-Fa-f]{64}")) {
+				config.preSharedKey = PWD;
+			} else {
+				config.preSharedKey = '"' + PWD + '"';
+			}
+		}
+			break;
+		}
+		int addNetwork = mWifiManager.addNetwork(config);
+		mWifiManager.enableNetwork(addNetwork, true);
+		mWifiManager.startScan();
+		connectConfig = config;
+		connecting = true;
+		updateUI("CONNECTING...");
+	}
+
+	private void updateUI(final String text) {
+		runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				CharSequence text2 = bt.getText();
+				bt.setText(text + "\n" + text2);
+			}
+		});
+	}
+
+	protected void onSupplicantConnectionStateChanged(SupplicantState state,
+			int error) {
+		Log.e("du", state.name());
+		switch (state) {
+		case DISCONNECTED:
+			if (error == WifiManager.ERROR_AUTHENTICATING
+					|| connectConfig == null) {
+				Log.e("du", state.name() + "   ==========");
+				updateUI(state.name());
+				connecting = false;
+				connectConfig = null;
+				mCurrentState = DISCONNECT;
+			}
+			break;
+		}
+	}
+
+	protected void onUpdateNetworkChanged(NetworkInfo info, WifiInfo mWifiInfo) {
+		DetailedState mDetailedState = info.getDetailedState();
+		Log.e("du", mDetailedState.name());
+		updateUI(mDetailedState.name());
+		switch (mDetailedState) {
+		case CONNECTED:
+			mCurrentState = CONNECT;
+			connectConfig = null;
+			connecting = false;
+			break;
+		}
+	}
+
+	protected void startScan() {
+		if (mWifiManager.isWifiEnabled()) {
+			mWifiManager.startScan();
+		} else {
+			mWifiManager.setWifiEnabled(true);
+		}
+	}
+
+	public static final int SECURITY_NONE = 0;
+	public static final int SECURITY_WEP = 1;
+	public static final int SECURITY_PSK = 2;
+	public static final int SECURITY_EAP = 3;
+	private TextView bt;
+	private EditText et;
+
+	private static int getSecurity(ScanResult result) {
+		if (result.capabilities.contains("WEP")) {
+			return SECURITY_WEP;
+		} else if (result.capabilities.contains("PSK")) {
+			return SECURITY_PSK;
+		} else if (result.capabilities.contains("EAP")) {
+			return SECURITY_EAP;
+		}
+		return SECURITY_NONE;
+	}
+
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.command:
+			String event = et.getText().toString();
+			if (TextUtils.isEmpty(event))
+				return;
+			bt.setText("Don't know the command");
+			break;
+		case R.id.connect:
+			disconnect = false;
+			connecting = false;
+			connectConfig = null;
+			mCurrentState = DISCONNECT;
+			if (!registered) {
+				registerWifiReceiver();
+			}
+			if (!mWifiManager.isWifiEnabled()) {
+				mWifiManager.setWifiEnabled(true);
+			} else {
+				mWifiManager.startScan();
+			}
+			break;
+		case R.id.disconnect:
+			disconnect = true;
+			List<WifiConfiguration> list = mWifiManager.getConfiguredNetworks();
+			for (WifiConfiguration wifi : list) {
+				mWifiManager.removeNetwork(wifi.networkId);
+			}
+			mWifiManager.saveConfiguration();
+			bt.setText(DISCONNECT);
+			break;
+		default:
+			break;
+		}
+	}
+}

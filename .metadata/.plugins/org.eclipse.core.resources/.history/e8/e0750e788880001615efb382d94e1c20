@@ -1,0 +1,251 @@
+package com.rokid.rkcommonlibrary;
+
+import android.app.Application;
+import android.content.BroadcastReceiver;
+import android.text.TextUtils;
+import android.util.DisplayMetrics;
+
+import com.nostra13.universalimageloader.cache.disc.impl.UnlimitedDiscCache;
+import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
+import com.rokid.rkcommonlibrary.config.RKProjectConfig;
+import com.rokid.rkcommonlibrary.utils.RKLogUtil;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * Created by Bassam on 16/7/5.
+ */
+public class RKApplicationEX extends Application {
+    private static RKApplicationEX applicationEx;
+    /**
+     * Activity管理器
+     */
+    private RKCustomActivityManager mActivityManager = null;
+    /**
+     * 数据缓存区，用于数据的临时缓存
+     */
+    private Map<String, Object> mHardCache = null;
+    /**
+     * 设备屏幕位深
+     */
+    private float deviceDensity;
+    /**
+     * 设备屏幕宽度（单位像素）
+     */
+    private int deviceWidth;
+    /**
+     * 设备屏幕高度（单位像素）
+     */
+    private int deviceHeight;
+
+
+    /**
+     * 单例方法
+     *
+     * @return
+     */
+    public static RKApplicationEX getInstance() {
+        return applicationEx;
+    }
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        applicationEx = this;
+        mHardCache = new HashMap<>();// 初始化系统级内存缓存
+        mActivityManager = new RKCustomActivityManager();
+        initResolution();
+        initFilePath();
+        initOtherLib();
+    }
+
+    /**
+     * 获取屏幕像素密度
+     *
+     * @return
+     */
+    public float getDeviceDensity() {
+        return deviceDensity;
+    }
+
+    /**
+     * 获取当前设备的屏幕宽度
+     *
+     * @return
+     */
+    public int getDeviceWidth() {
+        return deviceWidth;
+    }
+
+    /**
+     * 获取当前屏幕的高度
+     *
+     * @return
+     */
+    public int getDeviceHeight() {
+        return deviceHeight;
+    }
+
+    /**
+     * 得到activity管理器
+     *
+     * @return
+     */
+    public RKCustomActivityManager getActivityManager() {
+        return mActivityManager;
+    }
+
+    /**
+     * 缓存数据内容
+     *
+     * @param key
+     * @param value
+     * @return boolean
+     */
+    public boolean cache(String key, Object value) {
+        if (mHardCache == null) {
+            mHardCache = new HashMap<>();// 初始化系统级内存缓存
+        }
+        if (mHardCache == null) {
+            RKLogUtil.e("mHardCache is null,can't cache your value");
+            return false;
+        }
+        if (!TextUtils.isEmpty(key)) {
+            mHardCache.put(key, value);
+        }
+        return false;
+    }
+
+    /**
+     * 获取缓存内容
+     *
+     * @param key
+     * @return Object
+     */
+    public Object getCache(String key) {
+        if (mHardCache == null) {
+            mHardCache = new HashMap<>();// 初始化系统级内存缓存
+        }
+        if (mHardCache == null) {
+            RKLogUtil.e("mHardCache is null,can't cache your value");
+            return null;
+        }
+        if (!TextUtils.isEmpty(key) && mHardCache.containsKey(key)) {
+            return mHardCache.get(key);
+        }
+        return null;
+    }
+
+    /**
+     * 移除缓存
+     *
+     * @param key
+     */
+    public boolean removeCache(String key) {
+        if (mHardCache == null) {
+            mHardCache = new HashMap<>();// 初始化系统级内存缓存
+        }
+        if (mHardCache == null) {
+            RKLogUtil.e("mHardCache is null,can't cache your value");
+            return false;
+        }
+        if (!TextUtils.isEmpty(key) && mHardCache.containsKey(key)) {
+            mHardCache.remove(key);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * 清空系统缓存区
+     */
+    public boolean clearCache() {
+        if (mHardCache == null) {
+            mHardCache = new HashMap<>();// 初始化系统级内存缓存
+        }
+        if (mHardCache == null) {
+            RKLogUtil.e("mHardCache is null,can't cache your value");
+            return false;
+        }
+        mHardCache.clear();
+        Runtime.getRuntime().gc();
+        return true;
+    }
+
+    /**
+     * 初始化第三方库
+     * 已经初始化图片异步加载库
+     */
+    public void initOtherLib() {
+        initImageLoader();
+    }
+
+    /**
+     * 当系统内存不足时调用
+     */
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        Runtime.getRuntime().gc();// 通知Java虚拟机回收垃圾
+    }
+
+    /**
+     * 程序终止时候调用
+     */
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+    }
+
+    /**
+     * initResolution:初始化屏幕信息. <br/>
+     * 初始化屏幕的宽度，高度以及像素密度.<br/>
+     * 宽高的单位都是像素，px不是dp.<br/>
+     *
+     * @author BaoHang
+     */
+    private void initResolution() {
+        DisplayMetrics dm = getResources().getDisplayMetrics();
+        deviceWidth = dm.widthPixels;
+        deviceHeight = dm.heightPixels;
+        deviceDensity = dm.density;
+    }
+
+    /**
+     * 初始化缓存目录
+     */
+    private void initFilePath() {
+        File cacheDir = new File(RKProjectConfig.CACHE_DIR);
+        if (!cacheDir.exists()) {
+            cacheDir.mkdirs();
+        }
+        File imageCacheDir = new File(RKProjectConfig.CACHE_IMAGE_DIR);
+        if (!imageCacheDir.exists()) {
+            imageCacheDir.mkdirs();
+        }
+        File voiceCacheDir = new File(RKProjectConfig.CACHE_VOICE_DIR);
+        if (!voiceCacheDir.exists()) {
+            voiceCacheDir.mkdirs();
+        }
+    }
+
+    /**
+     * init ImageLoader
+     */
+    private void initImageLoader() {
+        File cacheDir = new File(RKProjectConfig.CACHE_DIR);
+        ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
+                this).threadPriority(Thread.NORM_PRIORITY - 2)
+                .denyCacheImageMultipleSizesInMemory()
+                .diskCache(new UnlimitedDiscCache(cacheDir))
+                .diskCacheFileNameGenerator(new Md5FileNameGenerator())
+                .tasksProcessingOrder(QueueProcessingType.LIFO)// Not
+                .build();
+        ImageLoader.getInstance().init(config);
+    }
+}

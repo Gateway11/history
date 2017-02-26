@@ -1,0 +1,89 @@
+package com.rokid.rksettings;
+
+import java.io.IOException;
+import rokid.services.util.RemoteServiceHelper;
+import android.content.Context;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
+import android.net.Uri;
+
+import java.util.Locale;
+
+import rokid.os.IRKSecurityAccess;
+import rokid.os.RKSystemProperties;
+import android.os.RemoteException;
+
+ import com.android.internal.app.LocalePicker; 
+
+public class SettingsUtil{
+
+	private Context mContext;
+	private IRKSecurityAccess mIRKSecurityAccess = null;
+
+	public SettingsUtil(Context mContext){
+		this.mContext = mContext;
+		initService();
+	}
+
+	private void initService(){
+		mIRKSecurityAccess =(IRKSecurityAccess)RemoteServiceHelper.getService(RemoteServiceHelper.RK_SECURITY_ACCESS);
+	}
+
+	public void setLanguage(String value){
+		String locale = getLanguage2();
+    	if (value.equals("zh")) {
+    		if (!locale.equals("zh")) {
+    			LocalePicker.updateLocale(Locale.CHINESE);
+    		}
+    	} else if (value.equals("en")) {
+    		if (!locale.equals("en")) {
+    			LocalePicker.updateLocale(Locale.ENGLISH);
+    		}
+		}
+	}
+
+	public void setRegion(String value){
+        try {
+			mIRKSecurityAccess.setServiceDistrict(value);
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public String getLanguage() throws RemoteException{
+		return mIRKSecurityAccess.getServiceLocale();
+	}	
+
+	public String getLanguage2(){
+		return Locale.getDefault().getLanguage();
+	}
+
+	public IRKSecurityAccess getSecurityAccess(){
+		return mIRKSecurityAccess;
+	}
+
+	public void goScanCode(){
+
+	}
+
+	public void playAudio(int resid){
+		MediaPlayer mMediaPlayer = new MediaPlayer();
+		try{
+			mMediaPlayer.setDataSource(mContext,Uri.parse("android.resource://" + mContext.getPackageName() + "/" + resid));
+			mMediaPlayer.setAudioStreamType(AudioManager.STREAM_RING);
+			mMediaPlayer.prepare();
+		}catch(IllegalStateException e1){
+			e1.printStackTrace();
+		}catch(IOException e1){
+			e1.printStackTrace();
+		}
+		mMediaPlayer.setOnCompletionListener(new OnCompletionListener() {
+			@Override
+			public void onCompletion(MediaPlayer mp) {
+				mp.release();
+			}
+		});
+		mMediaPlayer.start();
+	}
+}

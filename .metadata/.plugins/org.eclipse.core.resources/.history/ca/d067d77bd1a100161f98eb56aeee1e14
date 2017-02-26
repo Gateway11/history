@@ -1,0 +1,9 @@
+package com.example.demo;
+
+public enum Test {
+	INSTANCE;
+	
+	public boolean get(){
+		return false;
+	}
+}

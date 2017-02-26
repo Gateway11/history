@@ -1,0 +1,166 @@
+package com.rokid.rkcommonlibrary.rksysapi;
+
+import android.os.RemoteException;
+
+import com.rokid.rkcommonlibrary.RKApplicationEX;
+import com.rokid.rkcommonlibrary.utils.RKLogUtil;
+
+import rokid.os.ITTSCallback;
+import rokid.service.interfaces.TTSInterface;
+
+/**
+ * Created by Bassam on 4/27/16.
+ */
+public class RKTTSUtil {
+    private long ttsId;
+    private String ttsCode;//TTS的Code方法,用于区分TTS的处理
+    private RKTtsCallBack callBack;
+    /**
+     * 当前类的实例对象
+     */
+    private static RKTTSUtil instance;
+
+    /**
+     * 单例方法调用
+     *
+     * @return
+     */
+    public static RKTTSUtil getInstance() {
+        if (instance == null) {
+            synchronized (RKTTSUtil.class) {
+                if (instance == null) {
+                    instance = new RKTTSUtil();
+                }
+            }
+        }
+        return instance;
+    }
+
+    /**
+     * 获取TTS的Code
+     *
+     * @return
+     */
+    public String getTtsCode() {
+        return ttsCode;
+    }
+
+    /**
+     * 设置TTS的Code
+     *
+     * @param ttsCode
+     */
+    public void setTtsCode(String ttsCode) {
+        this.ttsCode = ttsCode;
+    }
+
+    /**
+     * 播报tts
+     *
+     * @param ttsContent
+     * @param callback
+     * @return
+     */
+    public boolean speakTTS(String ttsContent, RKTtsCallBack callback) {
+        this.callBack = callback;
+        TTSInterface ttsInterface = RKApiManager.getInstance().getmTTSInterface();
+        if (ttsInterface == null) {
+            return false;
+        }
+        try {
+            ttsInterface.unregisterTTSCallback(RKApplicationEX.getInstance().getApplicationContext()
+                    .getPackageName());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            if (ttsInterface.isSpeaking()) {
+                RKLogUtil.d("TTS还有内容在说，调用停止方法");
+                ttsInterface.stop();
+            }
+            ttsInterface.registerTTSDeadListener(new TTSInterface.onTTSDeathListener() {
+                @Override
+                public void onTTSServerDead() {
+                    RKLogUtil.e("接收到TTS死了的回调");
+                    if (callBack != null) {
+                        callBack.ttsFinishBack();
+                    }
+                }
+            });
+            boolean registerState = ttsInterface.registerTTSCallback(RKApplicationEX.getInstance
+                            ().getApplicationContext()
+                            .getPackageName(),
+                    new ITTSCallback.Stub() {
+                        @Override
+                        public int ttsEvent(int i, String s) throws RemoteException {
+                            RKLogUtil.i("接收到TTS回调: " + i + " " +
+                                    "info: " +
+                                    s);
+                            if (callBack != null) {
+                                callBack.ttsFinishBack();
+                            }
+                            return 0;
+                        }
+                    });
+            if (!registerState) {
+                return false;
+            }
+            ttsId = ttsInterface.speakIt(ttsContent);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean stopMyTTS(String ttsCode) {
+        if (ttsCode != null && this.ttsCode != null && !this.ttsCode.equals(ttsCode)) {
+            return false;
+        }
+        callBack = null;
+        TTSInterface ttsInterface = RKApiManager.getInstance().getmTTSInterface();
+        if (ttsInterface == null) {
+            return false;
+        }
+        try {
+            ttsInterface.unregisterTTSCallback(RKApplicationEX.getInstance()
+                    .getApplicationContext().getPackageName());
+            if (ttsInterface.isSpeaking()) {
+                //ttsInterface.stop();
+                ttsInterface.stopIt(ttsId);
+            }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * 停止播报TTS
+     *
+     * @return
+     */
+    public boolean stopAllTTS() {
+        callBack = null;
+        TTSInterface ttsInterface = RKApiManager.getInstance().getmTTSInterface();
+        if (ttsInterface == null) {
+            return false;
+        }
+        try {
+            ttsInterface.unregisterTTSCallback(RKApplicationEX.getInstance()
+                    .getApplicationContext().getPackageName());
+            if (ttsInterface.isSpeaking()) {
+                ttsInterface.stop();
+            }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public interface RKTtsCallBack {
+        void ttsFinishBack();
+    }
+}

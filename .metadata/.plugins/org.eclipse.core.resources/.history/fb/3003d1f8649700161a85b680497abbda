@@ -1,0 +1,190 @@
+package com.rokid.service.account;
+
+import rokid.os.IRKEventBus;
+import rokid.os.IRKEventCallback;
+import rokid.services.util.RemoteServiceHelper;
+import android.annotation.SuppressLint;
+import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Looper;
+import android.os.Message;
+import android.os.RemoteException;
+import android.text.TextUtils;
+import android.util.Log;
+
+public class RKAccountService extends Service {
+	private static final String TAG = "RKAccountService";
+	private static final String SESSION_TIMEOUT_BROADCAST_ACTION = "com.rokid.account.session.timeout";
+	private static final String RKSETTINGS_EVENT_ACTION = "com.rokid.settings.event";
+	
+	private RKAccountProxy mAccountProxy;
+	private RKLoginManager mLoginManager;
+	private RKSessionManager mSessionManager;
+	private IRKEventBus mEventBusClient;
+	
+	private RKAccountHandler mHandler;
+	public RKAccountHandler getHandler() {
+		return mHandler;
+	}
+	
+	@SuppressLint("HandlerLeak") public class RKAccountHandler extends Handler {
+		public static final int MSG_UPDATE_ENV_STRING = 0;
+		public static final int MSG_REGISTER_MASTER = 1;
+		public static final int MSG_UNREGISTER_MASTER = 2;
+		public static final int MSG_LOGIN = 3;
+		public static final int MSG_BIND_MASTER = 4;
+		public static final int MSG_UNBIND_MASTER = 5;
+		
+		public RKAccountHandler() {
+			super(Looper.getMainLooper());
+		}
+
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case MSG_UPDATE_ENV_STRING: {
+				handleUpdateEnvString((String)msg.obj);
+			} break;
+			case MSG_REGISTER_MASTER: {
+				handleRegisterCallback(msg.arg1, (IBinder)msg.obj);
+			} break;
+			case MSG_UNREGISTER_MASTER: {
+				handleUnregisterCallback(msg.arg1);
+			} break;
+			case MSG_LOGIN: {
+				handleLogin(msg.arg1);
+			} break;
+			case MSG_BIND_MASTER: {
+				handleBindMaster(msg.arg1, (String)msg.obj);
+			} break;
+			case MSG_UNBIND_MASTER: {
+				handleUnbindMaster(msg.arg2, (String)msg.obj);
+			} break;
+			default:
+				break;
+			}
+		}
+	}
+	
+	
+	private BroadcastReceiver mSessionTimeoutBroadcastReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals(SESSION_TIMEOUT_BROADCAST_ACTION)) {
+                Log.i(TAG, "received SESSION TIMEOUT broadcast");
+                mLoginManager.login(-1);
+            }
+        }
+    };
+    
+    private IRKEventCallback mEventBusCallback = new IRKEventCallback.Stub() {
+		@Override
+		public void onReceive(String action, Bundle extra) throws RemoteException {
+            if (action.equals(RKSETTINGS_EVENT_ACTION)) {
+                Log.i(TAG, "received rksettings event");
+                if (extra != null) {
+                    String event = extra.getString("event");
+                    if (!TextUtils.isEmpty(event)) {
+                        if (event.equals("0")) {
+                            Log.i(TAG, "get SET_PRO event");
+                        } else if (event.equals("1")) {
+                            Log.i(TAG, "get SET_SANDBOX event");
+                        } else if (event.equals("2")) {
+                            Log.i(TAG, "get SET_DAILY event");
+                        }
+                        Log.i(TAG, "relogin with sandbox state change");
+                        mHandler.sendEmptyMessage(RKAccountHandler.MSG_LOGIN);
+                    } else {
+                        Log.i(TAG, "rksettings event extra \"event\" is null");
+                    }
+                } else {
+                    Log.i(TAG, "rksettings event extra is null");
+                }
+            }
+		}
+    };
+	
+	
+	@Override
+	public IBinder onBind(Intent intent) {
+		mEventBusClient = (IRKEventBus)RemoteServiceHelper.getService(RemoteServiceHelper.RK_EVENTBUS);
+		mAccountProxy = new RKAccountProxy(this);
+		
+		mSessionManager = new RKSessionManager(getApplicationContext(), this);
+		mLoginManager = new RKLoginManager(getApplicationContext(), mSessionManager);
+		
+		mHandler = new RKAccountHandler();
+		
+		//setup env
+		try {
+			mEventBusClient.registerAction(RKSETTINGS_EVENT_ACTION,
+					mEventBusCallback);
+		} catch (RemoteException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		getApplication().registerReceiver(mSessionTimeoutBroadcastReceiver,
+				new IntentFilter(SESSION_TIMEOUT_BROADCAST_ACTION));
+		
+		mSessionManager.start();
+		
+		return mAccountProxy.asBinder();
+	}
+
+	//async call
+	public String handleGetRokidLoginSessionId() {
+		return mLoginManager.getSessionId();
+	}
+	
+	//async call
+	public void handleLogin(int pid) {
+		mLoginManager.login(pid);
+	}
+	
+	//async call
+	public void handleBindMaster(int pid, String userId) {
+		mLoginManager.bindRokidWithApp(pid, userId);
+	}
+	
+	//async call
+	public void handleUnbindMaster(int pid, String userId) {
+		mLoginManager.unbindRokidWithApp(pid, userId);
+	}
+	
+	//async call
+	public void handleRegisterCallback(int pid, IBinder callback) {
+		mLoginManager.registerCallback(pid, callback);
+	}
+	
+	//async call
+	public void handleUnregisterCallback(int pid) {
+		mLoginManager.unregisterCallback(pid);
+	}
+	
+    public void handleUpdateEnvString(String s) {
+        mLoginManager.updateRKEnvString(s);
+    }
+
+    public String handleGetEnvString() {
+        return mLoginManager.getRKEnvString();
+    }
+
+    public String handleGetR2ID() {
+        return mLoginManager.getR2IDSync();
+    }
+
+    public String handleGetRokidInfo() {
+        return mLoginManager.getRokidInfo();
+    }
+
+    //sync call
+    public boolean handleHasMaster() {
+        return mLoginManager.hasMaster();
+    }
+}

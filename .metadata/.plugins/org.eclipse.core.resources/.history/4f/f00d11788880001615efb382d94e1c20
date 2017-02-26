@@ -1,0 +1,87 @@
+package com.rokid.rkcommonlibrary.rksysapi;
+
+import rokid.service.interfaces.RKVolumeManager;
+
+/**
+ * Created by Bassam on 16/5/20.
+ * RK音量工具类
+ */
+public class RKVolumeManagerUtil {
+    /**
+     * 当前类的实例对象
+     */
+    private static RKVolumeManagerUtil instance;
+
+    /**
+     * 单例方法调用
+     *
+     * @return
+     */
+    public static RKVolumeManagerUtil getInstance() {
+        if (instance == null) {
+            synchronized (RKVolumeManagerUtil.class) {
+                if (instance == null) {
+                    instance = new RKVolumeManagerUtil();
+                }
+            }
+        }
+        return instance;
+    }
+
+    /**
+     * 设置若琪系统的声音音量
+     *
+     * @param volume
+     * @return boolean 成功或者失败
+     */
+    public boolean setRKVolume(int volume) {
+        try {
+            RKVolumeManager volumeManager = RKApiManager.getInstance().getmVolumeManager();
+            if (volumeManager != null) {
+                volumeManager.setStreamVolLevel(volume, false);
+                return true;
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * 得到当前系统音量大小
+     *
+     * @return if -1 means has error
+     */
+    public int getRKVolume() {
+        try {
+            RKVolumeManager volumeManager = RKApiManager.getInstance().getmVolumeManager();
+            if (volumeManager != null) {
+                return volumeManager.getStreamVolumeLevel();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return -1;
+    }
+
+    /**
+     * 设置若琪系统最小音量
+     *
+     * @param minVolme 最小音量
+     * @return boolean 成功或者失败
+     */
+    public boolean setRKMinVolume(int minVolme) {
+        try {
+            RKVolumeManager volumeManager = RKApiManager.getInstance().getmVolumeManager();
+            if (volumeManager != null) {
+                if (volumeManager.getStreamVolumeLevel() < minVolme) {
+                    volumeManager.setStreamVolLevel(minVolme, false);
+                }
+                return true;
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return false;
+    }
+}

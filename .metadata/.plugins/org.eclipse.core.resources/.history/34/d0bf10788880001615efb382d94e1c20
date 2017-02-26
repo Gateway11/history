@@ -1,0 +1,76 @@
+package com.rokid.rkcommonlibrary.rksysapi;
+
+import android.content.Intent;
+
+import com.rokid.rkcommonlibrary.utils.RKLogUtil;
+
+import rokid.os.IRKPowerManager;
+
+/**
+ * Created by Bassam on 16/7/19.
+ * 系统休眠工具类
+ */
+public class RKDormancyUtil {
+    /**
+     * 当前类的实例对象
+     */
+    private static RKDormancyUtil instance;
+
+    /**
+     * 单例方法调用
+     *
+     * @return
+     */
+    public static RKDormancyUtil getInstance() {
+        if (instance == null) {
+            synchronized (RKDormancyUtil.class) {
+                if (instance == null) {
+                    instance = new RKDormancyUtil();
+                }
+            }
+        }
+        return instance;
+    }
+
+    /**
+     * 是否在休眠状态
+     *
+     * @return boolean true为休眠,false为非休眠
+     */
+    public boolean isDormancyMode() {
+        try {
+            IRKPowerManager irkPowerManager = RKApiManager.getInstance().getmIRKPowerManager();
+            if (irkPowerManager != null) {
+                return irkPowerManager.inPowerSafeMode();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * 将应用从休眠状态直接唤起
+     *
+     * @param intent
+     * @return
+     */
+    public boolean wakeAppFromDormancy(Intent intent) {
+        if (intent == null) {
+            RKLogUtil.e("intent is null");
+            return false;
+        }
+        try {
+            IRKPowerManager irkPowerManager = RKApiManager.getInstance().getmIRKPowerManager();
+            if (irkPowerManager != null) {
+                irkPowerManager.requestPendingAction("{\"TYPE\":\"AWAKE_FROM_START_ACTIVITY\"}",
+                        intent, true);
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+}

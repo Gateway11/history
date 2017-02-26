@@ -1,0 +1,31 @@
+package com.example.rokiddemo;
+
+import android.os.ServiceManager;
+import rokid.home.RKHomeBaseVirtualDeviceService;
+
+
+public class MyVirtualDeviceService extends RKHomeBaseVirtualDeviceService {
+
+	String TAG=MyVirtualDeviceService.class.getSimpleName();
+	
+  
+
+	@Override
+	protected int controlDevices(String arg0) {
+		ServiceManager
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	protected void onInit() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	protected void startSearch() {
+		// TODO Auto-generated method stub
+		
+	}
+}

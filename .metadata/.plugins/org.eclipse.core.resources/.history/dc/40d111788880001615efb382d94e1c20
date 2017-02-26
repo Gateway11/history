@@ -1,0 +1,192 @@
+package com.rokid.rkcommonlibrary.widgets;
+
+import android.app.Activity;
+import android.graphics.drawable.AnimationDrawable;
+import android.media.MediaPlayer;
+import android.text.TextUtils;
+import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.widget.ImageView;
+
+import com.rokid.rkcommonlibrary.R;
+import com.rokid.rkcommonlibrary.mediaplayer.RKMediaDataBean;
+import com.rokid.rkcommonlibrary.mediaplayer.RKMediaManger;
+import com.rokid.rkcommonlibrary.mediaplayer.RKMediaPlayCallback;
+import com.rokid.rkcommonlibrary.rksysapi.RKTTSUtil;
+import com.rokid.rkcommonlibrary.utils.RKLogUtil;
+
+/**
+ * Created by Bassam on 16/8/4.
+ * 引导工具方法
+ */
+public class RKGuideWeiget {
+    private static final String GUIDE_MEDIA_ID = "RKGuideWeiget_MEDIA_KEY";
+    private View rl_guide;
+    private View tv_guide_back;
+    private ImageView im_guide;
+    private Activity activity;
+    private RKMediaDataBean rkMediaDataBean;
+    private GuideCallBack callBack;
+    private String ttsContent;
+
+    public RKGuideWeiget(Activity activity) {
+        this.activity = activity;
+        im_guide = (ImageView) activity.findViewById(R.id.im_guide);
+        rl_guide = activity.findViewById(R.id.rl_guide);
+        tv_guide_back = activity.findViewById(R.id.tv_guide_back);
+    }
+
+    public void init() {
+        ttsContent = null;
+        rkMediaDataBean = null;
+        rl_guide.setVisibility(View.GONE);
+        try {
+            if (im_guide != null && im_guide.getDrawable() != null) {
+                ((AnimationDrawable) im_guide.getDrawable()).stop();
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        im_guide.clearAnimation();
+        im_guide.removeCallbacks(startRunnable);
+        im_guide.removeCallbacks(stopRunnable);
+        tv_guide_back.clearAnimation();
+        rl_guide.clearAnimation();
+        RKTTSUtil.getInstance().stopAllTTS();
+        RKMediaManger.getInstance().removeResID(GUIDE_MEDIA_ID);
+        this.callBack = null;
+    }
+
+    public void showMediaGuide(RKMediaDataBean mediaDataBean, GuideCallBack callBack) {
+        if (callBack == null || mediaDataBean == null || !mediaDataBean.checkData()) {
+            return;
+        }
+        init();
+        this.callBack = callBack;
+        callBack.guideStart();
+        this.rkMediaDataBean = mediaDataBean;
+        rl_guide.setVisibility(View.VISIBLE);
+        RKMediaDataBean firstDataBean = new RKMediaDataBean(false);
+        firstDataBean.setAssetFileName("rk_guide_widget.mp3");
+        RKMediaManger.getInstance().addResID(GUIDE_MEDIA_ID, firstDataBean, null, 1);
+        im_guide.setImageResource(R.drawable.animation_guide_start);
+        AnimationDrawable startAnimation = (AnimationDrawable) im_guide.getDrawable();
+        startAnimation.start();
+        im_guide.postDelayed(startRunnable, 2300);
+        AlphaAnimation animation = new AlphaAnimation(0, 1);
+        animation.setDuration(1000);//设置动画持续时间
+        animation.setFillAfter(true);//动画执行完后是否停留在执行完的状态
+        tv_guide_back.setAnimation(animation);
+        animation.start();
+    }
+
+    public void showTTSGuide(String ttsContent, GuideCallBack callBack) {
+        if (callBack == null || TextUtils.isEmpty(ttsContent)) {
+            return;
+        }
+        init();
+        this.callBack = callBack;
+        callBack.guideStart();
+        this.ttsContent = ttsContent;
+        rl_guide.setVisibility(View.VISIBLE);
+        RKMediaDataBean firstDataBean = new RKMediaDataBean(false);
+        firstDataBean.setAssetFileName("rk_guide_widget.mp3");
+        RKMediaManger.getInstance().addResID(GUIDE_MEDIA_ID, firstDataBean, null, 1);
+        RKMediaManger.getInstance().startMediaPlayer(GUIDE_MEDIA_ID);
+        im_guide.setImageResource(R.drawable.animation_guide_start);
+        AnimationDrawable startAnimation = (AnimationDrawable) im_guide.getDrawable();
+        startAnimation.start();
+        im_guide.postDelayed(startRunnable, 2300);
+        AlphaAnimation animation = new AlphaAnimation(0, 1);
+        animation.setDuration(1000);//设置动画持续时间
+        animation.setFillAfter(true);//动画执行完后是否停留在执行完的状态
+        tv_guide_back.setAnimation(animation);
+        animation.start();
+    }
+
+    public void stopGuide() {
+        AlphaAnimation animation = new AlphaAnimation(1, 0);
+        animation.setDuration(600);//设置动画持续时间
+        animation.setFillAfter(true);//动画执行完后是否停留在执行完的状态
+        rl_guide.setAnimation(animation);
+        animation.start();
+        rl_guide.postDelayed(stopRunnable, 700);
+    }
+
+    Runnable startRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (rkMediaDataBean != null) {
+                RKMediaManger.getInstance().addResID(GUIDE_MEDIA_ID, rkMediaDataBean, new
+                        RKMediaPlayCallback() {
+                            @Override
+                            public void onPrepared(RKMediaDataBean rkMediaDataBean, MediaPlayer
+                                    mp) {
+
+                            }
+
+                            @Override
+                            public void onCompletion(RKMediaDataBean rkMediaDataBean, MediaPlayer
+                                    mp) {
+                                stopGuide();
+                            }
+
+                            @Override
+                            public void onError(RKMediaDataBean rkMediaDataBean, MediaPlayer mp, int
+                                    what, int extra) {
+                                stopGuide();
+                            }
+
+                            @Override
+                            public void onSeekComplete(RKMediaDataBean rkMediaDataBean,
+                                                       MediaPlayer mp) {
+
+                            }
+
+                            @Override
+                            public void onInfo(RKMediaDataBean rkMediaDataBean, MediaPlayer mp,
+                                               int what,
+                                               int extra) {
+
+                            }
+
+                            @Override
+                            public void onBufferingUpdate(RKMediaDataBean rkMediaDataBean,
+                                                          MediaPlayer
+                                                                  mp, int percent) {
+
+                            }
+                        }, 1);
+                RKMediaManger.getInstance().startMediaPlayer(GUIDE_MEDIA_ID);
+            } else if (!TextUtils.isEmpty(ttsContent)) {
+                RKTTSUtil.getInstance().speakTTS(ttsContent, new RKTTSUtil.RKTtsCallBack() {
+                    @Override
+                    public void ttsFinishBack() {
+                        stopGuide();
+                    }
+                });
+            } else {
+                stopGuide();
+            }
+
+        }
+    };
+    Runnable stopRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (callBack != null) {
+                RKLogUtil.d("引导回调");
+                callBack.guideFinish();
+                rl_guide.setVisibility(View.GONE);
+            }
+        }
+    };
+
+    public interface GuideCallBack {
+        public void guideStart();
+
+        public void guideFinish();
+
+    }
+
+}

@@ -1,0 +1,114 @@
+package com.rokid.wifi;
+
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.NetworkInfo;
+import android.net.NetworkInfo.DetailedState;
+import android.net.wifi.SupplicantState;
+import android.net.wifi.WifiManager;
+import android.util.Log;
+
+public class WifiEventReceiver extends BroadcastReceiver {
+	private static final String TAG = "WifiEventReceiver";
+	private static final String HIDE_LINK_CONFIGURATION_CHANGED_ACTION = 
+			"android.net.wifi.LINK_CONFIGURATION_CHANGED";
+	private static final String HIDE_CONFIGURED_CHANGED_ACTION =
+			"android.net.wifi.CONFIGURED_NETWORKS_CHANGE";
+	
+	private Context mContext = null;
+	private WifiEventCallback mWifiCallback; 
+	private IntentFilter mIntentFilter;
+	
+	public interface WifiEventCallback {
+		public void onWifiStateChanged(int state);
+		public void onUpdateAccessPoints();
+		public void onUpdateConnectionState(DetailedState state);
+		public void onUpdateNetworkChanged(NetworkInfo info);
+		public void onSupplicantConnectionStateChanged(SupplicantState state);
+		
+	}
+	
+	public WifiEventReceiver(Context mContext, WifiEventCallback callback) {
+		this.mContext = mContext;
+		this.mWifiCallback = callback;
+		
+		mIntentFilter = new IntentFilter();
+		mIntentFilter.addAction(WifiManager.WIFI_STATE_CHANGED_ACTION);
+		mIntentFilter.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+		mIntentFilter.addAction(WifiManager.NETWORK_IDS_CHANGED_ACTION);
+		mIntentFilter.addAction(WifiManager.SUPPLICANT_STATE_CHANGED_ACTION);
+		mIntentFilter.addAction(WifiManager.RSSI_CHANGED_ACTION);
+		mIntentFilter.addAction(WifiManager.NETWORK_STATE_CHANGED_ACTION);
+		
+		//hide
+		mIntentFilter.addAction(HIDE_LINK_CONFIGURATION_CHANGED_ACTION);
+		mIntentFilter.addAction(HIDE_CONFIGURED_CHANGED_ACTION);
+	}
+	
+	public void register() {
+		Log.i(TAG, "Register Wifi Receiver");
+		mContext.registerReceiver(this, mIntentFilter);
+	}
+	
+	public void unregister() {
+		Log.i(TAG, "Unregister Wifi Receiver");
+		mContext.unregisterReceiver(this);
+	}
+	
+	@Override
+	public void onReceive(Context mContext, Intent intent) {
+		String action = intent.getAction();
+		if (WifiManager.WIFI_STATE_CHANGED_ACTION.equals(action)) {
+			Log.i(TAG, "WIFI_STATE_CHANGED");
+			this.mWifiCallback.onWifiStateChanged(intent.getIntExtra(WifiManager.EXTRA_NEW_STATE,//wifi enable or disabled
+					WifiManager.WIFI_STATE_UNKNOWN));
+		} else if (WifiManager.SCAN_RESULTS_AVAILABLE_ACTION.equals(action) 
+				|| HIDE_CONFIGURED_CHANGED_ACTION.equals(action) 
+				|| HIDE_LINK_CONFIGURATION_CHANGED_ACTION.equals(action)) {
+			
+			Log.i(TAG, "SCAN_RESULTS_AVAILABLE");
+			this.mWifiCallback.onUpdateAccessPoints();//scann result
+			//a connection to an access point has changed
+		} else if (WifiManager.SUPPLICANT_STATE_CHANGED_ACTION.equals(action)) {
+			Log.i(TAG, "SUPPLICANT_STATE_CHANGED");
+			SupplicantState state = (SupplicantState)intent.getParcelableExtra(
+					WifiManager.EXTRA_NEW_STATE );
+			int error = intent.getIntExtra(WifiManager.EXTRA_SUPPLICANT_ERROR, 0);
+			this.mWifiCallback.onSupplicantConnectionStateChanged(state,error);
+			//wifi state chanage
+		} else if (WifiManager.NETWORK_STATE_CHANGED_ACTION.equals(action)) {
+			NetworkInfo info = (NetworkInfo) intent.getParcelableExtra(
+					WifiManager.EXTRA_NETWORK_INFO);
+			this.mWifiCallback.onUpdateNetworkChanged(info);
+			this.mWifiCallback.onUpdateAccessPoints();
+			this.mWifiCallback.onUpdateConnectionState(info.getDetailedState());
+		} else if (WifiManager.RSSI_CHANGED_ACTION.equals(action)) {
+			this.mWifiCallback.onUpdateConnectionState(null);
+		} 
+		
+	}
+
+	public static boolean isHandshakeState(SupplicantState state) {
+		switch (state) {
+		case AUTHENTICATING:
+		case ASSOCIATING:
+		case ASSOCIATED:
+		case FOUR_WAY_HANDSHAKE:
+		case GROUP_HANDSHAKE:
+			return true;
+		case COMPLETED:
+		case DISCONNECTED:
+		case INTERFACE_DISABLED:
+		case INACTIVE:
+		case SCANNING:
+		case DORMANT:
+		case UNINITIALIZED:
+		case INVALID:
+			return false;
+		}
+		
+		throw new IllegalArgumentException("Unkonwn supplicant state!");
+	}
+}

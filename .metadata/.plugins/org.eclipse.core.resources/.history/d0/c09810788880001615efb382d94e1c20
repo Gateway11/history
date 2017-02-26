@@ -1,0 +1,103 @@
+package com.rokid.rkcommonlibrary.rksysapi;
+
+import android.os.RemoteException;
+
+import com.google.gson.Gson;
+
+import java.util.Map;
+
+import rokid.entities.RKConfirmObject;
+import rokid.entities.RKIntentObject;
+import rokid.os.RKConnectionUtil;
+
+/**
+ * Created by Bassam on 16/7/22.
+ * 上下文工具类
+ */
+public class RKConfirmUtil {
+    /**
+     * 当前类的实例对象
+     */
+    private static RKConfirmUtil instance;
+
+    /**
+     * 单例方法调用
+     *
+     * @return
+     */
+    public static RKConfirmUtil getInstance() {
+        if (instance == null) {
+            synchronized (RKConfirmUtil.class) {
+                if (instance == null) {
+                    instance = new RKConfirmUtil();
+                }
+            }
+        }
+        return instance;
+    }
+
+    /**
+     * confirmChat
+     *
+     * @param domain     应用的Domin
+     * @param intent     应用需要处理的Intent
+     * @param ttsContent 播放的TTS,但是不建议用这个字段,因为中间很可能会被打断掉
+     * @param slot       我们需要的slot
+     */
+    public boolean confirmContent(String domain, String intent, String
+            ttsContent, String slot) {
+        RKConnectionUtil rkConnection = RKApiManager.getInstance().getmRKConnectionUtil();
+        if (rkConnection == null) {
+            return false;
+        }
+        try {
+            RKConfirmObject confirmObject = new RKConfirmObject();
+            confirmObject.setType(RKConfirmObject.type_slot);
+            confirmObject.setMethod(RKConfirmObject.method_voice);
+            RKIntentObject intentObject = new RKIntentObject();
+            intentObject.setDomain(domain);
+            intentObject.setIntent(intent);
+            confirmObject.setIntent(intentObject);
+            confirmObject.setTts(ttsContent);
+            confirmObject.setSlot(slot);
+            rkConnection.requestConfirm(new Gson().toJson(confirmObject));
+            return true;
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * 是否的上下文
+     *
+     * @param domain     应用的Domin
+     * @param intent     应用的Intent事件
+     * @param ttsContent TTS的播报内容
+     * @param slots      //预设的slots的内容,系统原样带回
+     */
+    public boolean confirmIf(String domain, final String intent, final String ttsContent,
+                             final Map<String, String> slots) {
+        RKConnectionUtil rkConnection = RKApiManager.getInstance().getmRKConnectionUtil();
+        if (rkConnection == null) {
+            return false;
+        }
+        try {
+            RKConfirmObject confirmObject = new RKConfirmObject();
+            confirmObject.setType(RKConfirmObject.type_intent);
+            confirmObject.setMethod(RKConfirmObject.method_voice);
+            RKIntentObject intentObject = new RKIntentObject();
+            intentObject.setDomain(domain);
+            intentObject.setIntent(intent);
+            if (slots != null)
+                intentObject.setSlots(slots);
+            confirmObject.setIntent(intentObject);
+            confirmObject.setTts(ttsContent);
+            rkConnection.requestConfirm(new Gson().toJson(confirmObject));
+            return true;
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+}

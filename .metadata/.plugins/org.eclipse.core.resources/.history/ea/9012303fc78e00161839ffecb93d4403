@@ -1,0 +1,77 @@
+package com.rokid.wifi;
+
+import java.util.List;
+
+import android.content.Context;
+import android.net.wifi.ScanResult;
+import android.net.wifi.WifiManager;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+
+public class APScanner {
+	private static final String TAG = "APScanner";
+	private static APScanner mDefaultApScanner = null;
+	private static final int OVERRIDE_WIFI_RESCAN_INTERVAL_MS = 10 * 1000;
+
+	private int mRetry = 0;
+	private WifiManager mWifiManager = null;
+	private Handler mHandler = null;
+	private boolean stopFlag = false;
+
+
+	private APScanner(WifiManager wifi) {
+		this.mWifiManager = wifi;
+	}
+
+	public static APScanner getInstance(WifiManager wifi) {
+		synchronized (APScanner.class) {
+			if (mDefaultApScanner == null) {
+				mDefaultApScanner = new APScanner(wifi);
+			}
+			return mDefaultApScanner;
+		}
+	}
+
+	public void setMessageHandler(Handler handler) {
+		mHandler = handler;
+	}
+
+	public void resume() {
+		if (!mHandler.hasMessages(RKWifiMessageHandler.MESSAGE_AP_SCAN)) {
+			stopFlag = false;
+			mHandler.sendEmptyMessage(RKWifiMessageHandler.MESSAGE_AP_SCAN);
+		}
+	}
+
+	public void forceScan() {
+		stopFlag = false;
+		mHandler.removeMessages(RKWifiMessageHandler.MESSAGE_AP_SCAN);
+		mHandler.sendEmptyMessage(RKWifiMessageHandler.MESSAGE_AP_SCAN);
+	}
+
+	public void pause() {
+		stopFlag = true;
+		mRetry = 0;
+		mHandler.removeMessages(RKWifiMessageHandler.MESSAGE_AP_SCAN);
+	}
+
+	public void run() {
+		if (stopFlag) {
+			Log.i(TAG, "SCAN STOP...");
+			return;
+		}
+
+
+		if (mWifiManager.startScan()) {
+			mRetry = 0;
+		} else if (++mRetry >= 3) {
+			mRetry = 0;
+			//report scan failed
+			Log.w(TAG, "scan failed after retry 3 times...");
+			return;
+		}
+
+		mHandler.sendEmptyMessageDelayed(RKWifiMessageHandler.MESSAGE_AP_SCAN, OVERRIDE_WIFI_RESCAN_INTERVAL_MS);
+	}
+}

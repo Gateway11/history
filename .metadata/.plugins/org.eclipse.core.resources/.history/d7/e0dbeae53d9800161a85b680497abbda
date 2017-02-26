@@ -1,0 +1,301 @@
+package rokid.os;
+ 
+import android.os.Binder;
+import android.os.IBinder;
+import android.os.Parcel;
+import android.os.RemoteException;
+
+public abstract class RKSettingsServicesNative extends Binder implements IRKSettingsServices{
+
+	public IRKSettingsServices asInterface(IBinder obj){
+		if(obj == null) return null;
+		RKSettingsServicesNative in = (RKSettingsServicesNative)obj.queryLocalInterface(descriptor);
+		if(in!=null) return in;
+		return new RKSettingsServiceProxy(obj);
+	}
+
+	public RKSettingsServicesNative(){
+		attachInterface(this,descriptor);
+	}
+
+	@Override
+	public IBinder asBinder(){
+		return this;
+	}
+
+	@Override
+	protected boolean onTransact(int code, Parcel data, Parcel reply, int flags) throws RemoteException {
+		switch(code){
+			case TRANSACTION_INIT_SERVICE:{
+				data.enforceInterface(descriptor);
+				init();
+				reply.writeNoException();
+			}
+				return true;
+			case TRANSACTION_CHECK_NETWORK:{
+				data.enforceInterface(descriptor);
+				boolean result = checkNetwork();
+				reply.writeNoException();
+				reply.writeInt(result ? 1 : 0);
+			}
+				return true;
+			case TRANSACTION_LOGIN:{
+				data.enforceInterface(descriptor);
+				boolean result = login();
+				reply.writeNoException();
+				reply.writeInt(result ? 1 : 0);
+			}
+				return true;
+			case TRANSACTION_BIND_MASTER:{
+				data.enforceInterface(descriptor); 
+				boolean result = bindMaster();
+				reply.writeNoException();
+				reply.writeInt(result ? 1 : 0);
+			}
+				return true;
+			case TRANSACTION_UNBIND_MASTER:{
+				data.enforceInterface(descriptor); 
+				boolean result = unbindMaster();
+				reply.writeNoException();
+				reply.writeInt(result ? 1 : 0);
+			}
+				return true;
+			case TRANSACTION_LOGIN_SUCCESSFULLY:{
+				data.enforceInterface(CALLBACK_DESCRIPTION);
+				loginSuccess();
+				reply.writeNoException(); 
+			}
+				return true;
+			case TRANSACTION_LOGIN_FAILED:{
+				data.enforceInterface(CALLBACK_DESCRIPTION);
+				loginFail();
+				reply.writeNoException();
+			}
+				return true;
+			case TRANSACTION_BIND_SUCCESSFULLY:{
+				data.enforceInterface(CALLBACK_DESCRIPTION);
+				String masterId = data.readString();
+				bindMasterSuccess(masterId);
+				reply.writeNoException(); 
+			}
+				return true;
+			case TRANSACTION_BIND_FAILED:{
+				data.enforceInterface(CALLBACK_DESCRIPTION);
+				String masterId = data.readString();
+				bindMasterFail(masterId);
+				reply.writeNoException();  
+			}
+				return true;
+			case TRANSACTION_UNBIND_SUCCESSFULLY:{
+				data.enforceInterface(CALLBACK_DESCRIPTION); 
+				unbindMasterSuccess();
+				reply.writeNoException(); 
+			}
+				return true;
+			case TRANSACTION_UNBIND_FAILED:{
+				data.enforceInterface(CALLBACK_DESCRIPTION); 
+				String masterId = data.readString();
+				unbindMasterFail(masterId);
+				reply.writeNoException();
+			}
+				return true;
+			case TRANSACTION_HANDLE_NLP:{
+				data.enforceInterface(descriptor);
+				boolean result = login();
+				reply.writeNoException();
+				reply.writeInt(result ? 1 : 0);
+			}
+				return true;
+		}
+		return super.onTransact(code,data,reply,flags);
+	
+	}
+}
+
+class RKSettingsServiceProxy implements IRKSettingsServices{
+		
+	public IBinder mRemote;
+
+	public RKSettingsServiceProxy(IBinder mRemote){
+		this.mRemote = mRemote;
+	}
+
+	@Override
+	public IBinder asBinder(){
+		return mRemote;
+	}
+
+	@Override
+	public void init() throws RemoteException{
+		Parcel data = Parcel.obtain();
+		Parcel reply = Parcel.obtain();
+		try{
+			data.writeInterfaceToken(descriptor);
+			mRemote.transact(TRANSACTION_INIT_SERVICE,data,reply,0);
+			reply.readException();
+		}finally{
+			data.recycle();
+			reply.recycle();
+		}
+	}
+
+	@Override
+	public boolean checkNetwork() throws RemoteException{
+		Parcel data = Parcel.obtain();
+		Parcel reply = Parcel.obtain();
+		try{
+			data.writeInterfaceToken(descriptor);
+			mRemote.transact(TRANSACTION_CHECK_NETWORK,data,reply,0);
+			reply.readException();
+			return result ==1? true : false;
+		}finally{
+			data.recycle();
+			reply.recycle();
+		}
+	}
+
+	@Override
+	public boolean login() throws RemoteException{
+		Parcel data = Parcel.obtain();
+		Parcel reply = Parcel.obtain();
+		try{
+			data.writeInterfaceToken(descriptor);
+			mRemote.transact(TRANSACTION_LOGIN,data,reply,0);
+			reply.readException();
+			int result = reply.readInt();
+			return result ==1? true : false;
+		}finally{
+			data.recycle();
+			reply.recycle();
+		}
+	}
+
+	@Override
+	public boolean bindMaster() throws RemoteException{
+		Parcel data = Parcel.obtain();
+		Parcel reply = Parcel.obtain();
+		try{
+			data.writeInterfaceToken(descriptor);
+			mRemote.transact(TRANSACTION_BIND_MASTER,data,reply,0);
+			reply.readException();
+			int result = reply.readInt();
+			return result ==1? true : false;
+		}finally{
+			data.recycle();
+			reply.recycle();
+		}
+	}
+
+	@Override
+	public boolean unbindMaster() throws RemoteException{
+		Parcel data = Parcel.obtain();
+		Parcel reply = Parcel.obtain();
+		try{
+			data.writeInterfaceToken(descriptor);
+			mRemote.transact(TRANSACTION_UNBIND_MASTER,data,reply,0);
+			reply.readException();
+			int result = reply.readInt();
+			return result ==1? true : false;
+		}finally{
+			data.recycle();
+			reply.recycle();
+		}
+	}
+
+	public void loginSuccess()throws RemoteException{
+		Parcel data = Parcel.obtain();
+		Parcel reply = Parcel.obtain();
+		try{
+			data.writeInterfaceToken(CALLBACK_DESCRIPTION);
+			mRemote.transact(TRANSACTION_LOGIN_SUCCESSFULLY,data,reply,0);
+			reply.readException();
+		}finally{
+			data.recycle();
+			reply.recycle();
+		}
+	}
+
+	public void loginFail()throws RemoteException{
+		Parcel data = Parcel.obtain();
+		Parcel reply = Parcel.obtain();
+		try{
+			data.writeInterfaceToken(CALLBACK_DESCRIPTION);
+			mRemote.transact(TRANSACTION_LOGIN_FAILED,data,reply,0);
+			reply.readException();
+		}finally{
+			data.recycle();
+			reply.recycle();
+		}
+	}
+
+	public void bindMasterSuccess(String masterId)throws RemoteException{
+		Parcel data = Parcel.obtain();
+		Parcel reply = Parcel.obtain();
+		try{
+			data.writeInterfaceToken(CALLBACK_DESCRIPTION);
+			data.writeString(masterId);
+			mRemote.transact(TRANSACTION_BIND_SUCCESSFULLY,data,reply,0);
+			reply.readException();
+		}finally{
+			data.recycle();
+			reply.recycle();
+		}
+	}
+
+	public void bindMasterFail(String masterId)throws RemoteException{
+		Parcel data = Parcel.obtain();
+		Parcel reply = Parcel.obtain();
+		try{
+			data.writeInterfaceToken(CALLBACK_DESCRIPTION);
+			data.writeString(masterId);
+			mRemote.transact(TRANSACTION_BIND_FAILED,data,reply,0);
+			reply.readException();
+		}finally{
+			data.recycle();
+			reply.recycle();
+		}
+	}
+
+	public void unbindMasterSuccess()throws RemoteException{
+		Parcel data = Parcel.obtain();
+		Parcel reply = Parcel.obtain();
+		try{
+			data.writeInterfaceToken(CALLBACK_DESCRIPTION);
+			mRemote.transact(TRANSACTION_UNBIND_SUCCESSFULLY,data,reply,0);
+			reply.readException();
+		}finally{
+			data.recycle();
+			reply.recycle();
+		}
+	}
+
+	public void unbindMasterFail(String masterId)throws RemoteException{
+		Parcel data = Parcel.obtain();
+		Parcel reply = Parcel.obtain();
+		try{
+			data.writeInterfaceToken(CALLBACK_DESCRIPTION);
+			data.writeString(masterId);
+			mRemote.transact(TRANSACTION_UNBIND_FAILED,data,reply,0);
+			reply.readException();
+		}finally{
+			data.recycle();
+			reply.recycle();
+		}
+	}
+	
+	public void handleNLP(String nlp){
+		Parcel data = Parcel.obtain();
+		Parcel reply = Parcel.obtain();
+		try{
+			data.writeInterfaceToken(descriptor);
+			data.writeString(nlp);
+			mRemote.transact(TRANSACTION_HANDLE_NLP,data,reply,0);
+			reply.readException();
+		}finally{
+			data.recycle();
+			reply.recycle();
+		}
+	}
+}
+
+

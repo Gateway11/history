@@ -1,0 +1,41 @@
+package com.rokid.wifi;
+
+public class RKWifiManagerNative extends RKWifiManagerNativeStub implements WifiEventCallback {
+
+	private final String TAG = "RKWifiManagerNative";
+	private final String UNKNOWN_SSID="<unknown ssid>";
+	private final String _0x0="0x0";//default ssid
+
+	private static final int WIFI_STATE_DISCONNECTED=0;
+	private static final int WIFI_STATE_OBTAINING_IPADDR=1;
+	private static final int WIFI_STATE_VERIFYING_POOR_LINK=2;
+	private static final int WIFI_STATE_CAPTIVE_PORTAL_CHECK=3;
+	private static final int WIFI_STATE_CONNECTED=4;
+	private static int mConnectState=WIFI_STATE_DISCONNECTED;
+	
+	public void onUpdateConnectionState(DetailedState state) {
+		updateConnectionState(state);
+	}
+
+	private void updateConnectionState(DetailedState state) {
+		if (!mWifiManager.isWifiEnabled()) {
+			apScanner.pause();
+			return;
+		}
+
+		if (state == DetailedState.OBTAINING_IPADDR) {
+			apScanner.pause();
+		} else {
+			apScanner.resume();
+		}
+
+		lastInfo = mWifiManager.getConnectionInfo();
+		if (state != null) {
+			lastState = state;
+		}
+
+		for (AccessPoint accessPoint: accessPoints) {
+			accessPoint.update(lastInfo, lastState);
+		}
+	}
+}

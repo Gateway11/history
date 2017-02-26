@@ -1,0 +1,79 @@
+package com.example.demo;
+
+import rokid.content.RokidContext;
+import rokid.os.IRKAndroidBridge;
+import rokid.os.IRKIdleService;
+import rokid.os.RKSystemProperties;
+import rokid.service.interfaces.RKWifiManager;
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Parcel;
+import android.os.RemoteException;
+import android.provider.Settings.System;
+import android.util.Log;
+
+public class MainActivity extends Activity {
+
+	String TAG = MainActivity.class.getSimpleName();
+	Handler mHandler =new Handler(){
+		public void handleMessage(android.os.Message msg) {
+			
+			
+		}
+	};
+	private IBinder mIdle;
+	private RokidContext context;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.activity_main);
+		context = RokidContext.getInstance();
+		//./wpa_supplicant -Dwext -iwlan0 -c/data/misc/wifi/wpa_supplicant.conf
+		
+		
+		
+		IRKAndroidBridge mAndroidBridge = (IRKAndroidBridge) context.getSystemRemoteService(getApplicationContext(),
+						RokidContext.RK_ANDROID_BRIDGE);
+		RKWifiManager mRKWifiManager = (RKWifiManager) context.getSystemRemoteService(getApplicationContext(),
+				RokidContext.RK_WIFI_SERVICE);
+		IBinder incubator = null;
+
+		Parcel data = Parcel.obtain();
+		Parcel reply = Parcel.obtain();
+		try {
+			incubator = mAndroidBridge.retrieveIncubator();
+			data.writeInterfaceToken("com.rokid.RKIncubatorService");
+            data.writeString("RK_IDLE_SERVICE");
+			incubator.transact(IBinder.FIRST_CALL_TRANSACTION + 1, data, reply,0);
+			reply.readException();
+			reply.readStrongBinder()
+			reply.writeb
+			mIdle = reply.readStrongBinder();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		} finally {
+			data.recycle();
+			reply.recycle();
+		}	
+	}
+	
+	@Override
+	protected void onNewIntent(Intent intent) {
+	
+		
+		Log.e(TAG, "onNewIntent");
+	}
+	@Override
+	protected void onResume(){
+		super.onResume();
+		if(mIdle!=null)
+		Log.e(TAG, "onResume");
+		String string = RKSystemProperties.getProperties("ro.product.locale.language").toString();
+		Log.e(TAG, string+"   "+RKSystemProperties.getProperties("ro.product.locale.region").toLowerCase());
+		IRKIdleService asInterface = IRKIdleService.Stub.asInterface(mIdle);
+	}
+}

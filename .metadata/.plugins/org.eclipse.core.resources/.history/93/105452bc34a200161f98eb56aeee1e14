@@ -1,0 +1,20 @@
+package com.example.demo;
+
+public enum Test {
+	INSTANCE;
+	
+	private boolean b;
+
+	public Test asInstance(){
+		return INSTANCE;
+	}
+	
+	Test(){
+		
+	}
+	
+	public boolean get(volatile boolean b){
+		this.b = b;
+		return false;
+	}
+}

@@ -1,0 +1,3 @@
+12-30 15:01:59.934: E/AndroidRuntime(3946): Caused by: java.lang.NullPointerException: Attempt to invoke virtual method 'void android.view.View.setOnClickListener(android.view.View$OnClickListener)' on a null object reference
+
+12-30 17:45:28.766: E/RKApplicationRecord(1821): No such component for domain com.rokid.system.launcher

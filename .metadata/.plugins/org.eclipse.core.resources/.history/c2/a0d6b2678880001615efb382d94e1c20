@@ -1,0 +1,121 @@
+package com.rokid.simple;
+
+import android.app.Activity;
+import android.os.Bundle;
+import android.util.Log;
+import android.widget.TextView;
+
+import com.rokid.rkcommonlibrary.beans.RKLocationBean;
+import com.rokid.rkcommonlibrary.net.RKHttpSignUtil;
+import com.rokid.rkcommonlibrary.net.RKHttpUtil;
+import com.rokid.rkcommonlibrary.rksysapi.RKLocationUtil;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+
+public class MainActivity extends Activity {
+    private TextView tv_test;
+    String DIDI_DOMAIN = "http://api.diditaxi.com.cn/api/v2/openApi";
+    String MAP_DOMAIN = "http://api.map.com/dache";
+    String DIDI_KEY = "MO16Yi21O0joEmQ2";
+    String MAP_KEY = "MO16Yi21O0joEmQ2";
+    String Channel = "70729";
+    String ROKID_DOMAIN = "http://m.zjwocai.com:8081/rokid-api/http/taxi/pushReply";
+//    private FrameAnimView fm_lo;
+//    private int images[] = {R.drawable.im_loading0, R.drawable.im_loading1, R.drawable
+// .im_loading2, R.drawable.im_loading3, R.drawable.im_loading4,
+//            R.drawable.im_loading5, R.drawable.im_loading6, R.drawable.im_loading7, R.drawable
+// .im_loading8, R.drawable.im_loading9, R.drawable.im_loading10, R.drawable.im_loading11, R
+// .drawable.im_loading12,
+//            R.drawable.im_loading13, R.drawable.im_loading14, R.drawable.im_loading15, R
+// .drawable.im_loading16, R.drawable.im_loading17, R.drawable.im_loading19, R.drawable
+// .im_loading20, R.drawable.im_loading21,
+//            R.drawable.im_loading22, R.drawable.im_loading23, R.drawable.im_loading24, R
+// .drawable.im_loading25, R.drawable.im_loading26, R.drawable.im_loading27,
+//            R.drawable.im_loading28, R.drawable.im_loading29, R.drawable.im_loading30, R
+// .drawable.im_loading31, R.drawable.im_loading32, R.drawable.im_loading33, R.drawable
+// .im_loading34};
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        tv_test = (TextView) findViewById(R.id.tv_test);
+//        fm_lo = (FrameAnimView) findViewById(R.id.fm_lo);
+//        fm_lo.setFrameInfo(30, images, 0);
+//        fm_lo.startAnim(null);
+//        Map<String, String> data = new HashMap<>();
+//        data.put("adress", "12345");
+//        data.put("token", "1234567789");
+//        RKPushUtil.getInstance().pushNotificationToMaster("内容", null, data);
+        //Log.i("测试", RKDeviceInfoUtil.getInstance().getProjectName() + "");
+        RKLocationBean locationBean = RKLocationUtil.getInstance().getRokidLocationBean();
+        if (locationBean != null) {
+            //getNearby(locationBean);
+            submitReq(locationBean);
+        }
+    }
+
+    /**
+     * 获取附近出租车
+     *
+     * @param locationBean
+     */
+    private void getNearby(RKLocationBean locationBean) {
+        Map<String, String> data = getBaseDateMap();
+        data.put("lng", locationBean.getLongitude());
+        data.put("lat", locationBean.getLatitude());
+        RKHttpUtil.getInstance().httpRequest(DIDI_DOMAIN + "/getNearby", "getNearby", data, null);
+    }
+
+    /**
+     * 打车请求提交接口
+     *
+     * @param locationBean
+     */
+    private void submitReq(RKLocationBean locationBean) {
+        Map<String, String> data = getBaseDateMap();
+        data.put("lng", "120.060652");
+        data.put("lat", "30.253873");
+        data.put("order_id", System.currentTimeMillis() + "1234567");
+        data.put("input_type", "1");
+        data.put("phone", "13738027740");
+        data.put("add_price", "15");
+        data.put("route_start", "浙江省杭州市西湖区西溪印象城");
+        data.put("route_end", "浙江省杭州市西湖区留和路浙江科技学院");
+        RKHttpUtil.getInstance().httpRequest(DIDI_DOMAIN + "/submitReq", "submitReq", data, null);
+    }
+
+
+    private Map<String, String> getBaseDateMap() {
+        String nonce;
+        String timestamp;
+        String token;
+        Random random = new Random();
+        int noncestrValue = 100000 + random.nextInt(899999);
+        nonce = noncestrValue + "";
+        timestamp = System.currentTimeMillis() / 1000 + "";
+        token = getToken(nonce, timestamp, DIDI_KEY);
+        Map<String, String> baseMap = new HashMap<>();
+        baseMap.put("nonce", nonce);
+        baseMap.put("timestamp", timestamp);
+        baseMap.put("token", token);
+        baseMap.put("channel", Channel);
+        return baseMap;
+    }
+
+    private String getToken(String nonce, String timestamp, String key) {
+        String temp = nonce + key + timestamp;
+        Log.i("测试", temp);
+        temp = temp.substring(1, temp.length() - 1);
+        Log.i("测试", temp);
+        return RKHttpSignUtil.getMD5String(temp.getBytes());
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        finish();
+    }
+}

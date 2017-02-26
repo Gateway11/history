@@ -1,0 +1,146 @@
+package com.rokid.rkcommonlibrary.utils;
+
+import android.text.TextUtils;
+import android.util.Log;
+
+import com.rokid.rkcommonlibrary.config.RKProjectConfig;
+
+/**
+ * @author Bassam
+ * @version V1.0
+ * @Title: 日志工具类
+ * @Package com.zjwocai.commonlibrary
+ * @Description 日志工具，用于日志输出的封装
+ * @date 2015-12-3
+ */
+public class RKLogUtil {
+    /**
+     * 获取日志的Tag
+     *
+     * @param caller
+     * @return
+     */
+    private static String generateTag(StackTraceElement caller) {
+        String tag = "%s.%s(L:%d)";
+        String callerClazzName = caller.getClassName();
+        callerClazzName = callerClazzName.substring(callerClazzName.lastIndexOf(".") + 1);
+        tag = String.format(tag, callerClazzName, caller.getMethodName(), caller.getLineNumber());
+        tag = TextUtils.isEmpty(RKProjectConfig.logTag) ? tag : RKProjectConfig.logTag + ":" + tag;
+        return tag;
+    }
+
+    /**
+     * 得到当前线程调用堆栈信息
+     *
+     * @return
+     */
+    private static StackTraceElement getCallerStackTraceElement() {
+        return Thread.currentThread().getStackTrace()[4];
+    }
+
+    /**
+     * 开启日志
+     */
+    public static void enableLog() {
+        RKProjectConfig.allowLog = true;
+        RKProjectConfig.allowD = true;
+        RKProjectConfig.allowE = true;
+        RKProjectConfig.allowI = true;
+        RKProjectConfig.allowV = true;
+        RKProjectConfig.allowW = true;
+    }
+
+    /**
+     * 关闭日志
+     */
+    public static void disableLog() {
+        RKProjectConfig.allowLog = false;
+        RKProjectConfig.allowD = false;
+        RKProjectConfig.allowE = false;
+        RKProjectConfig.allowI = false;
+        RKProjectConfig.allowV = false;
+        RKProjectConfig.allowW = false;
+    }
+
+    public static void v(String content) {
+        if (RKProjectConfig.allowLog && RKProjectConfig.allowV) {
+            StackTraceElement caller = getCallerStackTraceElement();
+            String tag = generateTag(caller);
+            Log.v(tag, content);
+        }
+    }
+
+    public static void v(String content, Throwable tr) {
+        if (RKProjectConfig.allowLog && RKProjectConfig.allowV) {
+            StackTraceElement caller = getCallerStackTraceElement();
+            String tag = generateTag(caller);
+            Log.v(tag, content, tr);
+        }
+    }
+
+    public static void d(String content) {
+        if (RKProjectConfig.allowLog && RKProjectConfig.allowD) {
+            StackTraceElement caller = getCallerStackTraceElement();
+            String tag = generateTag(caller);
+            Log.d(tag, content);
+        }
+    }
+
+    public static void d(String content, Throwable tr) {
+        if (RKProjectConfig.allowLog && RKProjectConfig.allowD) {
+            StackTraceElement caller = getCallerStackTraceElement();
+            String tag = generateTag(caller);
+            Log.d(tag, content, tr);
+        }
+    }
+
+    public static void i(String content) {
+        if (RKProjectConfig.allowLog && RKProjectConfig.allowI) {
+            StackTraceElement caller = getCallerStackTraceElement();
+            String tag = generateTag(caller);
+            Log.i(tag, content);
+        }
+    }
+
+    public static void i(String content, Throwable tr) {
+        if (RKProjectConfig.allowLog && RKProjectConfig.allowI) {
+            StackTraceElement caller = getCallerStackTraceElement();
+            String tag = generateTag(caller);
+            Log.i(tag, content, tr);
+        }
+    }
+
+    public static void w(String content) {
+        if (RKProjectConfig.allowLog && RKProjectConfig.allowW) {
+            StackTraceElement caller = getCallerStackTraceElement();
+            String tag = generateTag(caller);
+            Log.w(tag, content);
+        }
+    }
+
+    public static void w(String content, Throwable tr) {
+        if (RKProjectConfig.allowLog && RKProjectConfig.allowW) {
+            StackTraceElement caller = getCallerStackTraceElement();
+            String tag = generateTag(caller);
+            Log.w(tag, content, tr);
+        }
+    }
+
+    public static void e(String content) {
+        if (RKProjectConfig.allowLog && RKProjectConfig.allowE) {
+            StackTraceElement caller = getCallerStackTraceElement();
+            String tag = generateTag(caller);
+            Log.e(tag, content);
+        }
+    }
+
+    public static void e(String content, Throwable tr) {
+        if (RKProjectConfig.allowLog && RKProjectConfig.allowE) {
+            StackTraceElement caller = getCallerStackTraceElement();
+            String tag = generateTag(caller);
+            Log.e(tag, content, tr);
+        }
+    }
+
+
+}

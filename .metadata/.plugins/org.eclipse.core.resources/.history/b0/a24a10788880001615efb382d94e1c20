@@ -1,0 +1,247 @@
+package com.rokid.rkcommonlibrary.net;
+
+
+import android.text.TextUtils;
+
+import com.rokid.rkcommonlibrary.config.RKProjectConfig;
+import com.rokid.rkcommonlibrary.rksysapi.RKAccountUtil;
+import com.rokid.rkcommonlibrary.rksysapi.RKDeviceInfoUtil;
+import com.rokid.rkcommonlibrary.utils.RKLogUtil;
+import com.rokid.rkcommonlibrary.utils.RKProjectInfo;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.Headers;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
+/**
+ * Created by Bassam on 5/15/16.
+ */
+public class RKHttpUtil implements Callback {
+    private static RKHttpUtil instance;
+    private Map<String, Callback> callbackMap;//接口回调队列
+    private OkHttpClient mOkHttpClient;//请求客户端
+
+    public RKHttpUtil() {
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        if (RKProjectConfig.HTTP_REQUEST_TIMEOUT <= 0) {
+            builder.connectTimeout(10, TimeUnit.SECONDS);
+        } else {
+            builder.connectTimeout(RKProjectConfig.HTTP_REQUEST_TIMEOUT, TimeUnit.SECONDS);
+        }
+        mOkHttpClient = builder.build();
+        callbackMap = new HashMap<>();
+    }
+
+    /**
+     * @param appcode  App请求的Code
+     * @param service  App请求的服务
+     * @param action   App请求的事件
+     * @param token    用户Token,如果用不到则可传空
+     * @param page     请求页面
+     * @param pageSize 请求条数
+     * @return
+     */
+    private HashMap<String, String> getBaseData(String appcode, String service, String
+            action, String token, int page, int pageSize) {
+        HashMap<String, String> map = new HashMap<>();
+        map.put("appcode", appcode);
+        map.put("devicetype", RKDeviceInfoUtil.getInstance().getDeviceBrand());
+        map.put("devicemodel", RKDeviceInfoUtil.getInstance().getDeviceModel());
+        map.put("languagetype", RKDeviceInfoUtil.getInstance().getLanguage());
+        map.put("sys", "Android");
+        map.put("sysversion", RKDeviceInfoUtil.getInstance().getSysVersion());
+        map.put("deviceidentifier", RKAccountUtil.getInstance().getRokidID());
+        map.put("appversion", RKProjectInfo.getProjectVersion());
+        map.put("service", service);
+        map.put("action", action);
+        map.put("page", page + "");
+        map.put("pagesize", pageSize + "");
+        String noncestr;
+        Random random = new Random();
+        int noncestrValue = 100000 + random.nextInt(899999);
+        noncestr = noncestrValue + "";
+        map.put("noncestr", noncestr);
+        String timestamp = System.currentTimeMillis() + "";
+        map.put("timestamp", timestamp);
+        if (TextUtils.isEmpty(token))
+            map.put("token", "");
+        else
+            map.put("token", token);
+        String sign = RKHttpSignUtil.getSign(appcode, noncestr, timestamp, service, action);
+        map.put("sign", sign);
+        return map;
+    }
+
+    private Request getRequest(String webAdress, String requestCode, Map<String, String>
+            headerMap, Map<String, String> dataMap) {
+        RKLogUtil.d("RequestURL:" + webAdress);
+        Headers.Builder headers = new Headers.Builder();
+        if (headerMap != null) {
+            RKLogUtil.d("RequestHeaderData:" + headerMap.toString());
+            for (String key : headerMap.keySet()) {
+                if (headerMap.get(key) != null) {
+                    headers.add(key, headerMap.get(key));
+                }
+            }
+        }
+        FormBody.Builder builders = new FormBody.Builder();
+        if (dataMap != null) {
+            RKLogUtil.i("RequestBodyData:" + dataMap.toString());
+            for (String key : dataMap.keySet()) {
+                if (dataMap.get(key) != null) {
+                    builders.add(key, dataMap.get(key));
+                }
+            }
+        }
+        Headers header = headers.build();
+        RequestBody requestBody = builders.build();
+        Request request = new Request.Builder().url(webAdress)
+                .post(requestBody).headers(header).tag(requestCode).build();
+        return request;
+    }
+
+    public static RKHttpUtil getInstance() {
+        if (instance == null) {
+            synchronized (RKHttpUtil.class) {
+                if (instance == null) {
+                    instance = new RKHttpUtil();
+                }
+            }
+        }
+        return instance;
+    }
+
+    /**
+     * 进行网络请求
+     *
+     * @param webAdress   请求地址
+     * @param requestCode 请求编码,用于区分是哪个接口的回调,不做通信参数使用
+     * @param appcode     应用编码,由后台接口决定
+     * @param service     服务
+     * @param action      请求接口事项
+     * @param token       用户token,如果不需要用到则传空
+     * @param page        请求页面,如果非列表请求接口,则直接传0
+     * @param pageSize    一页请求的条数,非列表请求接口,直接传0
+     * @param dataMap     数据体
+     * @param callback    回调接口,注意这是一个子线程,回调回来以后,需要自己在主线程处理一下
+     */
+    public void httpRequest(String webAdress, String requestCode, String appcode, String service,
+                            String action, String token, int page, int pageSize, Map<String,
+            String> dataMap, Callback callback) {
+        Map<String, String> headerMap = getBaseData(appcode, service, action, token, page,
+                pageSize);
+        Request request = getRequest(webAdress, requestCode, headerMap, dataMap);
+        cancelTag(request.tag().toString());
+        Call call = mOkHttpClient.newCall(request);
+        RKLogUtil.d("开始网络请求");
+        call.enqueue(this);
+        if (callback != null) {
+            callbackMap.put(request.tag().toString(), callback);
+        }
+    }
+
+    /**
+     * 进行Http请求,主要用于第三方接口的调用
+     *
+     * @param webAdress
+     * @param requestCode
+     * @param dataMap
+     * @param callback
+     */
+    public void httpRequest(String webAdress, String requestCode, Map<String,
+            String> dataMap, Callback callback) {
+
+        RKLogUtil.d("RequestURL:" + webAdress);
+        Headers.Builder headers = new Headers.Builder();
+        FormBody.Builder builders = new FormBody.Builder();
+        if (dataMap != null) {
+            RKLogUtil.i("RequestBodyData:" + dataMap.toString());
+            for (String key : dataMap.keySet()) {
+                if (dataMap.get(key) != null) {
+                    builders.add(key, dataMap.get(key));
+                }
+            }
+        }
+        Headers header = headers.build();
+        RequestBody requestBody = builders.build();
+        Request request = new Request.Builder().url(webAdress)
+                .post(requestBody).headers(header).tag(requestCode).build();
+        cancelTag(request.tag().toString());
+        Call call = mOkHttpClient.newCall(request);
+        RKLogUtil.d("开始网络请求");
+        call.enqueue(this);
+        if (callback != null) {
+            callbackMap.put(request.tag().toString(), callback);
+        }
+    }
+
+    /**
+     * 取消指定的网络请求
+     *
+     * @param requestCode
+     */
+    public void cancelTag(String requestCode) {
+        for (Call call : mOkHttpClient.dispatcher().queuedCalls()) {
+            if (requestCode.equals(call.request().tag().toString())) {
+                if (callbackMap.containsKey(requestCode)) {
+                    callbackMap.put(requestCode, null);
+                }
+                call.cancel();
+            }
+        }
+        for (Call call : mOkHttpClient.dispatcher().runningCalls()) {
+            if (requestCode.equals(call.request().tag().toString())) {
+                if (callbackMap.containsKey(requestCode)) {
+                    callbackMap.put(requestCode, null);
+                }
+                call.cancel();
+            }
+        }
+        RKLogUtil.d("清理指定的网络请求:");
+    }
+
+    /**
+     * 清除所有的网络请求
+     */
+    public void cancelAllRequest() {
+        RKLogUtil.d("清理所有的网络请求:");
+        callbackMap.clear();
+        mOkHttpClient.dispatcher().cancelAll();
+    }
+
+    @Override
+    public void onFailure(Call call, IOException e) {
+        RKLogUtil.d("网络请求失败");
+        if (callbackMap.containsKey(call.request().tag().toString()) && callbackMap.get(call
+                .request().tag().toString()) != null) {
+            Callback callback = callbackMap.get(call.request().tag().toString());
+            if(!call.isCanceled()) {
+                callbackMap.remove(call.request().tag().toString());
+                callback.onFailure(call, e);
+            }
+        }
+    }
+
+    @Override
+    public void onResponse(Call call, Response response) throws IOException {
+        if (callbackMap.containsKey(call.request().tag().toString()) && callbackMap.get(call
+                .request().tag().toString()) != null) {
+            Callback callback = callbackMap.get(call.request().tag().toString());
+            callbackMap.remove(call.request().tag().toString());
+            callback.onResponse(call, response);
+        }
+
+    }
+}
+

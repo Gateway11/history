@@ -1,0 +1,339 @@
+package com.rokid.rkcommonlibrary.ui.view;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.text.TextUtils;
+
+import com.google.gson.Gson;
+import com.rokid.rkcommonlibrary.R;
+import com.rokid.rkcommonlibrary.RKApplicationEX;
+import com.rokid.rkcommonlibrary.beans.RKEventBean;
+import com.rokid.rkcommonlibrary.beans.RKNLPBean;
+import com.rokid.rkcommonlibrary.listener.RKOnHeadClickListener;
+import com.rokid.rkcommonlibrary.listener.RKOnLeftClickListener;
+import com.rokid.rkcommonlibrary.listener.RKOnLeftTouchListener;
+import com.rokid.rkcommonlibrary.listener.RKOnRightClickListener;
+import com.rokid.rkcommonlibrary.listener.RKOnRightTouchListener;
+import com.rokid.rkcommonlibrary.rksysapi.RKTTSUtil;
+import com.rokid.rkcommonlibrary.ui.model.RKNLPModel;
+import com.rokid.rkcommonlibrary.ui.presenter.RKClickPresenter;
+import com.rokid.rkcommonlibrary.ui.presenter.RKTouchPresenter;
+import com.rokid.rkcommonlibrary.utils.RKLogUtil;
+import com.rokid.rkcommonlibrary.utils.RKProjectInfo;
+import com.umeng.analytics.MobclickAgent;
+
+import java.io.Serializable;
+
+/**
+ * Created by Bassam on 16/7/25.
+ */
+public abstract class RKBaseActivity extends Activity implements RKNLPModel, RKBaseView {
+    private int viewId;//视图的ID
+    protected boolean isCreate = false;//是否是新建的Activity还是onNewIntent
+    protected boolean isNeedRestore = false;
+    protected boolean activityHide = true;
+    private String ttsCode = "";
+    private RKOnHeadClickListener onHeadClickListener;
+
+    public RKBaseActivity(int id) {
+        viewId = id;
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        RKLogUtil.d("onCreate");
+        readyForView();
+        setContentView(viewId);
+        RKApplicationEX.getInstance().getActivityManager().pushActivity(this);
+        isCreate = true;
+        isNeedRestore = false;
+        activityHide = false;
+        if (RKTTSUtil.getInstance() != null) {
+            ttsCode = System.currentTimeMillis() + "";
+            RKTTSUtil.getInstance().setTtsCode(ttsCode);
+            RKTTSUtil.getInstance().stopAllTTS();
+        }
+        initActivity();
+        loadIntent(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        RKLogUtil.d("onNewIntent");
+        isCreate = false;
+        isNeedRestore = false;
+        activityHide = false;
+        if (RKTTSUtil.getInstance() != null) {
+            ttsCode = System.currentTimeMillis() + "";
+            RKTTSUtil.getInstance().setTtsCode(ttsCode);
+            RKTTSUtil.getInstance().stopAllTTS();
+        }
+        RKClickPresenter.getInstance().stopTouchPresenter();
+        stopAllPersenter();//停止所有的操作
+        loadIntent(intent);
+    }
+
+    /**
+     * readyForView:在setContentView之前的准备工作. <br/>
+     * 正常情况下不需要重写该方法.<br/>
+     * 需要使用该方法的时候只需要继承BaseActivity，然后重写该方法就行.<br/>
+     * 目前只是在百度地图集成中看到需要重写该方法，用于百度地图SDK的初始化操作.<br/>
+     *
+     * @author BaoHang
+     */
+    public void readyForView() {
+
+    }
+
+    /**
+     * initActivity:初始化Activity. <br/>
+     * 主要用于初始化控件视图以及数据.<br/>
+     *
+     * @author BaoHang
+     */
+    public abstract void initActivity();
+
+    /**
+     * 获取intent中的数据,如果获取的不是NLP数据,则重写该方法
+     *
+     * @param intent
+     */
+    public void loadIntent(Intent intent) {
+        if (intent != null) {
+            String action = intent.getAction();
+            if (RKProjectInfo.getProjectDomain().equals
+                    (action)) {
+                RKLogUtil.d("loadAction:Action=" + action);
+                String nlp = intent.getStringExtra(getString(R.string.nlp_extra));
+                if (!TextUtils.isEmpty(nlp)) {
+                    RKNLPBean nlpBean = parseNLP(nlp);
+                    if (nlpBean != null) {
+                        RKLogUtil.d("loadAction:NLPDate=" + nlp);
+                        if (checkNlpBean(nlpBean)) {
+                            showViewByNLp(nlpBean);
+                        } else {
+                            RKLogUtil.d("NLP Check Error" + nlp);
+                            showNLPErrorTTS();
+                        }
+                    } else {
+                        RKLogUtil.e("loadAction:NLPParse Error，NLP=" + nlp);
+                        showParseNLPErrorTTS();
+                    }
+                } else {
+                    RKLogUtil.e("loadAction:No NLPDate");
+                    showNoNLPDateErrorTTS();
+                }
+            } else {
+                RKLogUtil.e("loadAction:ActionError,Action=" + action);
+                showActivonErrorTTS();
+            }
+        } else {
+            RKLogUtil.e("loadAction:NoIntent");
+            showNoIntentErrorTTS();
+        }
+    }
+
+    /**
+     * 恢复视图
+     */
+    public abstract void restoreView();
+
+    /**
+     * 恢复操作
+     */
+    public abstract void restorePersenter();
+
+    /**
+     * 隐藏界面,以及清理动画
+     */
+    public abstract void hideView();
+
+    /**
+     * 停止相关的操作
+     */
+    public abstract void stopAllPersenter();
+
+    public boolean onNewRokidEvent(String event) {
+        RKLogUtil.i("触摸事件:" + event);
+        Gson gson = new Gson();
+        final RKEventBean eventBean = gson.fromJson(event, RKEventBean.class);
+        if (eventBean == null) {
+            return false;
+        }
+        if ("at42qt1010".equals(eventBean.getDevice())) {//头上
+            if (onHeadClickListener != null) {
+                onHeadClickListener.onHeadClickListener();
+            }
+        } else if ("sn5100_right".equals(eventBean.getDevice())) {//若琪的右边,实际是我们的左边
+            boolean clickstate = RKClickPresenter.getInstance().doLeftClickEvntPresenter(eventBean);
+            if (!clickstate) {
+                return RKTouchPresenter.getInstance().doLeftTouchEventPresenter(eventBean);
+            } else {
+                RKTouchPresenter.getInstance().doLeftTouchEventPresenter(eventBean);
+                return true;
+            }
+        } else if ("sn5100_letf".equals(eventBean.getDevice())) {//若琪的左边,实际是我们的右边
+            boolean clickstate = RKClickPresenter.getInstance().doRightClickEvntPresenter
+                    (eventBean);
+            if (!clickstate) {
+                return RKTouchPresenter.getInstance().doRightTouchEventPresenter(eventBean);
+            } else {
+                RKTouchPresenter.getInstance().doRightTouchEventPresenter(eventBean);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /***
+     * 设置左边触摸事件
+     *
+     * @param onLeftTouchListener
+     */
+    public void setOnLeftTouchListener(RKOnLeftTouchListener onLeftTouchListener) {
+        RKTouchPresenter.getInstance().setOnLeftTouchListener(onLeftTouchListener);
+    }
+
+    /**
+     * 设置右边触摸事件
+     *
+     * @param onRightTouchListener
+     */
+    public void setOnRightTouchListener(RKOnRightTouchListener onRightTouchListener) {
+        RKTouchPresenter.getInstance().setOnRightTouchListener(onRightTouchListener);
+    }
+
+    /**
+     * 设置左边拍事件
+     *
+     * @param onLeftClickListener
+     */
+    public void setOnLeftClickListener(RKOnLeftClickListener onLeftClickListener) {
+        RKClickPresenter.getInstance().setOnLeftClickListener(onLeftClickListener);
+    }
+
+    /**
+     * 设置右边拍事件
+     *
+     * @param onRightClickListener
+     */
+    public void setOnRightClickListener(RKOnRightClickListener onRightClickListener) {
+        RKClickPresenter.getInstance().setOnRightClickListener(onRightClickListener);
+    }
+
+    /**
+     * 设置头部拍事件
+     *
+     * @param rkOnHeadClickListener
+     */
+    public void setOnHeadClickListener(RKOnHeadClickListener rkOnHeadClickListener) {
+        onHeadClickListener = rkOnHeadClickListener;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        RKLogUtil.d("onStart");
+        activityHide = false;
+        if (isNeedRestore) {
+            restoreView();
+            restorePersenter();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        RKLogUtil.d("onResume");
+        activityHide = false;
+        MobclickAgent.onResume(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        RKLogUtil.d("onPause");
+        MobclickAgent.onPause(this);
+        activityHide = true;
+        isNeedRestore = true;
+        RKClickPresenter.getInstance().stopTouchPresenter();
+        hideView();
+        stopAllPersenter();//停止所有的操作
+        RKTTSUtil.getInstance().setTtsCode(ttsCode);
+        RKTTSUtil.getInstance().stopMyTTS(ttsCode);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        RKLogUtil.d("onStop");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        RKLogUtil.d("onDestroy");
+    }
+
+    @Override
+    public void finish() {
+        RKApplicationEX.getInstance().getActivityManager().popActivity(this);
+        super.finish();
+    }
+
+    /**
+     * 是否可以做显示或者音频上的事情,在Stop状态,应用是不能做这些事情的,否则会出现黑屏情况下提示声音等情况
+     *
+     * @return
+     */
+    public boolean canDoSomeThing() {
+        if (activityHide) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * 用于区分在stoppresent和hid的时候判断是 stop操作还是onnewintent操作
+     *
+     * @return
+     */
+    public boolean isActivityHide() {
+        return activityHide;
+    }
+
+    /**
+     * 关闭Activity 堆栈队列，直到指定的Activity为止
+     *
+     * @param cls
+     */
+    public void finishAllExt(Class<?> cls) {
+        RKApplicationEX.getInstance().getActivityManager().popAllActivityExceptOne(cls);
+    }
+
+    /**
+     * 关闭所有Activity
+     */
+    public void finishAll() {
+        RKApplicationEX.getInstance().getActivityManager().popAllActivity();
+    }
+
+    /**
+     * 启用指定的Activity
+     *
+     * @param c
+     * @param data
+     */
+    public void startActivity(Class c, Object data) {
+        Intent intent = new Intent(this, c);
+        if (data != null) {
+            intent.putExtra(getString(R.string.nlp_extra), (Serializable) data);
+        }
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent
+                .FLAG_ACTIVITY_TASK_ON_HOME);
+        startActivity(intent);
+    }
+}

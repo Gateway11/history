@@ -1,0 +1,998 @@
+package com.rokid.server;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import com.alibaba.fastjson.JSON;
+import com.google.gson.reflect.TypeToken;
+import com.rokid.r2connectionmanager.R2ConnectionManager;
+import com.rokid.r2connectionmanager.callback.R2ConnectionBaseCallback;
+import com.rokid.r2connectionmanager.request.R2ConnectionRapiCall;
+import com.rokid.server.framework.protocol.protobuff.ParameterPBWrap;
+import com.rokid.server.homebase.device.Home;
+import com.rokid.server.homebase.device.Profile;
+import com.rokid.server.homebase.device.RKSpecs;
+import com.rokid.server.homebase.device.Room;
+import com.rokid.server.homebase.device.VirtualDevice;
+import com.rokid.server.homebase.device.VirtualDeviceManager;
+import com.rokid.server.homebase.scene.VirtualSceneException;
+import com.rokid.server.pm.RKPackageMonitor;
+
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.Binder;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.RemoteException;
+import android.os.ServiceManager;
+import android.os.SystemProperties;
+import android.text.TextUtils;
+import android.util.Log;
+import android.util.Slog;
+import rokid.home.RKHomeBaseVirtualDeviceService;
+import rokid.os.IRKAccountManager;
+import rokid.os.NativeRKAccountManager;
+import rokid.os.RKBusEventCallbackListener;
+import rokid.os.RKEventBusClient;
+import rokid.os.RKSystemProperties;
+import rokid.pm.RKPackage;
+
+/**
+ * Created by showingcp on 3/15/16.
+ */
+public class RKHomeBaseService extends Binder {
+	
+	private static final String TAG = "RKHomeBaseService";
+	private static final String CLASS_NAME = "RKHomeBaseService_";
+	
+    private H mHandler = new H();
+    private static final int MESSAGE_STORE_TOKEN = 0;
+    private RKPackageMonitor mPackageMonitor = null;
+    /*private static final String DB_VERSION = "1.0";*/
+    private static final String DB_VERSION = "1.1";
+
+    private class H extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            switch(msg.what) {
+                case MESSAGE_STORE_TOKEN: {
+                    handleStoreToken();
+                } break;
+                default: {
+
+                } break;
+            }
+        }
+    }
+
+    private Context mContext;
+    private RKEventBusClient mClient;
+    private VirtualDeviceManager mVirtualDeviceManager;
+    private VirtualSceneManager mVirtualSceneManager;
+
+    public RKHomeBaseService(Context context) {
+        mContext = context;
+        mClient = null;
+        mPackageMonitor = null;
+        mVirtualDeviceManager = VirtualDeviceManager.getInstance(context);
+        mVirtualSceneManager = VirtualSceneManager.getInstance(context); 
+        mClient.registerAction(RKPackageMonitor.EVENT_BUS_ACTION_PACKAGE_EVENT, mBusEventCallbackListener);
+
+        Slog.i(TAG, "init db impl");
+        File file = new File("/data/fob/db_version");
+        String dbVersion = null;
+        if (file.exists()) {
+            if (file.canRead()) {
+                StringBuffer sb = new StringBuffer();
+                byte[] byteBuffer = new byte[256];
+                int len = -1;
+                FileInputStream fileInputStream = null;
+                try {
+                    fileInputStream = new FileInputStream(file);
+                    while ((len = fileInputStream.read(byteBuffer, 0, 256)) != -1) {
+                        sb.append(new String(byteBuffer, 0, len, "UTF-8"));
+                    }
+
+                    JSONObject jsonObject = new JSONObject(sb.toString());
+                    dbVersion = jsonObject.getString("version");
+
+                    mVirtualDeviceManager.initDBImpl(DB_VERSION, dbVersion);
+                    //done
+                    return;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    try {
+                        fileInputStream.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        
+        Slog.i(TAG, "an exception occurs when init db");
+        //any exception will reach here
+        mVirtualDeviceManager.initDBImpl(DB_VERSION, null);
+        
+    }
+    
+    private HashMap<Integer, RKHomeBaseRemoteServiceProxy> mHomeBaseProxyMap = new HashMap<Integer, RKHomeBaseRemoteServiceProxy>();
+
+    public IBinder getProxyForVendor(int vendor) {
+        synchronized (this) {
+            return mHomeBaseProxyMap.get(vendor).proxy;
+        }
+    }
+
+    public IBinder getProxyForRokidPackageName(String rokidPackageName) {
+        synchronized (this) {
+            for (Map.Entry<Integer, RKHomeBaseRemoteServiceProxy> entry : mHomeBaseProxyMap.entrySet()) {
+                RKPackage rkPackage = entry.getValue().rkPackage;
+                if (rkPackage == null) {
+                    continue;
+                }
+
+                if (rkPackage.rokidPackage == null) {
+                    continue;
+                }
+
+                if (rkPackage.rokidPackage.equals(rokidPackageName)) {
+                    return entry.getValue().proxy;
+                }
+            }
+
+            return null;
+        }
+    }
+
+    private class RKHomeBaseRemoteServiceProxy implements ServiceConnection {
+        public RKPackage rkPackage;
+        public IBinder proxy;
+        public int vendor;
+
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            Log.i(TAG, "Vendor: " + vendor + " package: " + rkPackage.rokidPackage + " connected!");
+            this.proxy = iBinder;
+            synchronized (RKHomeBaseService.this) {
+                mHomeBaseProxyMap.put(vendor, this);
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            Log.i(TAG, "Vendor: " + vendor + " package: " + rkPackage.rokidPackage + " is dead..");
+            this.proxy = null;
+            synchronized (RKHomeBaseService.this) {
+                mHomeBaseProxyMap.remove(vendor);
+            }
+        }
+    }
+
+    private RKBusEventCallbackListener mBusEventCallbackListener = new RKBusEventCallbackListener(RKEventBusClient.FLAG_CALLBACK_IN_BINDER, null) {
+        @Override
+        public boolean onEventCallback(String action, Bundle extra, int flag) {
+            Log.i(TAG, "read package event in homebase service");
+
+            String event = extra.getString("event", "");
+            if (TextUtils.isEmpty(event)) {
+                return false;
+            }
+
+            //
+            if (event.equals("init_package")) {
+                List<RKPackage> packages = null;
+                try {
+                    packages = mPackageMonitor.getInstalledHomebasePackage();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                for (RKPackage rkPackage : packages) {
+                    Log.i(TAG, "init homebase package: " + rkPackage.rokidPackage);
+                    RKHomeBaseRemoteServiceProxy homeBaseRemoteServiceProxy = new RKHomeBaseRemoteServiceProxy();
+                    homeBaseRemoteServiceProxy.rkPackage = rkPackage;
+                    try {
+                        homeBaseRemoteServiceProxy.vendor = Integer.parseInt(rkPackage.homeBase);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        continue;
+                    }
+
+                    try {
+                        //auto bind
+                        mContext.bindService(new Intent(rkPackage.rokidPackage), homeBaseRemoteServiceProxy, Context.BIND_AUTO_CREATE);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            } else if (event.equals("add_homebase_package")) {
+
+                String packageName = extra.getString("package", "");
+                if (TextUtils.isEmpty(packageName)) {
+                    Log.e(TAG, "empty package name when add homebase package");
+                    return false;
+                }
+
+
+                RKPackage rkPackage = null;
+                try {
+                    rkPackage = mPackageMonitor.getPackageForDomain(packageName);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                if (rkPackage == null) {
+                    Log.e(TAG, "error empty package info for " + packageName);
+                    return false;
+                }
+
+                Log.i(TAG, "add homebase package: " + rkPackage.rokidPackage);
+                RKHomeBaseRemoteServiceProxy homeBaseRemoteServiceProxy = new RKHomeBaseRemoteServiceProxy();
+                homeBaseRemoteServiceProxy.rkPackage = rkPackage;
+                try {
+                    homeBaseRemoteServiceProxy.vendor = Integer.parseInt(rkPackage.homeBase);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return false;
+                }
+
+                try {
+                    //auto bind
+                    mContext.bindService(new Intent(rkPackage.rokidPackage), homeBaseRemoteServiceProxy, Context.BIND_AUTO_CREATE);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            //we have removed in onServiceDisconnected
+            } else if (event.equals("remove_homebase_package")) {
+
+            }
+            return false;
+        }
+    };
+
+    public void launchVirtualDeviceServices() {
+        
+    }
+
+    @Override
+    public String registerDevice(String deviceInfo, byte[] meta) {
+        VirtualDevice registerDevice;
+        if (!TextUtils.isEmpty(deviceInfo)) {
+            VirtualDevice device = JSON.parseObject(deviceInfo, VirtualDevice.class);
+            if (device != null) {
+                Slog.i(TAG, "call VirtualDeviceManager - createVirtualDevice");
+                registerDevice = mVirtualDeviceManager.createVirtualDevice(device.home, device.room, device.type, device.alias, device.category, device.vendor, device.descriptor, device.profile, device.status, device.on, device.deviceId, device.intermediary, meta);
+            } else {
+                registerDevice = null;
+                Slog.i(TAG, "register device with illegal device info");
+            }
+        } else {
+            registerDevice = null;
+            Slog.i(TAG, "register device with invalid device info");
+        }
+
+        if (registerDevice == null) {
+            Slog.i(TAG, "register device info failed");
+            return null;
+        } else {
+            String registerDeviceInfo = JSON.toJSONString(registerDevice);
+            Slog.i(TAG, "registered device info: " + registerDeviceInfo);
+            return registerDeviceInfo;
+        }
+    }
+
+    @Override
+    public void removeDevice(long deviceId) {
+        VirtualDevice deviceToRemove = new VirtualDevice();
+        deviceToRemove.setId(deviceId);
+        mVirtualDeviceManager.removeVirtualDevice(deviceToRemove);
+    }
+
+    @Override
+    public boolean updateDevice(String deviceInfo) {
+        Slog.i(TAG, "remote call: updateDevices with deviceInfo: " + deviceInfo);
+        //Gson gson = new Gson();
+        boolean ret = false;
+        if (!TextUtils.isEmpty(deviceInfo)) {
+            //VirtualDevice device = gson.fromJson(deviceInfo, VirtualDevice.class);
+            try {
+                VirtualDevice device = JSON.parseObject(deviceInfo, VirtualDevice.class);
+                if (device != null) {
+                    // TODO call virtual device manager update
+                    ret = mVirtualDeviceManager.updateVirtualDevice(device);
+                } else {
+                    ret = false;
+                    Slog.i(TAG, "update device with illegal device info");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            ret = false;
+            Slog.i(TAG, "update device with invalid device info");
+        }
+        return ret;
+    }
+
+
+    public String getDevices(String key, String condition) {
+        ArrayList<VirtualDevice> devices = new ArrayList<VirtualDevice>();
+        String deviceListinfo = null;
+        if (!TextUtils.isEmpty(key) && !TextUtils.isEmpty(condition)) {
+            //Gson gson = new Gson();
+            if (key.equals("home")) {
+                Slog.i(TAG, "get devices by home");
+                //Home home = gson.fromJson(condition, Home.class);
+                Home home = JSON.parseObject(condition, Home.class);
+                if (home != null) {
+                    Slog.i(TAG, "home is valid, call VirtualDeivceManager - getVirtualDeviceByHome with Hoom.descriptor: " + home.descriptor);
+                    List<VirtualDevice> homeDevices = mVirtualDeviceManager.getVirtualDeviceByHome(home);
+                    if (homeDevices != null && !homeDevices.isEmpty()) {
+                        Slog.i(TAG, "get devices successfully");
+                        for (VirtualDevice device: homeDevices) {
+                            devices.add(device);
+                        }
+                    } else {
+                        Slog.i(TAG, "no devices matches the type: " + key + ", and condition: " + condition);
+                    }
+                }
+            } else if (key.equals("room")) {
+                Slog.i(TAG, "get devices by room");
+                //Room room = gson.fromJson(condition, Room.class);
+                Room room = JSON.parseObject(condition, Room.class);
+                if (room != null) {
+                    Slog.i(TAG, "room is valid, call VirtualDeviceManager - getVirtualDeviceByRoom with Room.descriptor: " + room.descriptor);
+                    List<VirtualDevice> roomDevices = mVirtualDeviceManager.getVirtualDeviceByRoom(room);
+                    if (roomDevices != null && !roomDevices.isEmpty()) {
+                        Slog.i(TAG, "get devices successfully");
+                        for (VirtualDevice device: roomDevices) {
+                            devices.add(device);
+                        }
+                    } else {
+                        Slog.i(TAG, "no devices matches the type: " + key + ", and condition: " + condition);
+                    }
+                }
+            } else if (key.equals("type")) {
+                Slog.i(TAG, "get devices by type");
+                //Map<String, Integer> typeMap = gson.fromJson(condition, new TypeToken<Map<String, Integer>>(){}.getType());
+                Map<String, String> typeMap = JSON.parseObject(condition, new TypeToken<Map<String, String>>() {
+                }.getType());
+                if (typeMap != null) {
+                    Slog.i(TAG, "typeMap is valid, call VirtualDeviceManager - getVirtualDeviceByType with type: " + typeMap.get("type"));
+                    List<VirtualDevice> typeDevices = mVirtualDeviceManager.getVirtualDeviceByType(typeMap.get("type"));
+                    if (typeDevices!= null && !typeDevices.isEmpty()) {
+                        Slog.i(TAG, "get devices successfully");
+                        for (VirtualDevice device: typeDevices) {
+                            devices.add(device);
+                        }
+                    } else {
+                        Slog.i(TAG, "no devices matches the type: " + key + ", and condition: " + condition);
+                    }
+                }
+            } else if (key.equals("alias")) {
+                Slog.i(TAG, "get devices by alias");
+                //Map<String, Integer> typeMap = gson.fromJson(condition, new TypeToken<Map<String, Integer>>(){}.getType());
+                Map<String, String> typeMap = JSON.parseObject(condition, new TypeToken<Map<String, String>>() {
+                }.getType());
+                if (typeMap != null) {
+                    Slog.i(TAG, "typeMap is valid, call VirtualDeviceManager - getVirtualDeviceByType with alias: " + typeMap.get("alias"));
+                    List<VirtualDevice> typeDevices = mVirtualDeviceManager.getVirtualDeviceByAlias(typeMap.get("alias"));
+                    if (typeDevices!= null && !typeDevices.isEmpty()) {
+                        Slog.i(TAG, "get devices successfully");
+                        for (VirtualDevice device: typeDevices) {
+                            devices.add(device);
+                        }
+                    } else {
+                        Slog.i(TAG, "no devices matches the alias: " + key + ", and condition: " + condition);
+                    }
+                }
+            } else if (key.equals("category")) {
+                Slog.i(TAG, "get devices by category");
+                //Map<String, Integer> categoryMap = gson.fromJson(condition, new TypeToken<Map<String, Integer>>(){}.getType());
+                Map<String, Integer> categoryMap = JSON.parseObject(condition, new TypeToken<Map<String, Integer>>() {
+                }.getType());
+                if (categoryMap != null) {
+                    Slog.i(TAG, "categoryMap is valid, call VirtualDeviceManager - getVirtualDeviceByCategory with type: " + categoryMap.get("category"));
+                    List<VirtualDevice> categoryDevices = mVirtualDeviceManager.getVirtualDeviceByCategory(categoryMap.get("category"));
+                    if (categoryDevices!= null && !categoryDevices.isEmpty()) {
+                        Slog.i(TAG, "get devices successfully");
+                        for (VirtualDevice device: categoryDevices) {
+                            devices.add(device);
+                        }
+                    } else {
+                        Slog.i(TAG, "no devices matches the type: " + key + ", and condition: " + condition);
+                    }
+                }
+            } else if (key.equals("vendor")) {
+                Slog.i(TAG, "get devices by vendor");
+                //Vendor vendor = gson.fromJson(condition, Vendor.class);
+                Vendor vendor = JSON.parseObject(condition, Vendor.class);
+                if (vendor != null) {
+                    Slog.i(TAG, "vendor is valid, call VirtualDeviceManager - getVirtualDeviceByVendor with Vendor.vendor: " + vendor.vendor);
+                    List<VirtualDevice> vendorDevices = mVirtualDeviceManager.getVirtualDeviceByVendor(vendor);
+                    if (vendorDevices!= null && !vendorDevices.isEmpty()) {
+                        Slog.i(TAG, "get devices successfully");
+                        for (VirtualDevice device: vendorDevices) {
+                            devices.add(device);
+                        }
+                    } else {
+                        Slog.i(TAG, "no devices matches the type: " + key + ", and condition: " + condition);
+                    }
+                }
+            } else if (key.equals("profile")) {
+                Slog.i(TAG, "get devices by profile");
+                //Profile profile = gson.fromJson(condition, Profile.class);
+                Profile profile = JSON.parseObject(condition, Profile.class);
+                if (profile != null) {
+                    Slog.i(TAG, "profile is valid, call VirtualDeviceManager - getVirtualDeviceByProfile with Profile.action: " + profile.getAction());
+                    List<VirtualDevice> profileDevices = mVirtualDeviceManager.getVirtualDeviceByProfile(profile);
+                    if (profileDevices!= null && !profileDevices.isEmpty()) {
+                        Slog.i(TAG, "get devices successfully");
+                        for (VirtualDevice device: profileDevices) {
+                            devices.add(device);
+                        }
+                    } else {
+                        Slog.i(TAG, "no devices matches the type: " + key + ", and condition: " + condition);
+                    }
+                }
+            } else if (key.equals("id")) {
+                Slog.i(TAG, "get devices by id");
+                //Map<String, Long> idMap = gson.fromJson(condition, new TypeToken<Map<String, Long>>(){}.getType());
+                Map<String, Long> idMap = JSON.parseObject(condition, new TypeToken<Map<String, Long>>() {
+                }.getType());
+                if (idMap != null) {
+                    Slog.i(TAG, "idMap is valid, call VirtualDeviceManager - getVirtualDeviceById with id: " + idMap.get("id"));
+                    VirtualDevice device = mVirtualDeviceManager.getVirtualDeviceById(idMap.get("id"));
+                    if (device != null) {
+                        devices.add(device);
+                    }
+                }
+            }
+        } else {
+            Slog.i(TAG, "get devices with invalid key or condition");
+        }
+
+        deviceListinfo = JSON.toJSONString(devices);
+        // Slog.i(TAG, "get devices info: " + deviceListinfo);
+
+        return deviceListinfo;
+    }
+
+    public String getAllDevices() {
+        Slog.i(TAG, "called get all devices");
+        ArrayList<VirtualDevice> devices = new ArrayList<VirtualDevice>();
+        String deviceListinfo = null;
+        List<VirtualDevice> allDevices = mVirtualDeviceManager.getAllDevices();
+        if (allDevices != null && !allDevices.isEmpty()) {
+            for (VirtualDevice device : allDevices) {
+                devices.add(device);
+            }
+        }
+
+        HashMap<String, Object> deviceMap = new HashMap<String, Object>();
+        deviceMap.put("devices", devices);
+
+        Slog.i(TAG, "the number of all devices: " + devices.size());
+
+        deviceListinfo = JSON.toJSONString(deviceMap);
+        // Slog.i(TAG, "get all devices info: " + deviceListinfo);
+
+        return deviceListinfo;
+    }
+
+
+    public String getDeviceProfile(long deviceId) {
+        VirtualDevice device =  mVirtualDeviceManager.getVirtualDeviceById(deviceId);
+        if (device != null) {
+            Profile profile = device.getProfile();
+            if (profile != null) {
+                String profileString = JSON.toJSONString(profile);
+                return profileString;
+            } else {
+                Slog.i(TAG, "profile is null for device: " + deviceId);
+                return null;
+            }
+        } else {
+            Slog.i(TAG, "device does not exist");
+            return null;
+        }
+    }
+
+
+    public int controlDevices(String specs) {
+        if (!TextUtils.isEmpty(specs)) {
+            RKSpecs rkSpecs = JSON.parseObject(specs, RKSpecs.class);
+            List<VirtualDevice> devices = rkSpecs.getDevices();
+            
+            Set<Integer> vendorCodes = new HashSet<Integer>();
+            for (VirtualDevice device : devices) {
+                vendorCodes.add(device.getVendor().vendor);
+            }
+
+            for (Integer vendorCode : vendorCodes) {
+                IBinder proxy = getProxyForVendor(vendorCode);
+                Slog.i(TAG, "specs=" + specs + ",vendorCode=" + vendorCode + ",proxy=" + proxy);
+                try {
+                    RKHomeBaseVirtualDeviceService.ControlDevices(proxy, specs);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            
+        } else {
+            Slog.i(TAG, "control devices with invalid devices' info");
+        }
+
+        return 0;
+    }
+
+
+    public void startSearch() throws RemoteException {
+        Log.i(TAG, "startSearch");
+        synchronized (this) {
+            Collection<RKHomeBaseRemoteServiceProxy> proxyCollection = mHomeBaseProxyMap.values();
+            for (RKHomeBaseRemoteServiceProxy proxy : proxyCollection) {
+                try {
+                    Log.i(TAG, "proxy.vendor=" + proxy.vendor);
+                    RKHomeBaseVirtualDeviceService.StartSearch(proxy.proxy);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    public void removeAllDevices() {
+        Log.i(TAG, "remove all devices");
+        mVirtualDeviceManager.removeAllDevices();
+    }
+
+
+    public long[] getAllDevicesId() {
+        Log.i(TAG, "get all device id");
+        List<VirtualDevice> virtualDevices = mVirtualDeviceManager.getAllDevices();
+        long[] lists = new long[virtualDevices.size()];
+        int i = 0;
+        for (VirtualDevice virtualDevice : virtualDevices) {
+            lists[i] = virtualDevice.id;
+            i++;
+        }
+
+        return lists;
+    }
+
+    private static final String HOME_BASE_UUID_TOKEN = "persist.sys.rokid.hb.uuid";
+    
+
+    public String getDeviceToken() {
+        Log.i(TAG, "request device token by pid " + Binder.getCallingPid());
+        synchronized (this) {
+            String uuid = RKSystemProperties.getProperties(HOME_BASE_UUID_TOKEN);
+            if (TextUtils.isEmpty(uuid)) {
+                uuid = UUID.randomUUID().toString();
+                RKSystemProperties.setProperties(HOME_BASE_UUID_TOKEN, uuid);
+                mHandler.sendEmptyMessage(MESSAGE_STORE_TOKEN);
+            }
+
+            return uuid;
+        }
+    }
+
+    private void handleStoreToken() {
+        String mSessionId = null;
+        String uuid = RKSystemProperties.getProperties(HOME_BASE_UUID_TOKEN);
+        IRKAccountManager mAccountInterface = NativeRKAccountManager.asInterface(ServiceManager.getService("rk_account"));
+
+        try {
+            mSessionId = mAccountInterface.getRokidLoginSessionId();
+        } catch (RemoteException e) {
+            mSessionId = null;
+            e.printStackTrace();
+            return;
+        }
+
+        R2ConnectionRapiCall rapiCall = new R2ConnectionRapiCall();
+        rapiCall.setAPI("com.rokid.service.roki.storeAppToken4Roki");
+        rapiCall.setVersion("1.0");
+        rapiCall.setSessionId(mSessionId);
+        rapiCall.setParamString("appName", "HomeBase");
+        rapiCall.setParamString("token", uuid);
+
+        ParameterPBWrap.ParameterPB result = R2ConnectionManager.getInstance(mContext).syncRequestRAPIServiceWithRapiCall(rapiCall);
+        if (result.getBoolParam()) {
+            Slog.i (TAG, "store token done!");
+        } else {
+            Slog.e (TAG, "store token failed!");
+        }
+    }
+    
+    private static final CopyOnWriteArrayList<String> HOT_WORDS_TRIGGERS = new CopyOnWriteArrayList<String>();
+    // private static final CopyOnWriteArrayList<String> HOT_WORDS_DESCRIPTOR = new CopyOnWriteArrayList<String>();
+    
+    private static final String SLOT_DEVICE_DESCRIPTOR = "descriptor";
+    private static final String SLOT_SCENE_TRIGGER = "trigger";
+    
+    // 需要抽离出接口
+    @Deprecated
+    public void saveOrRemoveHotwords(List<String> params, String slot, boolean saveOrRemove) {
+    	Slog.d(TAG,"saveOrRemoveHotwords, params=" + params + ", slot=" + slot + ", saveOrRemove=" + saveOrRemove);
+        IBinder accountBinder = ServiceManager.getService("rk_account");
+        IRKAccountManager accountProxy = (IRKAccountManager) NativeRKAccountManager.asInterface(accountBinder);
+        String loginSessionId = null;
+        if (accountProxy != null) {
+            try {
+                loginSessionId = accountProxy.getRokidLoginSessionId();
+                if (!TextUtils.isEmpty(loginSessionId)) {
+                    R2ConnectionRapiCall rapiCall = new R2ConnectionRapiCall();
+                    rapiCall.setSessionId(loginSessionId);
+                    
+                    String domain = "com.rokid.system.homebase";
+                    
+					if (saveOrRemove) {
+						rapiCall.setAPI("com.rokid.framework.speech.saveHotwords");
+						rapiCall.setVersion("1.0");
+						rapiCall.setParamString("domain", domain);
+						rapiCall.setParamString("slot", slot);
+						
+						JSONArray jsonArray = new JSONArray();
+						
+						for (String param : params) {
+							jsonArray.put(param);
+						}
+						
+						String parameters = jsonArray.toString();
+						Slog.d(TAG, "parameter : " + parameters);
+						rapiCall.setParamString("hotwords", parameters);
+					} else {
+						rapiCall.setAPI("com.rokid.framework.speech.removeHotwords");
+						rapiCall.setVersion("1.0");
+						rapiCall.setParamString("domain", domain);
+						rapiCall.setParamString("slot", slot);
+					}
+					
+					Slog.i(TAG, "rapiCall=" + rapiCall);
+					
+                    R2ConnectionManager connMgr = R2ConnectionManager.getInstance(mContext);
+                    connMgr.asyncRequestRAPIServiceWithRapiCall(rapiCall, new HotWordsConnectionCallback(saveOrRemove));
+                    Slog.d(TAG,"send the descriptor to server");
+                } else {
+                	Slog.d(TAG,"loginSessionId  is  null");
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                Slog.d(TAG,"loginSessionId exception, ex=" + ex.getMessage());
+            }
+        } else {
+        	Slog.d(TAG,"accountProxy  is  null");
+        }
+    }
+    
+    public void saveHotWords(List<String> params, String slot) {
+    	Slog.d(TAG,"saveHotwords, params=" + params + ", slot=" + slot);
+        IBinder accountBinder = ServiceManager.getService("rk_account");
+        IRKAccountManager accountProxy = (IRKAccountManager) NativeRKAccountManager.asInterface(accountBinder);
+        String loginSessionId = null;
+        if (accountProxy != null) {
+            try {
+                loginSessionId = accountProxy.getRokidLoginSessionId();
+                if (!TextUtils.isEmpty(loginSessionId)) {
+                    R2ConnectionRapiCall rapiCall = new R2ConnectionRapiCall();
+                    rapiCall.setSessionId(loginSessionId);
+                    
+                    String domain = "com.rokid.system.homebase";
+                    
+                    rapiCall.setAPI("com.rokid.framework.speech.saveHotwords");
+					rapiCall.setVersion("1.0");
+					rapiCall.setParamString("domain", domain);
+					rapiCall.setParamString("slot", slot);
+					
+					// query all 
+					Set<String> allParams = new HashSet<String>();
+					
+					if (SLOT_DEVICE_DESCRIPTOR.equalsIgnoreCase(slot)) {
+						allParams.addAll(params);
+						
+						List<VirtualDevice> allDevices = mVirtualDeviceManager.getAllDevices();
+				        if (allDevices != null && !allDevices.isEmpty()) {
+				            for (VirtualDevice device : allDevices) {
+				            	if (!TextUtils.isEmpty(device.getDescriptor())) {
+				            		allParams.add(device.getDescriptor());
+				            	}
+				            }
+				        }
+					} /*else if (SLOT_SCENE_TRIGGER.equalsIgnoreCase(slot)) {
+						allParams.addAll(params);
+						
+						List<VirtualScene> allScenes = mVirtualSceneManager.getAllScenes();
+				        if (allScenes != null && !allScenes.isEmpty()) {
+				            for (VirtualScene scene : allScenes) {
+				            	if (!TextUtils.isEmpty(scene.getTrigger())) {
+				            		allParams.add(scene.getTrigger());
+				            	}
+				            }
+				        }
+					}*/
+					
+					JSONArray jsonArray = new JSONArray();
+					
+					for (String param : allParams) {
+						jsonArray.put(param);
+					}
+					
+					String parameters = jsonArray.toString();
+					Slog.d(TAG, "parameter : " + parameters);
+					rapiCall.setParamString("hotwords", parameters);
+					
+					Slog.i(TAG, "rapiCall=" + rapiCall);
+					
+                    R2ConnectionManager connMgr = R2ConnectionManager.getInstance(mContext);
+                    connMgr.asyncRequestRAPIServiceWithRapiCall(rapiCall, new SaveHotWordsConnectionCallback());
+                    Slog.d(TAG,"send the descriptor to server");
+                } else {
+                	Slog.d(TAG,"loginSessionId  is  null");
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                Slog.d(TAG,"loginSessionId exception, ex=" + ex.getMessage());
+            }
+        } else {
+        	Slog.d(TAG,"accountProxy  is  null");
+        }
+    }
+    
+    private class SaveHotWordsConnectionCallback implements R2ConnectionBaseCallback {
+    	
+        public SaveHotWordsConnectionCallback() {
+            super();
+        }
+
+        @Override
+        public void onError(String s) {
+        	Slog.d(TAG,"SaveHotWordsConnectionCallback onError :" + s);
+        }
+
+        @Override
+        public void onSuccess(ParameterPBWrap.ParameterPB parameterPB) {
+            Slog.d(TAG,"SaveHotWordsConnectionCallback onSuccess, parameterPB=" + parameterPB);
+        }
+
+        @Override
+        public void onFailed(int i, String s) {
+        	Slog.d(TAG,"SaveHotWordsConnectionCallback onFailed :" + i + " ---" + s);
+        }
+    }
+    
+    @Deprecated
+    private class HotWordsConnectionCallback implements R2ConnectionBaseCallback {
+    	
+    	private boolean saveOrRemove;
+    	
+        public HotWordsConnectionCallback(boolean saveOrRemove) {
+            super();
+            this.saveOrRemove = saveOrRemove;
+        }
+
+        @Override
+        public void onError(String s) {
+        	Slog.d(TAG,"HotWordsConnectionCallback onError :" + s + ", saveOrRemove=" + saveOrRemove);
+        }
+
+        @Override
+        public void onSuccess(ParameterPBWrap.ParameterPB parameterPB) {
+            Slog.d(TAG,"HotWordsConnectionCallback onSuccess, parameterPB=" + parameterPB + ", saveOrRemove=" + saveOrRemove);
+            /*if (mScheduledFuture != null) {
+            	mScheduledFuture.cancel(true);
+            	
+            }*/
+        }
+
+        @Override
+        public void onFailed(int i, String s) {
+        	Slog.d(TAG,"HotWordsConnectionCallback onFailed :" + i + " ---" + s + ", saveOrRemove=" + saveOrRemove);
+        }
+    }
+    
+    // scenes
+
+
+	public VirtualScene registerScene(String sceneId, String name, Vendor vendor, String trigger) throws RemoteException {
+		Slog.d(TAG, CLASS_NAME + "registerScene, sceneId=" + sceneId + ", name=" + name + ", vendor=" + vendor + ", trigger=" +trigger);
+		return mVirtualSceneManager.createVirtualScene(sceneId, name, vendor, trigger);
+	}
+	
+
+	public boolean registerScenes(List<VirtualScene> scenes) throws RemoteException {
+		Slog.d(TAG, CLASS_NAME + "registerScenes, scenes=" + scenes);
+		return mVirtualSceneManager.createVirtualScenes(scenes);
+	}
+
+
+	public boolean updateVirtualScene(VirtualScene virtualScene) throws RemoteException {
+		Slog.d(TAG, CLASS_NAME + "updateVirtualScene, virtualScene=" + virtualScene);
+		if (virtualScene == null) 
+			return false;
+		return mVirtualSceneManager.updateVirtualScene(virtualScene);
+	}
+
+	
+	public boolean removeVirtualDevice(VirtualScene virtualScene) throws RemoteException {
+		Slog.d(TAG, CLASS_NAME + "removeVirtualDevice, virtualScene=" + virtualScene);
+		if (virtualScene == null) return false;
+		return mVirtualSceneManager.removeVirtualDevice(virtualScene);
+	}
+
+
+	public VirtualScene getSceneById(long id) throws RemoteException {
+		Slog.d(TAG, CLASS_NAME + "getSceneById, id=" + id);
+		return mVirtualSceneManager.getSceneById(id);
+	}
+
+	public List<VirtualScene> getAllScenes() throws RemoteException {
+		Slog.d(TAG, CLASS_NAME + "getAllScenes");
+		return mVirtualSceneManager.getAllScenes();
+	}
+
+
+	public VirtualScene getSceneBySceneId(int vendorCode, String sceneId) throws RemoteException {
+		Slog.d(TAG, CLASS_NAME + "getSceneBySceneId, vendorCode=" + vendorCode + ", sceneId=" + sceneId);
+		VirtualScene virtualScene = null;
+		try {
+			virtualScene = mVirtualSceneManager.getSceneBySceneId(vendorCode, sceneId);
+		} catch (VirtualSceneException e) {
+			e.printStackTrace();
+		}
+		return virtualScene;
+	}
+
+	@Override
+	public List<VirtualScene> getScenesByName(String sceneName) throws RemoteException {
+		Slog.d(Constants.TAG, CLASS_NAME + "getScenesByName, sceneName=" + sceneName);
+		return mVirtualSceneManager.getScenesByName(sceneName);
+	}
+
+	@Override
+	public List<VirtualScene> getScenesByVendorCode(int vendorCode) throws RemoteException {
+		Slog.d(Constants.TAG, CLASS_NAME + "getScenesByVendorCode, vendorCode=" + vendorCode);
+		List<VirtualScene> virtualScenes = null;
+		try {
+			virtualScenes = mVirtualSceneManager.getScenesByVendorCode(vendorCode);
+		} catch (VirtualSceneException e) {
+			e.printStackTrace();
+		}
+		
+		if (virtualScenes != null) {
+			Slog.d(TAG, CLASS_NAME + "virtualScenes=" + JSON.toJSONString(virtualScenes));
+		} else {
+			Slog.d(TAG, CLASS_NAME + "the result --> virtualScenes is null");
+		}
+		
+		return virtualScenes;
+	}
+
+
+	public List<VirtualScene> getScenesByTrigger(String sceneTrigger) throws RemoteException {
+		Slog.d(TAG, CLASS_NAME + "getScenesByTrigger, sceneTrigger=" + sceneTrigger);
+		return mVirtualSceneManager.getScenesByTrigger(sceneTrigger);
+	}
+
+
+	public int controlScene(String trigger) throws RemoteException {
+			
+		// find vendors
+		Set<Integer> vendorCodes = mHomeBaseProxyMap.keySet();
+		
+		for (Integer vendorCode : vendorCodes) {
+            IBinder proxy = getProxyForVendor(vendorCode);
+            Slog.i(TAG, "vendorCode=" + vendorCode + ",proxy=" + proxy);
+            try {
+                RKHomeBaseVirtualDeviceService.ControlScene(proxy, trigger);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+		
+		return 0;
+	}
+	
+	public synchronized void updateTrigger(String oldTrigger, final String trigger, final String etJson) {
+        IBinder accountBinder = ServiceManager.getService("rk_account");
+        IRKAccountManager accountProxy = (IRKAccountManager) NativeRKAccountManager.asInterface(accountBinder);
+        try {
+            if (accountProxy == null) {
+                Log.i(TAG, "accountProxy is null");
+                return;
+            }
+            final String loginSessionId = accountProxy.getRokidLoginSessionId();
+            if (loginSessionId == null) {
+                Log.i(TAG, "loginSessionId is null");
+                return;
+            }
+            R2ConnectionRapiCall rapiCall = new R2ConnectionRapiCall();
+            rapiCall.setSessionId(loginSessionId);
+            rapiCall.setAPI("com.rokid.service.phone.updateTrigger");
+            rapiCall.setVersion("1.0");
+            rapiCall.setParamString("id", loginSessionId);
+            rapiCall.setParamString("rokiId", SystemProperties.get("ro.serialno"));
+            rapiCall.setParamString("operation", "DELETE");
+            rapiCall.setParamString("trigger", oldTrigger);
+            R2ConnectionManager connMgr = R2ConnectionManager.getInstance(mContext);
+            connMgr.asyncRequestRAPIServiceWithRapiCall(rapiCall, new R2ConnectionBaseCallback() {
+                @Override
+                public void onSuccess(ParameterPBWrap.ParameterPB parameterPB) {
+                    saveTrigger(loginSessionId, trigger, etJson);
+                    Log.d(TAG, "save trigger  success: " + parameterPB.getStringParam());
+                }
+
+                @Override
+                public void onFailed(int i, String s) {
+                    Log.d(TAG, "save trigger  faile: " + s);
+                }
+
+                @Override
+                public void onError(String s) {
+                    Log.d(TAG, "save trigger  error: " + s);
+                }
+            });
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+    }
+
+    //save trigger
+	public synchronized void saveTrigger(String loginSessionId,String trigger,String etJson) {
+        R2ConnectionRapiCall rapiCall = new R2ConnectionRapiCall();
+        rapiCall.setSessionId(loginSessionId);
+        rapiCall.setAPI("com.rokid.service.phone.updateTrigger");
+        rapiCall.setVersion("1.0");
+        rapiCall.setParamString("id", loginSessionId);
+        rapiCall.setParamString("rokiId", SystemProperties.get("ro.serialno"));
+        rapiCall.setParamString("operation", "INSERT");
+        rapiCall.setParamString("trigger", trigger);
+        rapiCall.setParamString("executions", etJson);
+        R2ConnectionManager connMgr = R2ConnectionManager.getInstance(mContext);
+        connMgr.asyncRequestRAPIServiceWithRapiCall(rapiCall, new R2ConnectionBaseCallback() {
+            @Override
+            public void onSuccess(ParameterPBWrap.ParameterPB parameterPB) {
+                Log.d(TAG, "save trigger  success: " + parameterPB.getStringParam());
+            }
+            @Override
+            public void onFailed(int i, String s) {
+                Log.d(TAG, "save trigger  faile: " + s);
+            }
+            @Override
+            public void onError(String s) {
+                Log.d(TAG, "save trigger  error: " + s);
+            }
+        });
+    }
+	
+	public void saveOrviboUserInfo(String userName, String password) {
+		mVirtualDeviceManager.saveUserInfo(userName, password);
+	}
+	
+	public OrviboUserInfo getOrviboUserInfo() {
+		return mVirtualDeviceManager.getOrviboUserInfo();
+	}
+	
+}

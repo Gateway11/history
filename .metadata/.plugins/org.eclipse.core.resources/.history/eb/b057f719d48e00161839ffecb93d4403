@@ -1,0 +1,224 @@
+package rokid.os;
+
+import android.os.Binder;
+import android.os.IBinder;
+import android.os.RemoteException;
+import android.os.Parcel;
+import android.util.Log;
+
+/**
+ *  binder native implementation of service RKWifiManager
+ *  only implement binder transactions
+ *  actual functions implementation is in RKWifiManagerService
+ *
+ *  @author ming <chen.zhang@rokid.com>
+ *  @see  com.rokid.wifi.RKWifiManagerNative
+ */
+public abstract class RKWifiManagerNativeStub extends Binder implements IRKWifiManager {
+	public static final String DESCRIPTOR = "com.rokid.wifi.RKWifiManagerService";
+	private static final String TAG = "RKWifiManagerNativeStub";
+
+	private static final int TRANSACT_START_INIT = IBinder.FIRST_CALL_TRANSACTION;
+	private static final int TRANSACT_CHECK_WIFI = IBinder.FIRST_CALL_TRANSACTION + 1;
+	private static final int TRANSACT_IS_WIFI_CONNECTED = IBinder.FIRST_CALL_TRANSACTION + 2;
+	private static final int TRANSACT_CONNECT_WIFI = IBinder.FIRST_CALL_TRANSACTION + 3;
+	private static final int TRANSACT_DISCONNECT_WIFI = IBinder.FIRST_CALL_TRANSACTION + 4;
+	private static final int TRANSACT_SET_WIFI_CHANGE_LISTENER = IBinder.FIRST_CALL_TRANSACTION + 5;
+	private static final int TRANSACT_REMOVE_WIFI_CHANGE_LISTENER = IBinder.FIRST_CALL_TRANSACTION + 6;
+
+	public static IRKWifiManager asInterface(IBinder obj) {
+		if (obj == null) {
+			return null;
+		}
+
+		RKWifiManagerNativeStub in = (RKWifiManagerNativeStub)obj.queryLocalInterface(DESCRIPTOR);
+		if (in != null) {
+			return in;
+		}
+
+		return new RKWifiManagerNativeStub.Proxy(obj);
+	}
+
+	public String getInterfaceDescriptor() {
+		return DESCRIPTOR;
+	}
+
+	public IBinder asBinder() {
+		return this;
+	}
+
+	protected boolean onTransact(int code, Parcel data, Parcel reply,
+		   	int flags) throws RemoteException {
+		switch (code) {
+		case TRANSACT_START_INIT:
+			Log.i(TAG, "onTransactStartInit...");
+			data.enforceInterface(DESCRIPTOR);
+			handleStartInit();
+			reply.writeNoException();
+			return true;
+		case TRANSACT_CHECK_WIFI:
+			Log.i(TAG, "onTransactCheckWifi...");
+			data.enforceInterface(DESCRIPTOR);
+			IBinder incubator = data.readStrongBinder();
+			handleWifiCheck(incubator);
+			reply.writeNoException();
+			return true;
+		case TRANSACT_IS_WIFI_CONNECTED: {
+			Log.i(TAG, "onTransactIsWifiConnected...");
+			data.enforceInterface(DESCRIPTOR);
+			boolean connect = isWifiConnected();
+			reply.writeNoException();
+			reply.writeInt(connect ? 1 : 0);
+			return true;
+		}
+		case TRANSACT_CONNECT_WIFI: {
+			Log.i(TAG, "onTransactiConnectWifi...");
+			data.enforceInterface(DESCRIPTOR);
+			String ssid = data.readString();
+			String passwd = data.readString();
+			boolean ret = connect(ssid, passwd);
+			reply.writeNoException();
+			reply.writeInt(ret ? 1 : 0);
+			return true;
+		}
+		case TRANSACT_DISCONNECT_WIFI:
+			Log.i(TAG, "onDisconnectWifi...");
+			data.enforceInterface(DESCRIPTOR);
+			disconnect(data.readInt() == 1);
+			reply.writeNoException();
+			return true;
+		case TRANSACT_SET_WIFI_CHANGE_LISTENER: {
+			Log.i(TAG, "onSetWifiChangeListener");
+			data.enforceInterface(DESCRIPTOR);
+			IBinder proxy = data.readStrongBinder();
+			setWifiStatusListener(IRKWifiManagerCallback.Stub.asInterface(proxy));
+			reply.writeNoException();
+			return true;
+		}
+		case TRANSACT_REMOVE_WIFI_CHANGE_LISTENER: {
+			Log.i(TAG, "onRemoveWifiChangeListener");
+			data.enforceInterface(DESCRIPTOR);
+			IBinder proxy = data.readStrongBinder();
+			removeWifiStatusListener(IRKWifiManagerCallback.Stub.asInterface(proxy));
+			reply.writeNoException();
+			return true;
+		}
+		default:
+			return super.onTransact(code, data, reply, flags);
+		}
+	}
+
+	protected abstract void handleStartInit();
+
+	protected abstract void handleWifiCheck(IBinder incubator);
+
+	public static class Proxy implements IRKWifiManager {
+		IBinder binder;
+
+		public Proxy(IBinder obj) {
+			binder = obj;
+		}
+
+		public IBinder asBinder() {
+			return binder;
+		}
+
+		public boolean isWifiConnected() {
+			//call wifi manager to get wifi is connected?
+			Parcel data = Parcel.obtain();
+			Parcel reply = Parcel.obtain();
+
+			try {
+				data.writeInterfaceToken(DESCRIPTOR);
+				binder.transact(TRANSACT_IS_WIFI_CONNECTED, data, reply, 0);
+				reply.readException();
+				boolean ret = (reply.readInt() == 1);
+				return ret;
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				data.recycle();
+				reply.recycle();
+			}
+			return false;
+		}
+
+		public boolean connect(String ssid, String passwd) {
+			Parcel data = Parcel.obtain();
+			Parcel reply = Parcel.obtain();
+
+			try {
+				data.writeInterfaceToken(DESCRIPTOR);
+				data.writeString(ssid);
+				data.writeString(passwd);
+				binder.transact(TRANSACT_CONNECT_WIFI, data, reply, 0);
+				reply.readException();
+				return (reply.readInt() == 1);
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				data.recycle();
+				reply.recycle();
+			}
+			return false;
+		}
+
+		public void disconnect(boolean forget) {
+			Parcel data = Parcel.obtain();
+			Parcel reply = Parcel.obtain();
+			try {
+				data.writeInterfaceToken(DESCRIPTOR);
+				data.writeInt(forget ? 1 : 0);
+				binder.transact(TRANSACT_DISCONNECT_WIFI, data, reply, 0);
+				reply.readException();
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				data.recycle();
+				reply.recycle();
+			}
+		}
+
+		/**
+		 *  set notify listener for wifi status change
+		 *
+		 *  @param cb  callback interface
+		 *             class of cb's instance should extends class
+		 *             'rokid.os.IRKWifiManagerCallback.Stub'
+		 *             RKWifiManagerNative will obtain a binder of
+		 *             'rokid.os.IRKWifiManagerCallback.Stub.Proxy'
+		 *  @see rokid.os.IRKWifiManagerCallback
+		 */
+		public void setWifiStatusListener(IRKWifiManagerCallback cb) {
+			Parcel data = Parcel.obtain();
+			Parcel reply = Parcel.obtain();
+			try {
+				data.writeInterfaceToken(DESCRIPTOR);
+				data.writeStrongBinder(cb != null ? cb.asBinder() : null);
+				binder.transact(TRANSACT_SET_WIFI_CHANGE_LISTENER, data, reply, 0);
+				reply.readException();
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				data.recycle();
+				reply.recycle();
+			}
+		}
+
+		public void removeWifiStatusListener(IRKWifiManagerCallback cb) {
+			Parcel data = Parcel.obtain();
+			Parcel reply = Parcel.obtain();
+			try {
+				data.writeInterfaceToken(DESCRIPTOR);
+				data.writeStrongBinder(cb != null ? cb.asBinder() : null);
+				binder.transact(TRANSACT_REMOVE_WIFI_CHANGE_LISTENER, data, reply, 0);
+				reply.readException();
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				data.recycle();
+				reply.recycle();
+			}
+		}
+	}
+}

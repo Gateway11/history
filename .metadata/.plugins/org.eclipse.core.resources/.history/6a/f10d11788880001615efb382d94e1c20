@@ -1,0 +1,25 @@
+package com.rokid.rkcommonlibrary.ui.model;
+
+import com.rokid.rkcommonlibrary.beans.RKNLPBean;
+
+/**
+ * Created by Bassam on 5/15/16.
+ */
+public interface RKNLPModel {
+    /**
+     * 进行根据实际的slotes进行NLP数据解析
+     *
+     * @param nlp 数据格式字符串
+     * @return NLPBean
+     */
+    RKNLPBean parseNLP(String nlp);
+
+    /**
+     * 检查NLP数据是否OK，主要检查NLP中的Domain以及Intent是否在我们的定义范围之内主要排查Rokid由于系统级别NLP
+     * 响应导致的问题，或者由于NLP的XML升级了，但是还没有升级导致的问题
+     * 没有想好这个方法放在哪里，所以还是先放在Activity这边，这样开发者只需要集成一下BaseMainActivity方法就可以了
+     *
+     * @return 检查是否通过
+     */
+    boolean checkNlpBean(RKNLPBean nlpBean);
+}

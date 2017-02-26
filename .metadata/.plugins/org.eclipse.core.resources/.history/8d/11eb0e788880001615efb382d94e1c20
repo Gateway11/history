@@ -1,0 +1,126 @@
+package com.rokid.rkcommonlibrary.beans;
+
+import java.io.Serializable;
+
+/**
+ * Created by Bassam on 16/7/26.
+ */
+public class RKLocationBean implements Serializable{
+    private String country;//国家 中国
+    private String province;//省份 浙江省
+    private String city;//城市 杭州市
+    private String district;//地区 西湖区
+    private String postalCode;//邮政编码
+    private String street;//详细地址 艺术集合村18幢999
+    private String streetNumber;//
+    private String route;
+    private String latitude;//纬度 30.25698459710018
+    private String longitude;//经度 120.0434636605159
+    private String ip;//IP地址
+    private String locationFrom;//地址来源 MANUAL
+    private RKTimeZoneBean timeZone;//时区
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getDistrict() {
+        return district;
+    }
+
+    public void setDistrict(String district) {
+        this.district = district;
+    }
+
+    public String getPostalCode() {
+        return postalCode;
+    }
+
+    public void setPostalCode(String postalCode) {
+        this.postalCode = postalCode;
+    }
+
+    public String getStreet() {
+        return street;
+    }
+
+    public void setStreet(String street) {
+        this.street = street;
+    }
+
+    public String getStreetNumber() {
+        return streetNumber;
+    }
+
+    public void setStreetNumber(String streetNumber) {
+        this.streetNumber = streetNumber;
+    }
+
+    public String getRoute() {
+        return route;
+    }
+
+    public void setRoute(String route) {
+        this.route = route;
+    }
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
+    }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public String getLocationFrom() {
+        return locationFrom;
+    }
+
+    public void setLocationFrom(String locationFrom) {
+        this.locationFrom = locationFrom;
+    }
+
+    public RKTimeZoneBean getTimeZone() {
+        return timeZone;
+    }
+
+    public void setTimeZone(RKTimeZoneBean timeZone) {
+        this.timeZone = timeZone;
+    }
+}

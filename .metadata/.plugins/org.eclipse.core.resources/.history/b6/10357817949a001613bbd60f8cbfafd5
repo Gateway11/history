@@ -1,0 +1,286 @@
+package rokid.services.util;
+
+import java.lang.reflect.Method;
+import java.util.HashSet;
+import java.util.HashMap;
+import android.os.RemoteException;
+import android.os.ServiceManager;
+import android.os.IBinder;
+import android.os.Parcel;
+import android.os.IInterface;
+import android.util.Log;
+import rokid.os.IRKEventBus;
+import rokid.os.internal.IRKIncubator;
+
+/**
+ *  helper for get system or remote services of rokid
+ *
+ *  @author ming <chen.zhang@rokid.com>
+ */
+public class RemoteServiceHelper {
+	// register to incubator
+	public static final String TTS_SERVICE = "tts";
+	public static final String CV_SERVICE = "cv";
+	public static final String EXECUTOR_SERVICE = "rkruntime";
+	public static final String RK_WIFI_SERVICE = "wifi";
+	public static final String LUMEN_SERVICE = "lumen";
+	public static final String NEBULA_SERVICE = "nebula";
+	public static final String RK_SETTINGS = "rk_settings";
+	public static final String RK_VOLUME = "rkvolume";
+	public static final String RK_NLP_STUB = "rknlpstub";
+	public static final String RK_UPDATE = "rk_update";
+	public static final String RK_REMOTE_CHANNEL = "remotechannel_ws";
+	public static final String RK_IDLE_SERVICE = "RK_IDLE_SERVICE";
+	public static final String RK_ACCOUNT = "rk_account";
+	public static final String RK_SECURITY_ACCESS = "security_access";
+
+	// TODO: no interface? directly use IBinder
+	public static final String ROKID_STORE = "rokidstore";
+	// register to android.os.ServiceManager
+	public static final String RK_ANDROID_BRIDGE = "bridge";
+	public static final String RK_POWER_MANAGER = "rkpm";
+	public static final String RK_GEN_SETTINGS = "rk_gen_settings";
+	public static final String CONNECTION_SERVICE = "rk_connection";
+	public static final String RK_PACKAGE_MANAGER = "rk_package_manager";
+	public static final String RK_EVENTBUS = "rk_eventbus";
+
+	private static final String TAG = "RemoteServiceHelper";
+
+	private static RemoteServiceHelper _instance;
+	private static final String[] _remoteServiceNames = {
+//		TTS_SERVICE, CV_SERVICE, EXECUTOR_SERVICE, RK_WIFI_SERVICE,
+//		LUMEN_SERVICE, NEBULA_SERVICE, RK_SETTINGS, RK_VOLUME, RK_NLP_STUB,
+//		RK_UPDATE, RK_REMOTE_CHANNEL, RK_IDLE_SERVICE, ROKID_STORE
+		RK_ACCOUNT, CONNECTION_SERVICE, EXECUTOR_SERVICE, LUMEN_SERVICE,
+			TTS_SERVICE, RK_UPDATE, RK_VOLUME, RK_SETTINGS, RK_NLP_STUB,
+			RK_WIFI_SERVICE
+	};
+	private static final String[] _systemServiceNames = {
+		RK_ANDROID_BRIDGE, RK_PACKAGE_MANAGER,RK_SECURITY_ACCESS,
+		RK_EVENTBUS, RK_POWER_MANAGER
+//		RK_ANDROID_BRIDGE, RK_POWER_MANAGER, RK_ACCOUNT, RK_GEN_SETTINGS,
+//		CONNECTION_SERVICE, RK_PACKAGE_MANAGER
+	};
+	private static final String[] _namesForServiceManager = {
+//		"droid_bridge", "rk_powermanager", "rk_account",
+//		"rk_settings", "rk_connection", "rkpm"
+		"droid_bridge", "rkpm","security_access", "rk_event_bus",
+		"rk_power_manager"
+	};
+	private static final Class<?>[] _remoteServiceClasses = {
+		rokid.os.RKAccountManagerStub.class,
+		rokid.os.NativeRKConnectionUtil.class,
+		rokid.os.RKExecutorNativeStub.class,
+		rokid.os.RKLumenNativeStub.class,
+		rokid.os.IRKTTS.Stub.class,
+		rokid.os.IRKUpdateService.Stub.class,
+		rokid.os.RKVolumeManagerStub.class,
+		rokid.os.RKSettingsServicesNative.class,
+		rokid.os.RKASRAgentNative.class,
+		rokid.os.RKWifiManagerNativeStub.class,
+//		rokid.os.IR2TTS.Stub.class,
+//		rokid.service.RKRedqueen.Stub.class,
+//		rokid.os.RKExecutorNativeStub.class,
+//		rokid.os.RKLumenNativeStub.class,
+//		rokid.os.RKSystemUIProxy.class,
+//		rokid.os.RKSettingsProxy.class,
+//		rokid.os.RKVolumeManagerProxy.class,
+//		rokid.os.RKnlpStubProxy.class,
+//		rokid.os.IRKUpdateService.Stub.class,
+//		rokid.os.RKRemoteChannelProxy.class,
+//		rokid.os.IRKIdleService.Stub.class,
+//		rokid.os.RokidStoreProxy.class,
+	};
+	private static final Class<?>[] _systemServiceClasses = {
+		rokid.os.NativeRKAndroidBridge.class,
+		rokid.pm.IRKPackageMonitor.Stub.class,
+		rokid.os.RKSecurityAccessNative.class,
+		rokid.os.IRKEventBus.Stub.class,
+		rokid.os.NativeRKPowerManager.class
+//		rokid.os.NativeRKPowerManager.class,
+//		rokid.os.NativeRKAccountManager.class,
+//		rokid.os.IRKGeneralSettings.Stub.class,
+//		rokid.os.NativeRKConnectionUtil.class,
+//		rokid.pm.RKNativePackageMonitor.class,
+	};
+
+	private IRKIncubator incubator;
+	// names of available remote services
+	private HashSet<String> remoteServices;
+	// use to generate binder proxy of remote/system services
+	private HashMap<String, Method> servicesProxy;
+	// services cache that already got
+	private HashMap<String, IInterface> servicesCache;
+	// names of available system services
+	private HashMap<String, String> systemServiceNameMap;
+
+	private class BinderDeathHandler implements IBinder.DeathRecipient {
+		private String who;
+		private IBinder.DeathRecipient superCallback;
+
+		public BinderDeathHandler(String name, IBinder.DeathRecipient cb) {
+			who = name;
+			superCallback = cb;
+		}
+
+		public void binderDied() {
+			synchronized (servicesCache) {
+				servicesCache.remove(who);
+			}
+			if (superCallback != null)
+				superCallback.binderDied();
+		}
+	}
+
+
+	/**
+	 *  get single instance of RemoteServiceHelper
+	 *
+	 *  @return instance of RemoteServiceHelper
+	 */
+	private static RemoteServiceHelper instance() {
+		synchronized(RemoteServiceHelper.class) {
+			if (_instance == null) {
+				try {
+					_instance = new RemoteServiceHelper();
+				} catch (RemoteException e) {
+					return null;
+				}
+			}
+			return _instance;
+		}
+	}
+
+	public static IInterface getService(String who) {
+		return getService(who, null);
+	}
+
+	/**
+	 *  get remote or system service of rokid
+	 *
+	 *  @param who  service name
+	 *  @param cb   binder died callback of service
+	 *  @return     service's binder proxy interface
+	 */
+	public static IInterface getService(String who, IBinder.DeathRecipient cb) {
+		return instance().getServiceInternal(who, cb);
+	}
+
+	public static IRKIncubator getIncubator() {
+		RemoteServiceHelper helper = instance();
+		return helper == null ? null : helper.incubator;
+	}
+
+	private RemoteServiceHelper() throws RemoteException {
+		IBinder obj = ServiceManager.getService("incubator");
+		incubator = IRKIncubator.Stub.asInterface(obj);
+		Class<?> c;
+		Method m;
+		int i;
+
+		remoteServices = new HashSet<String>();
+		servicesProxy = new HashMap<String, Method>();
+		servicesCache = new HashMap<String, IInterface>();
+		systemServiceNameMap = new HashMap<String, String>();
+		for (i=0; i<_remoteServiceNames.length; ++i) {
+			c = _remoteServiceClasses[i];
+			try {
+				m = c.getMethod("asInterface", IBinder.class);
+			} catch (NoSuchMethodException e) {
+				Log.e(TAG, "class " + c.getName()
+						+ " have no asInterface method, remote service "
+						+ _remoteServiceNames[i] + " disabled");
+				continue;
+			}
+			servicesProxy.put(_remoteServiceNames[i], m);
+			// debug
+			Log.e(TAG, "add remote service name " + _remoteServiceNames[i]);
+			remoteServices.add(_remoteServiceNames[i]);
+		}
+		for (i=0; i<_systemServiceNames.length; ++i) {
+			c = _systemServiceClasses[i];
+			try {
+				m = c.getMethod("asInterface", IBinder.class);
+			} catch (NoSuchMethodException e) {
+				Log.e(TAG, "class " + c.getName()
+						+ " have no asInterface method, system service "
+						+ _systemServiceNames[i] + " disabled");
+				continue;
+			}
+			servicesProxy.put(_systemServiceNames[i], m);
+			systemServiceNameMap.put(_systemServiceNames[i], _namesForServiceManager[i]);
+		}
+	}
+
+	private IBinder getServiceByIncubator(String who, IBinder.DeathRecipient cb) {
+		IBinder proxy;
+
+		try {
+			proxy = incubator.getService(who);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+			return null;
+		}
+		if (proxy == null)
+			return null;
+		try {
+			proxy.linkToDeath(new BinderDeathHandler(who, cb), 0);
+		} catch (RemoteException e) {
+			// binder already dead
+			return null;
+		}
+		return proxy;
+	}
+
+	private IInterface getServiceInternal(String who, IBinder.DeathRecipient cb) {
+		IInterface res = null;
+		IBinder obj = null;
+
+		// TODO: cache is necessary?
+		// this function implement logic is difficulty because
+		// support binder.linkToDeath and cache created binder proxy
+		// if no cache, logic will be simple
+
+		// always create new binder proxy
+		// if cb != null
+		if (cb == null) {
+			synchronized (servicesCache) {
+				res = servicesCache.get(who);
+			}
+			if (res != null)
+				return res;
+		}
+
+		if (remoteServices.contains(who)) {
+			// debug
+			Log.e(TAG, "get service " + who + " from incubator");
+			obj = getServiceByIncubator(who, cb);
+		} else {
+			// debug
+			Log.e(TAG, "get service " + who + " from ServiceManager");
+			String name = systemServiceNameMap.get(who);
+			if (name != null)
+				obj = ServiceManager.getService(name);
+			else
+				Log.e(TAG, "service " + who + " not found");
+		}
+		if (obj != null) {
+			Method m = servicesProxy.get(who);
+			try {
+				res = (IInterface)m.invoke(null, obj);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		if (res != null) {
+			synchronized (servicesCache) {
+				// one service may have more than one binder proxy
+				// only cache one binder for one service
+				if (servicesCache.get(who) == null)
+					servicesCache.put(who, res);
+			}
+		}
+		return res;
+	}
+}

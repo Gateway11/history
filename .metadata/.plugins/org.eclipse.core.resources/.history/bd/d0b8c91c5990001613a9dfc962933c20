@@ -1,0 +1,286 @@
+package com.rokid.wifi;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+
+import android.app.Activity;
+import android.content.Context;
+import android.net.NetworkInfo;
+import android.net.NetworkInfo.DetailedState;
+import android.net.wifi.ScanResult;
+import android.net.wifi.SupplicantState;
+import android.net.wifi.WifiConfiguration;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
+import android.net.wifi.WifiConfiguration.AuthAlgorithm;
+import android.net.wifi.WifiConfiguration.KeyMgmt;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.EditText;
+
+
+public class MainActivity extends Activity implements OnClickListener {
+
+	
+	String TAG=MainActivity.class.getSimpleName();
+    private EditText pwd_tv;
+	private WifiManager mWifiManager;
+	
+	private final int MESSAGE_WIFI_CONNECT_TIMEOUT=0;
+	public static final int MESSAGE_START_SCAN=1;
+	private final int MESSAGE_PASSWORD_ERROR=2; 
+	private final int MESSAGE_WIFI_DISCONNECT=3;
+	
+	private Multimap<String, AccessPoint> apMap=new Multimap<String,AccessPoint>();
+	private List<AccessPoint> mAccessPointList=new ArrayList<AccessPoint>();
+	private	AtomicBoolean mConnectState = new AtomicBoolean(false);
+	private AccessPoint mConnectingAP; 
+	
+	private Handler mHandler =new Handler(){
+		public void handleMessage(Message msg){
+			switch(msg.what){
+				case MESSAGE_WIFI_CONNECT_TIMEOUT:
+					Log.e(TAG,"MESSAGE_WIFI_CONNECT_TIMEOUT");
+					break;
+				case MESSAGE_START_SCAN:
+					break;
+				case MESSAGE_PASSWORD_ERROR:
+					break;
+				case MESSAGE_WIFI_DISCONNECT:
+
+					break;
+			}
+		}
+	};
+
+	@Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        
+      
+        pwd_tv = (EditText) findViewById(R.id.pwd);
+        Button open_wifi = (Button) findViewById(R.id.open_wifi);
+        Button conn_wifi = (Button) findViewById(R.id.conn_wifi);
+        Button close_wifi = (Button) findViewById(R.id.close_wifi);
+        open_wifi.setOnClickListener(this);
+        conn_wifi.setOnClickListener(this);
+        close_wifi.setOnClickListener(this);
+        
+        mWifiManager = (WifiManager)getSystemService(Context.WIFI_SERVICE);
+		if(!mWifiManager.isWifiEnabled()){
+			mWifiManager.setWifiEnabled(true);
+		}
+    }
+
+	@Override
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.open_wifi:
+			open_wifi();
+			break;
+		case R.id.conn_wifi:
+			conn_wifi();
+			break;
+		case R.id.close_wifi:
+			close_wifi();
+			break;
+		}
+	}
+
+	private void close_wifi() {
+		
+	}
+
+	private void conn_wifi() {
+		
+	}
+
+	private void open_wifi() {
+		List<WifiConfiguration> list = mWifiManager.getConfiguredNetworks();	
+		for (WifiConfiguration wifi : list) {
+			mWifiManager.removeNetwork(wifi.networkId);
+		}
+		String ssid="ROKID.TC";
+		String pwd=pwd_tv.getText().toString();
+		List<AccessPoint> ssids = null;
+		if ((ssids = apMap.getAll(ssid)) == null || ssids.isEmpty()) {
+			Log.e(TAG, "cannot find such ssid");
+			return false;
+		}
+		AccessPoint ap = null;
+		for (int i = 0; i < ssids.size(); i++) {
+			ap = ssids.get(i);
+			if (ap == null) {
+				continue;
+			}
+			if (ap != null) {
+				break;
+			}
+		}
+		//get config from ap
+		final WifiConfiguration configure = new WifiConfiguration();
+		if (ap.networkId == -1) {
+			Log.i(TAG, "ap network is -1");
+			configure.SSID = AccessPoint.convertToQuotedString(ap.ssid);
+		} else {
+			Log.i(TAG, "ap network is " + ap.networkId);
+			configure.networkId = ap.networkId;
+		}
+
+		switch (ap.security) {
+		case AccessPoint.SECURITY_NONE: {
+			configure.allowedKeyManagement.set(KeyMgmt.NONE);
+		} break;
+		//ignore
+		case AccessPoint.SECURITY_WEP: {
+			configure.allowedKeyManagement.set(KeyMgmt.NONE);
+			configure.allowedAuthAlgorithms.set(AuthAlgorithm.OPEN);
+			configure.allowedAuthAlgorithms.set(AuthAlgorithm.SHARED);
+			int len = pwd.length();
+			if ((len == 10) || (len == 26) || (len == 58) &&
+					pwd.matches("[0-9A-Fa-f]*")) {
+				configure.wepKeys[0] = pwd;
+			} else {
+				configure.wepKeys[0] = '"' + pwd + '"';
+			}
+			configure.wepKeys[0] = pwd;
+		} break;
+		case AccessPoint.SECURITY_PSK: {
+			configure.allowedKeyManagement.set(KeyMgmt.WPA_PSK);
+			if (pwd.matches("[0-9A-Fa-f]{64}")) {
+				configure.preSharedKey = pwd;
+			} else {
+				configure.preSharedKey = '"' + pwd + '"';
+			}
+		} break;
+		case AccessPoint.SECURITY_EAP: {
+			Log.e(TAG, "not support EAP yet");
+			return false;
+		}
+		default:
+			Log.e(TAG, "WTF UNKNOWN SECURITY");
+			return false;
+		}
+
+		//connect
+		if (configure.networkId != -1) {
+			mWifiManager.save(configure, new WifiManager.ActionListener() {
+                @Override
+                public void onSuccess() {
+                }
+                @Override
+                public void onFailure(int reason) {
+					Log.e(TAG,"save fail ...");
+                }
+            });
+		}
+
+		//direct connect
+		mWifiManager.connect(configure, new WifiManager.ActionListener() {
+           @Override
+           public void onSuccess() {
+				Log.i(TAG, "connect successfully!");
+           }
+           @Override
+           public void onFailure(int reason) {
+			   Log.e(TAG,"connect fail ...");
+           }
+		});
+
+
+		if (mWifiManager.isWifiEnabled()) {
+			mWifiManager.startScan();
+		}
+
+		ap.mConfig = configure;
+		mConnectingAP = ap;
+		onUpdateAccessPoints();
+
+		mHandler.removeMessages(MESSAGE_WIFI_CONNECT_TIMEOUT);
+		mHandler.sendEmptyMessageDelayed(MESSAGE_PASSWORD_ERROR,10000);
+		Log.i(TAG, "start timeout ...");
+		mHandler.sendEmptyMessageDelayed(MESSAGE_WIFI_CONNECT_TIMEOUT, 60000);
+
+	}
+	
+	public void onWifiStateChanged(int state){
+		if(WifiManager.WIFI_STATE_ENABLED==state){
+			mWifiManager.startScan();
+		}
+	}
+	
+	public void onUpdateAccessPoints(){
+		if(WifiManager.WIFI_STATE_ENABLED==mWifiManager.getWifiState()){
+			final List<ScanResult> results = mWifiManager.getScanResults();
+			if (results != null) {
+				for (ScanResult result : results) {
+					if (result.SSID == null || result.SSID.length() == 0 
+							|| result.capabilities.contains("[IBSS]")) {
+						continue;
+					}
+
+					boolean found = false;
+					for (AccessPoint mAccessPoint : apMap.getAll(result.SSID)) {
+						if (mAccessPoint.update(result))
+							found = true;
+					}
+
+					if (!found) {
+						AccessPoint mAccessPoint = new AccessPoint(result);
+						mAccessPointList.add(mAccessPoint);
+						apMap.put(mAccessPoint.ssid, mAccessPoint);
+					}
+				}
+			}
+			Collections.sort(mAccessPointList); 
+		}
+		
+	}
+	
+	public void onSupplicantConnectionStateChanged(SupplicantState state,int error){
+		
+	}
+	
+	public void onUpdateNetworkChanged(NetworkInfo info,WifiInfo mWifiInfo){
+		
+	}
+	
+	public void onUpdateConnectionState(DetailedState state){
+		
+	}
+	
+	private class Multimap<K, V> {
+		private final HashMap<K, List<V>> store = new HashMap<K, List<V>>();
+		List<V> getAll(K key) {
+			List<V> values = store.get(key);
+			return values != null ? values : Collections.<V>emptyList();
+		}
+
+		void clear() {
+			store.clear();
+		}
+
+		void put(K key, V val) {
+			List<V> valList = store.get(key);
+			if (valList == null) {
+				valList = new ArrayList<V>(3);
+				store.put(key, valList);
+			}
+			valList.add(val);
+		}
+
+		HashMap<K, List<V>> getInternal() {
+			return store;
+		}
+	}
+}

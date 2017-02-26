@@ -1,0 +1,28 @@
+package com.rokid.rkcommonlibrary.listener;
+
+import com.rokid.rkcommonlibrary.beans.RKEventBean;
+
+/**
+ * Created by Bassam on 16/8/17.
+ */
+public interface RKOnLeftTouchListener {
+    /**
+     * 按下
+     *
+     * @param rkEventBean
+     */
+    void onLeftTouchDown(RKEventBean rkEventBean);
+
+    /**
+     * 变化
+     *
+     * @param rkEventBean
+     */
+    void onLeftTouchMove(RKEventBean rkEventBean);
+
+    /**
+     * 抬起
+     */
+    void onLeftTouchUp();
+}
+

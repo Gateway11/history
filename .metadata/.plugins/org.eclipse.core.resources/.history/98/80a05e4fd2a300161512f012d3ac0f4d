@@ -1,0 +1,91 @@
+package com.example.networkconnect;
+
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import android.app.Service;
+import android.content.Context;
+import android.content.Intent;
+import android.net.wifi.WifiManager;
+import android.os.Binder;
+import android.os.Handler;
+import android.os.IBinder;
+
+public class RKWifiManagerService extends Service {
+
+	public static final int MESSAGE_START_SCAN = 0;
+	public static final int MESSAGE_STOP_SCAN = 1;
+	public static final int MESSAGE_SCAN_COMPLETE = 2;
+	public static final int MESSAGE_UPDATE_NETWORK_INFO = 3;
+	public static final int MESSAGE_UPDATE_ACCESS_POINTS = 4;
+
+	Handler mHandler = new Handler() {
+		public void handleMessage(android.os.Message msg) {
+			switch (msg.what) {
+			case MESSAGE_START_SCAN:
+				mWifiScanner.startScan();
+				break;
+			case MESSAGE_STOP_SCAN:
+				mWifiScanner.stopScan();
+				break;
+			case MESSAGE_SCAN_COMPLETE:
+				break;
+			}
+		}
+	};
+	private final AtomicBoolean mConnected = new AtomicBoolean(false);
+	private WifiManager mWifiManager;
+	private RKWifiScanner mWifiScanner;
+	private RKWifiConnectHelper mWifiConnectHelper;
+	private RKAccessPoint mAccessPoint;
+	private ConnectState mCurrendState;
+
+	@Override
+	public void onCreate() {
+		super.onCreate();
+		mWifiManager = (WifiManager) getApplicationContext().getSystemService(
+				Context.WIFI_SERVICE);
+		new RKWifiReceiver().registReceiver(getApplicationContext(), mHandler);
+		mWifiScanner = new RKWifiScanner(mWifiManager, mHandler);
+		mWifiConnectHelper = new RKWifiConnectHelper(mHandler, mWifiManager);
+		mCurrendState = new ConnectState();
+		mAccessPoint = new RKAccessPoint();
+		if (!mWifiManager.isWifiEnabled()) {
+			mWifiManager.setWifiEnabled(true);
+		} else {
+			mWifiScanner.startScan();
+		}
+	}
+
+	@Override
+	public IBinder onBind(Intent intent) {
+		return new RKWifiManagerStub();
+	}
+
+	class RKWifiManagerStub extends Binder implements IRKWifiManager {
+
+		@Override
+		public boolean connect(String ssid, String pwd) {
+			mWifiConnectHelper.connect(ssid, pwd);
+			return false;
+		}
+
+		@Override
+		public boolean disconnect() {
+			mWifiConnectHelper.disconnect();
+			return false;
+		}
+
+		@Override
+		public boolean isConnected() {
+			return mConnected.get();
+		}
+	};
+
+	class ConnectState {
+		boolean enabled = false;
+		boolean connected = false;
+		String ssid = "";
+		int networkId = -1;
+		int level = -1;
+	}
+}
