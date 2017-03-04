@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">BluetoothBleServer</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="broadcost">send broadcost</string>
+    <string name="connectwifi">connect wifi</string>
+        
+    <string name="sdatabutton">sendData button</string>
+    <string name="viewtext_wifi_name">WiFi name</string>
+    <string name="viewtext_wifi_password">Password</string>
+    <string name="viewtext_wifi_name_default">hexu_tao</string>
+    <string name="viewtext_wifi_password_default">123456789</string>
+</resources>
