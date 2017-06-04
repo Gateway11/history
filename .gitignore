@@ -1,2 +1,11 @@
 .metadata/
 .DS_Store
+.settings
+.classpath
+.project
+proguard-project.txt
+project.properties
+*.apk
+bin
+gen
+readme.txt
