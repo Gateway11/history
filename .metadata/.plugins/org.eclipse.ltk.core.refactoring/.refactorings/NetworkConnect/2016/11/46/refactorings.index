@@ -1,8 +1,0 @@
-1478407584497	Convert local variable 'lastInfo' to field
-1478409052712	Convert local variable 'connecting' to field
-1478423109103	Rename type 'RKWifiConnectCallback'
-1478499884019	Convert local variable 'cm' to field
-1478508488664	Convert local variable 'wifiLock' to field
-1478516906506	Convert local variable 'config' to field
-1478518281002	Rename type 'RKWifiManagerService'
-1478518311755	Rename type 'RKWifiService'

@@ -1,9 +1,0 @@
-package com.example.networkconnect;
-
-public interface RKWifiConnectCallback {
-	
-	void ssidNotFind();
-	void pwdError();
-	void disconnected();
-	void connected();
-}

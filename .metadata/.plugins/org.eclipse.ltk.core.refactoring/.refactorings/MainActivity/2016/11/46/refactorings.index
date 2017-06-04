@@ -1,9 +1,0 @@
-1478591062585	Rename type 'RKAccessPoint'
-1478591075641	Rename type 'IRKWifiConnectCallback'
-1478591087292	Rename type 'RKWifiConnectHelper'
-1478591097844	Rename type 'RKWifiScanner'
-1478591107616	Rename type 'RKWifiReceiver'
-1478591118567	Rename type 'RKWifiConnectService'
-1478591132215	Rename type 'IRKWifiManager'
-1478592838549	Convert local variable 'lock' to field
-1478592849256	Convert local variable 'condition' to field

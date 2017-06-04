@@ -1,9 +1,0 @@
-package com.example.demo;
-
-public enum Test {
-	INSTANCE;
-	
-	public void get(){
-		
-	}
-}
