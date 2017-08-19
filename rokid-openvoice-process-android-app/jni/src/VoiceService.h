@@ -45,10 +45,6 @@ private:
 		SPEECH_STATE_UNKNOWN = 0, SPEECH_STATE_PREPARED, SPEECH_STATE_RELEASED
 	};
 
-
-	int vad_start();
-	void voice_print(const voice_event_t *);
-
 	pthread_mutex_t event_mutex;
 	pthread_mutex_t speech_mutex;
 	pthread_mutex_t siren_mutex;
@@ -56,8 +52,12 @@ private:
 	pthread_t event_thread;
 	pthread_t response_thread;
 
-	friend void* onEvent(void *);
-	friend void* onResponse(void *);
+	void* onEvent();
+	void* onResponse();
+
+	int vad_start();
+	void voice_print(const voice_event_t *);
+	void voice_event_callback(voice_event_t *voice_event);
 
 	shared_ptr<Speech> _speech;
 	shared_ptr<VoiceCallback> callback;
@@ -71,8 +71,5 @@ private:
 	bool has_vt = false;
 	bool openSiren = true;
 };
-
-void* onEvent(void *);
-void* onResponse(void *);
 
 #endif // VOICE_SERVICE_H
