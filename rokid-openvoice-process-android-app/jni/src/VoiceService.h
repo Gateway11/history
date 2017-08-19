@@ -5,11 +5,13 @@
 
 #include <pthread.h>
 #include <stdlib.h>
+#include <memory>
+#include <string>
 #include <list>
 
-#include <siren.h>
-#include <speech.h>
-
+#include "VoiceCallback.h"
+#include "siren.h"
+#include "speech.h"
 #include "log.h"
 
 using namespace std;
@@ -22,27 +24,15 @@ public:
 	VoiceService();
 	~VoiceService(){}
 
-	int vad_start();
-	void voice_print(const voice_event_t *);
-
-	pthread_mutex_t event_mutex;
-	pthread_mutex_t speech_mutex;
-	pthread_mutex_t siren_mutex;
-	pthread_cond_t event_cond;
-	pthread_t event_thread;
-	pthread_t response_thread;
-
-	shared_ptr<Speech> _speech;
-	list<voice_event_t*> message_queue;
-
-private:
-	bool init();
+	bool setup();
 	void config();
 	void start_siren(bool);
 	void set_siren_state(const int);
 	void network_state_change(bool);
 	void update_stack(const string&);
+	void regist_callback(const void*);
 
+private:
 	int mCurrentSirenState = SIREN_STATE_UNKNOWN;
 	int mCurrentSpeechState = SPEECH_STATE_UNKNOWN;
 	enum {
@@ -54,6 +44,24 @@ private:
 	enum {
 		SPEECH_STATE_UNKNOWN = 0, SPEECH_STATE_PREPARED, SPEECH_STATE_RELEASED
 	};
+
+
+	int vad_start();
+	void voice_print(const voice_event_t *);
+
+	pthread_mutex_t event_mutex;
+	pthread_mutex_t speech_mutex;
+	pthread_mutex_t siren_mutex;
+	pthread_cond_t event_cond;
+	pthread_t event_thread;
+	pthread_t response_thread;
+
+	friend void* onEvent(void *);
+	friend void* onResponse(void *);
+
+	shared_ptr<Speech> _speech;
+	shared_ptr<VoiceCallback> callback;
+	list<voice_event_t*> message_queue;
 
 	string appid;
 	int vt_start;
