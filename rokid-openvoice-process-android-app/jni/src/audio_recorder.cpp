@@ -1,5 +1,7 @@
 #include "audio_recorder.h"
 
+#include <SLES/OpenSLES.h>
+
 #include "VoiceService.h"
 #include "opensl_io.h"
 #include "log.h"
@@ -8,6 +10,8 @@
 
 siren_t _siren;
 siren_proc_callback_t event_callback;
+
+OPENSL_STREAM* stream = nullptr;
 
 siren_input_if_t siren_input = { init_input, release_input, start_input,
 		stop_input, read_input, on_err_input };
@@ -40,16 +44,21 @@ void release_input(void *token) {
 }
 
 int start_input(void *token) {
+	stream = android_OpenAudioDevice(SL_SAMPLINGRATE_48, 2, 2, 15360);
+	if (stream == nullptr) {
+		LOGE("failed to open audio device ! \n");
+		return -1;
+	}
 	return 1;
 }
 
 void stop_input(void *token) {
 	LOGV("%s", __FUNCTION__);
+	android_CloseAudioDevice(stream);
 }
 
 int read_input(void *token, char *buff, int frame_cnt) {
-	//return mic_array_device->read_stream(mic_array_device, buff, frame_cnt);
-	return -1;
+	return android_AudioIn(stream, (short*)buff, frame_cnt/2);
 }
 
 int find_card(const char *snd) {

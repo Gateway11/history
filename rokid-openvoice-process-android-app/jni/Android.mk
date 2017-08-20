@@ -1,3 +1,5 @@
+#git clone https://bitbucket.org/victorlazzarini/android-audiotest
+
 LOCAL_PATH := $(call my-dir)
 include $(call all-subdir-makefiles)
 
