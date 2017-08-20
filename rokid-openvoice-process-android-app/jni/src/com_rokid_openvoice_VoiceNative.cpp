@@ -32,5 +32,5 @@ JNIEXPORT void JNICALL Java_com_rokid_openvoice_VoiceNavive_native_network_state
 JNIEXPORT void JNICALL Java_com_rokid_openvoice_VoiceNavive_native_update_tack(JNIEnv *env, jobject thiz, jstring appid)
 {
 	LOGD("%s", __FUNCTION__);
-	//service->update_stack(s);
+    service->update_stack(string(env->GetStringUTFChars(appid, NULL)));
 }
