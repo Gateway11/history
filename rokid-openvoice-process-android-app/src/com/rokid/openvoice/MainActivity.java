@@ -9,12 +9,15 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        
         VoiceNative.setup();
-        VoiceNative.networkStateChange(true);
+        VoiceNative.startSiren(true);
+//        VoiceNative.networkStateChange(true);
     }
 }
-//08-21 11:42:26.506: E/libOpenSLES(9216): pAudioSnk: channelMask=0x3 numChannels=4
-//08-21 11:42:26.506: W/libOpenSLES(9216): Leaving Engine::CreateAudioRecorder (SL_RESULT_PARAMETER_INVALID)
+
+//08-22 10:43:51.804: E/speech.Connection(5757): initialize ssl failed: Exception: /system/etc/roots.pem
+//08-22 10:43:51.804: E/speech.Connection(5757): connect: init ssl failed
+//08-22 10:43:51.804: I/speech.Connection(5757): connect to server failed, wait a while and retry
+
 
 
