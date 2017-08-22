@@ -27,6 +27,7 @@
 */
 
 #include "opensl_io.h"
+#include "log.h"
 
 #define CONV16BIT 32768
 #define CONVMYFLT (1./32768.)
@@ -244,7 +245,9 @@ static SLresult openSLRecOpen(OPENSL_STREAM *p)
     const SLboolean req[1] = {SL_BOOLEAN_TRUE};
     result = (*p->engineEngine)->CreateAudioRecorder(p->engineEngine, &(p->recorderObject), &audioSrc,
 						     &audioSnk, 1, id, req);
+    LOGV("+++++++++++++++++++++++++++++++++++++++++++");
     if (SL_RESULT_SUCCESS != result) goto end_recopen;
+    LOGV("+++++++++++++++++++++++++++++++++++++++++++");
 
     // realize the audio recorder
     result = (*p->recorderObject)->Realize(p->recorderObject, SL_BOOLEAN_FALSE);
@@ -312,18 +315,8 @@ OPENSL_STREAM *android_OpenAudioDevice(int sr, int inchannels, int outchannels, 
     p = (OPENSL_STREAM *) calloc(sizeof(OPENSL_STREAM),1);
 
     p->inchannels = inchannels;
-    p->outchannels = outchannels;
     p->sr = sr;
     p->inlock = createThreadLock();
-    p->outlock = createThreadLock();
- 
-    if((p->outBufSamples = bufferframes*outchannels) != 0) {
-        if((p->outputBuffer[0] = (short *) calloc(p->outBufSamples, sizeof(short))) == NULL ||
-           (p->outputBuffer[1] = (short *) calloc(p->outBufSamples, sizeof(short))) == NULL) {
-            android_CloseAudioDevice(p);
-            return NULL;
-        }
-    }
 
     if((p->inBufSamples = bufferframes*inchannels) != 0){
         if((p->inputBuffer[0] = (short *) calloc(p->inBufSamples, sizeof(short))) == NULL ||
@@ -334,7 +327,6 @@ OPENSL_STREAM *android_OpenAudioDevice(int sr, int inchannels, int outchannels, 
     }
 
     p->currentInputIndex = 0;
-    p->currentOutputBuffer  = 0;
     p->currentInputIndex = p->inBufSamples;
     p->currentInputBuffer = 0;
 
@@ -348,12 +340,6 @@ OPENSL_STREAM *android_OpenAudioDevice(int sr, int inchannels, int outchannels, 
         return NULL;
     }
 
-    if(openSLPlayOpen(p) != SL_RESULT_SUCCESS) {
-        android_CloseAudioDevice(p);
-        return NULL;
-    }
-
-    notifyThreadLock(p->outlock);
     notifyThreadLock(p->inlock);
 
     p->time = 0.;

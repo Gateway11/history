@@ -38,7 +38,7 @@ typedef struct {
     bool vt_remote_check_with_aec;
     bool vt_remote_check_without_aec;
     bool vt_local_classify_check;
-
+    
     std::string nnet_path;
 } siren_vt_alg_config;
 
@@ -73,11 +73,11 @@ typedef struct {
     siren_event_t event;
     int length;
     int flag;
-
+   
     double sl;
     double background_energy;
     double background_threshold;
-
+    
     vt_event_t vt;
     void *buff;
 } voice_event_t;

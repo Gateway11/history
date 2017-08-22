@@ -142,17 +142,18 @@ void VoiceService::voice_print(const voice_event_t *voice_event) {
 }
 
 void VoiceService::voice_event_callback(voice_event_t *voice_event) {
+	LOGV("+++++++++++++++++++++++++++++++++++++++++++++++++++++");
 	pthread_mutex_lock(&event_mutex);
 	//add to siren_queue
-	voice_event_t *voice_message(new voice_event_t);
-	memcpy(voice_message, voice_event, sizeof(voice_event_t));
-	void *buff = NULL;
-	if (HAS_VOICE(voice_message->flag) || HAS_VT(voice_message->flag)) {
-		buff = new char(voice_event->length);
-		memcpy(buff, voice_event->buff, voice_event->length);
-		voice_message->buff = buff;
-	}
-	message_queue.push_back(voice_message);
+//	voice_event_t *voice_message(new voice_event_t);
+//	memcpy(voice_message, voice_event, sizeof(voice_event_t));
+//	void *buff = NULL;
+//	if (HAS_VOICE(voice_message->flag) || HAS_VT(voice_message->flag)) {
+//		buff = new char(voice_event->length);
+//		memcpy(buff, voice_event->buff, voice_event->length);
+//		voice_message->buff = buff;
+//	}
+//	message_queue.push_back(voice_message);
 	pthread_cond_signal(&event_cond);
 	pthread_mutex_unlock(&event_mutex);
 }

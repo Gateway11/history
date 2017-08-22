@@ -1,36 +1,44 @@
 #include <jni.h>
-
 #include "VoiceService.h"
 
 shared_ptr<VoiceService> service = make_shared<VoiceService>();
 
-JNIEXPORT jboolean JNICALL Java_com_rokid_openvoice_VoiceNavive_native_setup(JNIEnv *env, jobject thiz, jobject callback)
+extern "C" {
+
+JNIEXPORT jboolean JNICALL 
+Java_com_rokid_openvoice_VoiceNative_setup(JNIEnv *env, jclass)
 {
 	LOGD("%s", __FUNCTION__);
     return service->setup();
-	//return JNI_TRUE;
+	return JNI_TRUE;
 }
 
-JNIEXPORT void JNICALL Java_com_rokid_openvoice_VoiceNavive_native_start_Siren(JNIEnv *env, jobject thiz, jint isopen)
+JNIEXPORT void JNICALL 
+Java_com_rokid_openvoice_VoiceNavive_startSiren(JNIEnv *env, jclass, jint isopen)
 {
 	LOGD("%s", __FUNCTION__);
 	service->start_siren((int)isopen);
 }
 
-JNIEXPORT void JNICALL Java_com_rokid_openvoice_VoiceNavive_native_set_siren_state(JNIEnv *env, jobject thiz, jint state)
+JNIEXPORT void JNICALL 
+Java_com_rokid_openvoice_VoiceNative_setSirenState(JNIEnv *env, jclass, jint state)
 {
 	LOGD("%s", __FUNCTION__);
 	service->set_siren_state((int)state);
 }
 
-JNIEXPORT void JNICALL Java_com_rokid_openvoice_VoiceNavive_native_network_state_hange(JNIEnv *env, jobject thiz, jboolean isconnect)
+JNIEXPORT void JNICALL 
+Java_com_rokid_openvoice_VoiceNative_networkStateChange(JNIEnv *env, jclass, jboolean isconnect)
 {
 	LOGD("%s", __FUNCTION__);
 	service->network_state_change((bool)isconnect);
 }
 
-JNIEXPORT void JNICALL Java_com_rokid_openvoice_VoiceNavive_native_update_tack(JNIEnv *env, jobject thiz, jstring appid)
+JNIEXPORT void JNICALL 
+Java_com_rokid_openvoice_VoiceNative_updateStack(JNIEnv *env, jclass, jstring appid)
 {
 	LOGD("%s", __FUNCTION__);
     service->update_stack(string(env->GetStringUTFChars(appid, NULL)));
+}
+
 }

@@ -7,9 +7,15 @@
 #include "log.h"
 
 #include <string.h>
+#define SAMPLERATE 48000
+#define CHANNELS 4
+#define PERIOD_TIME 20 //ms
+#define FRAME_SIZE SAMPLERATE*PERIOD_TIME/1000
+#define BUFFER_SIZE FRAME_SIZE*CHANNELS
 
 siren_t _siren;
 siren_proc_callback_t event_callback;
+void* __token = nullptr;
 
 OPENSL_STREAM* stream = nullptr;
 
@@ -19,6 +25,7 @@ siren_input_if_t siren_input = { init_input, release_input, start_input,
 siren_state_changed_callback_t siren_state_change = { state_changed_callback };
 
 bool init(void*token, on_voice_event_t callback) {
+    __token = token;
 	event_callback.voice_event_callback = callback;
 	_siren = init_siren(token, NULL, &siren_input);
 	return true;
@@ -44,12 +51,13 @@ void release_input(void *token) {
 }
 
 int start_input(void *token) {
-	stream = android_OpenAudioDevice(SL_SAMPLINGRATE_48, 2, 2, 15360);
+	stream = android_OpenAudioDevice(16000, 1, 0, 1024);
 	if (stream == nullptr) {
 		LOGE("failed to open audio device ! \n");
 		return -1;
 	}
-	return 1;
+	LOGE("open audio device success! \n");
+	return 0;
 }
 
 void stop_input(void *token) {
@@ -58,6 +66,7 @@ void stop_input(void *token) {
 }
 
 int read_input(void *token, char *buff, int frame_cnt) {
+	LOGV("%s", __FUNCTION__);
 	return android_AudioIn(stream, (short*)buff, frame_cnt/2);
 }
 

@@ -2,13 +2,16 @@ package com.rokid.openvoice;
 
 public class VoiceNative{
 	
-	public static native final boolean native_setup(Object callback); 
+	static{
+		System.loadLibrary("openvoice2");
+	}
+	public static native boolean setup(); 
 	
-	public static native final void native_start_Siren(boolean isopen); 
+	public static native void startSiren(boolean isopen); 
 	
-	public static native final void native_set_siren_state(int state);
+	public static native void setSirenState(int state);
 	
-	public static native final void native_network_state_hange(boolean isconnected);
+	public static native void networkStateChange(boolean isconnected);
 	
-	public static native final void native_update_tack(String appid);
+	public static native void updateStack(String appid);
 }
