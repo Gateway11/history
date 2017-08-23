@@ -1,13 +1,4 @@
-#LOCAL_PATH := $(call my-dir)
-CURRENT_DIR := speech
-
-PocoFoundationDir := poco/Foundation
-PocoNetDir := poco/Net
-PocoNetSSLDir := poco/NetSSL_OpenSSL
-PocoCryptoDir := poco/Crypto
-PocoUtilDir := poco/Util
-PocoXMLDir := poco/XML
-PocoJSONDir := poco/JSON
+MY_LOCAL_PATH := $(call my-dir)
 
 IGNORED_WARNINGS := -Wno-sign-compare -Wno-unused-parameter -Wno-sign-promo -Wno-error=return-type -Wno-error=non-virtual-dtor
 COMMON_CFLAGS := \
@@ -24,41 +15,33 @@ LOCAL_CPP_EXTENSION := .cc
 
 LOCAL_C_INCLUDES := \
 	$(LOCAL_PATH)/include \
-	$(LOCAL_PATH)/protobuf/src \
-	$(LOCAL_PATH)/$(PocoFoundationDir)/include \
-	$(LOCAL_PATH)/$(PocoNetDir)/include \
-	$(LOCAL_PATH)/$(PocoNetSSLDir)/include \
-	$(LOCAL_PATH)/$(PocoCryptoDir)/include \
-	$(LOCAL_PATH)/$(PocoUtilDir)/include \
-	$(LOCAL_PATH)/$(PocoXMLDir)/include \
-	$(LOCAL_PATH)/$(PocoJSONDir)/include \
-	$(LOCAL_PATH)/$(CURRENT_DIR)/proto \
-	$(LOCAL_PATH)/$(CURRENT_DIR)/include \
-	$(LOCAL_PATH)/$(CURRENT_DIR)/src/common
+	$(MY_LOCAL_PATH)/proto \
+	$(MY_LOCAL_PATH)/include \
+	$(MY_LOCAL_PATH)/src/common
 
 COMMON_SRC := \
-	$(CURRENT_DIR)/proto/speech.pb.cc \
-	$(CURRENT_DIR)/src/common/speech_config.cc \
-	$(CURRENT_DIR)/src/common/speech_config.h \
-	$(CURRENT_DIR)/src/common/log.cc \
-	$(CURRENT_DIR)/src/common/log.h \
-	$(CURRENT_DIR)/src/common/speech_connection.cc \
-	$(CURRENT_DIR)/src/common/speech_connection.h
+	$(MY_LOCAL_PATH)/proto/speech.pb.cc \
+	$(MY_LOCAL_PATH)/src/common/speech_config.cc \
+	$(MY_LOCAL_PATH)/src/common/speech_config.h \
+	$(MY_LOCAL_PATH)/src/common/log.cc \
+	$(MY_LOCAL_PATH)/src/common/log.h \
+	$(MY_LOCAL_PATH)/src/common/speech_connection.cc \
+	$(MY_LOCAL_PATH)/src/common/speech_connection.h
 
 TTS_SRC := \
-	$(CURRENT_DIR)/src/tts/tts_impl.cc \
-	$(CURRENT_DIR)/src/tts/tts_impl.h \
-	$(CURRENT_DIR)/src/tts/types.h
+	$(MY_LOCAL_PATH)/src/tts/tts_impl.cc \
+	$(MY_LOCAL_PATH)/src/tts/tts_impl.h \
+	$(MY_LOCAL_PATH)/src/tts/types.h
 
 ASR_SRC := \
-	$(CURRENT_DIR)/src/asr/asr_impl.cc \
-	$(CURRENT_DIR)/src/asr/asr_impl.h \
-	$(CURRENT_DIR)/src/asr/types.h
+	$(MY_LOCAL_PATH)/src/asr/asr_impl.cc \
+	$(MY_LOCAL_PATH)/src/asr/asr_impl.h \
+	$(MY_LOCAL_PATH)/src/asr/types.h
 
 SPEECH_SRC := \
-	$(CURRENT_DIR)/src/speech/speech_impl.cc \
-	$(CURRENT_DIR)/src/speech/speech_impl.h \
-	$(CURRENT_DIR)/src/speech/types.h
+	$(MY_LOCAL_PATH)/src/speech/speech_impl.cc \
+	$(MY_LOCAL_PATH)/src/speech/speech_impl.h \
+	$(MY_LOCAL_PATH)/src/speech/types.h
 
 LOCAL_SRC_FILES := \
 	$(COMMON_SRC) \
@@ -70,6 +53,8 @@ LOCAL_CFLAGS := $(COMMON_CFLAGS) \
 	-std=c++11 -frtti -fexceptions
 LOCAL_LDLIBS += -llog
 LOCAL_SHARED_LIBRARIES := libpoco libcrypto libprotobuf-rokid-cpp-full
+
+LOCAL_EXPORT_C_INCLUDES := $(MY_LOCAL_PATH)/include
 
 include $(BUILD_SHARED_LIBRARY)
 

@@ -14,59 +14,58 @@
 #
 #
 
-#LOCAL_PATH := $(call my-dir)
-CURRENT_DIR := protobuf
+MY_LOCAL_PATH := $(call my-dir)
 
 IGNORED_WARNINGS := -Wno-sign-compare -Wno-unused-parameter -Wno-sign-promo -Wno-error=return-type
 
 CC_LITE_SRC_FILES := \
-   	$(CURRENT_DIR)/src/google/protobuf/stubs/atomicops_internals_x86_gcc.cc         \
-    $(CURRENT_DIR)/src/google/protobuf/stubs/atomicops_internals_x86_msvc.cc        \
-    $(CURRENT_DIR)/src/google/protobuf/stubs/common.cc                              \
-    $(CURRENT_DIR)/src/google/protobuf/stubs/once.cc                                \
-    $(CURRENT_DIR)/src/google/protobuf/stubs/hash.h                                 \
-    $(CURRENT_DIR)/src/google/protobuf/stubs/map_util.h                             \
-    $(CURRENT_DIR)/src/google/protobuf/stubs/shared_ptr.h                           \
-    $(CURRENT_DIR)/src/google/protobuf/stubs/stringprintf.cc                        \
-    $(CURRENT_DIR)/src/google/protobuf/stubs/stringprintf.h                         \
-    $(CURRENT_DIR)/src/google/protobuf/extension_set.cc                             \
-    $(CURRENT_DIR)/src/google/protobuf/generated_message_util.cc                    \
-    $(CURRENT_DIR)/src/google/protobuf/message_lite.cc                              \
-    $(CURRENT_DIR)/src/google/protobuf/repeated_field.cc                            \
-    $(CURRENT_DIR)/src/google/protobuf/wire_format_lite.cc                          \
-    $(CURRENT_DIR)/src/google/protobuf/io/coded_stream.cc                           \
-    $(CURRENT_DIR)/src/google/protobuf/io/coded_stream_inl.h                        \
-    $(CURRENT_DIR)/src/google/protobuf/io/zero_copy_stream.cc                       \
-    $(CURRENT_DIR)/src/google/protobuf/io/zero_copy_stream_impl_lite.cc
+   	$(MY_LOCAL_PATH)/src/google/protobuf/stubs/atomicops_internals_x86_gcc.cc         \
+    $(MY_LOCAL_PATH)/src/google/protobuf/stubs/atomicops_internals_x86_msvc.cc        \
+    $(MY_LOCAL_PATH)/src/google/protobuf/stubs/common.cc                              \
+    $(MY_LOCAL_PATH)/src/google/protobuf/stubs/once.cc                                \
+    $(MY_LOCAL_PATH)/src/google/protobuf/stubs/hash.h                                 \
+    $(MY_LOCAL_PATH)/src/google/protobuf/stubs/map_util.h                             \
+    $(MY_LOCAL_PATH)/src/google/protobuf/stubs/shared_ptr.h                           \
+    $(MY_LOCAL_PATH)/src/google/protobuf/stubs/stringprintf.cc                        \
+    $(MY_LOCAL_PATH)/src/google/protobuf/stubs/stringprintf.h                         \
+    $(MY_LOCAL_PATH)/src/google/protobuf/extension_set.cc                             \
+    $(MY_LOCAL_PATH)/src/google/protobuf/generated_message_util.cc                    \
+    $(MY_LOCAL_PATH)/src/google/protobuf/message_lite.cc                              \
+    $(MY_LOCAL_PATH)/src/google/protobuf/repeated_field.cc                            \
+    $(MY_LOCAL_PATH)/src/google/protobuf/wire_format_lite.cc                          \
+    $(MY_LOCAL_PATH)/src/google/protobuf/io/coded_stream.cc                           \
+    $(MY_LOCAL_PATH)/src/google/protobuf/io/coded_stream_inl.h                        \
+    $(MY_LOCAL_PATH)/src/google/protobuf/io/zero_copy_stream.cc                       \
+    $(MY_LOCAL_PATH)/src/google/protobuf/io/zero_copy_stream_impl_lite.cc
 
 # C++ full library
 # =======================================================
 protobuf_cc_full_src_files := \
     $(CC_LITE_SRC_FILES)                                             \
-    $(CURRENT_DIR)/src/google/protobuf/stubs/strutil.cc                             \
-    $(CURRENT_DIR)/src/google/protobuf/stubs/strutil.h                              \
-    $(CURRENT_DIR)/src/google/protobuf/stubs/substitute.cc                          \
-    $(CURRENT_DIR)/src/google/protobuf/stubs/substitute.h                           \
-    $(CURRENT_DIR)/src/google/protobuf/stubs/structurally_valid.cc                  \
-    $(CURRENT_DIR)/src/google/protobuf/descriptor.cc                                \
-    $(CURRENT_DIR)/src/google/protobuf/descriptor.pb.cc                             \
-    $(CURRENT_DIR)/src/google/protobuf/descriptor_database.cc                       \
-    $(CURRENT_DIR)/src/google/protobuf/dynamic_message.cc                           \
-    $(CURRENT_DIR)/src/google/protobuf/extension_set_heavy.cc                       \
-    $(CURRENT_DIR)/src/google/protobuf/generated_message_reflection.cc              \
-    $(CURRENT_DIR)/src/google/protobuf/message.cc                                   \
-    $(CURRENT_DIR)/src/google/protobuf/reflection_ops.cc                            \
-    $(CURRENT_DIR)/src/google/protobuf/service.cc                                   \
-    $(CURRENT_DIR)/src/google/protobuf/text_format.cc                               \
-    $(CURRENT_DIR)/src/google/protobuf/unknown_field_set.cc                         \
-    $(CURRENT_DIR)/src/google/protobuf/wire_format.cc                               \
-    $(CURRENT_DIR)/src/google/protobuf/io/gzip_stream.cc                            \
-    $(CURRENT_DIR)/src/google/protobuf/io/printer.cc                                \
-    $(CURRENT_DIR)/src/google/protobuf/io/strtod.cc                                 \
-    $(CURRENT_DIR)/src/google/protobuf/io/tokenizer.cc                              \
-    $(CURRENT_DIR)/src/google/protobuf/io/zero_copy_stream_impl.cc                  \
-    $(CURRENT_DIR)/src/google/protobuf/compiler/importer.cc                         \
-    $(CURRENT_DIR)/src/google/protobuf/compiler/parser.cc
+    $(MY_LOCAL_PATH)/src/google/protobuf/stubs/strutil.cc                             \
+    $(MY_LOCAL_PATH)/src/google/protobuf/stubs/strutil.h                              \
+    $(MY_LOCAL_PATH)/src/google/protobuf/stubs/substitute.cc                          \
+    $(MY_LOCAL_PATH)/src/google/protobuf/stubs/substitute.h                           \
+    $(MY_LOCAL_PATH)/src/google/protobuf/stubs/structurally_valid.cc                  \
+    $(MY_LOCAL_PATH)/src/google/protobuf/descriptor.cc                                \
+    $(MY_LOCAL_PATH)/src/google/protobuf/descriptor.pb.cc                             \
+    $(MY_LOCAL_PATH)/src/google/protobuf/descriptor_database.cc                       \
+    $(MY_LOCAL_PATH)/src/google/protobuf/dynamic_message.cc                           \
+    $(MY_LOCAL_PATH)/src/google/protobuf/extension_set_heavy.cc                       \
+    $(MY_LOCAL_PATH)/src/google/protobuf/generated_message_reflection.cc              \
+    $(MY_LOCAL_PATH)/src/google/protobuf/message.cc                                   \
+    $(MY_LOCAL_PATH)/src/google/protobuf/reflection_ops.cc                            \
+    $(MY_LOCAL_PATH)/src/google/protobuf/service.cc                                   \
+    $(MY_LOCAL_PATH)/src/google/protobuf/text_format.cc                               \
+    $(MY_LOCAL_PATH)/src/google/protobuf/unknown_field_set.cc                         \
+    $(MY_LOCAL_PATH)/src/google/protobuf/wire_format.cc                               \
+    $(MY_LOCAL_PATH)/src/google/protobuf/io/gzip_stream.cc                            \
+    $(MY_LOCAL_PATH)/src/google/protobuf/io/printer.cc                                \
+    $(MY_LOCAL_PATH)/src/google/protobuf/io/strtod.cc                                 \
+    $(MY_LOCAL_PATH)/src/google/protobuf/io/tokenizer.cc                              \
+    $(MY_LOCAL_PATH)/src/google/protobuf/io/zero_copy_stream_impl.cc                  \
+    $(MY_LOCAL_PATH)/src/google/protobuf/compiler/importer.cc                         \
+    $(MY_LOCAL_PATH)/src/google/protobuf/compiler/parser.cc
 
 # C++ full library - libc++ version for the platform
 # =======================================================
@@ -77,10 +76,12 @@ LOCAL_MODULE_TAGS := optional
 LOCAL_CPP_EXTENSION := .cc
 LOCAL_SRC_FILES := $(protobuf_cc_full_src_files)
 LOCAL_C_INCLUDES := \
-    $(LOCAL_PATH)/$(CURRENT_DIR)/android \
-    $(LOCAL_PATH)/$(CURRENT_DIR)/src
+    $(MY_LOCAL_PATH)/android \
+    $(MY_LOCAL_PATH)/src
 
 LOCAL_CFLAGS := -frtti -std=c++11 $(IGNORED_WARNINGS)
 LOCAL_SHARED_LIBRARIES := libz
+
+LOCAL_EXPORT_C_INCLUDES := $(MY_LOCAL_PATH)/src
 
 include $(BUILD_SHARED_LIBRARY)
