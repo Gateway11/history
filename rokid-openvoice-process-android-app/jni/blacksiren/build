@@ -1,0 +1,11 @@
+#!/bin/sh
+#export NDK_HOME=/Users/hadoop/software/android-ndk-r10e
+export NDK_HOME=/Users/daixiang/Android/AndroidIDE/ndk-r14
+export PATH=$NDK_HOME:$PATH
+
+cd libjsonc
+ndk-build clean
+ndk-build
+cd ../libbsiren
+ndk-build clean
+ndk-build

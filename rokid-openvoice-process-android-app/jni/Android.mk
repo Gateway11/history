@@ -7,25 +7,26 @@ include $(call all-subdir-makefiles)
 include $(CLEAR_VARS)
 LOCAL_MODULE := libopenvoice
 LOCAL_SRC_FILES := \
-		src/audio_recorder.cpp \
-        src/opensl_io.c \
-        src/VoiceService.cpp \
-        src/VoiceCallback.cpp
+		main/audio_recorder.cpp \
+		main/mic_array.c \
+        main/VoiceService.cpp \
+        main/VoiceCallback.cpp
     
 LOCAL_SHARED_LIBRARIES := \
         libbsiren \
+		libtinyalsa \
         libspeech
 
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/include
 LOCAL_LDLIBS := -llog -lOpenSLES
-LOCAL_CFLAGS += -std=c++11
+LOCAL_CPPFLAGS += -std=c++11
 include $(BUILD_SHARED_LIBRARY)
 
 #===========================================
 #
 include $(CLEAR_VARS)
 LOCAL_MODULE := libopenvoice2
-LOCAL_SRC_FILES := src/com_rokid_openvoice_VoiceNative.cpp
+LOCAL_SRC_FILES := main/com_rokid_openvoice_VoiceNative.cpp
         
 LOCAL_LDLIBS := -llog
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/include

@@ -1,15 +1,15 @@
 #!/bin/sh
-export NDK_HOME=/Users/daixiang/Android/AndroidIDE/ndk-r12
+export NDK_HOME=/Users/daixiang/Android/AndroidIDE/ndk-r13
 export PATH=$NDK_HOME:$PATH
 
-cd rokid-blacksiren/libjsonc
-#ndk-build clean
-ndk-build
+cd blacksiren/libjsonc
+ndk-build clean
+ndk-build -j8
 
 cd ../libbsiren
-#ndk-build clean
-ndk-build
+ndk-build clean
+ndk-build -j8
 
 cd ..
 ndk-build clean
-ndk-build
+ndk-build -j8
