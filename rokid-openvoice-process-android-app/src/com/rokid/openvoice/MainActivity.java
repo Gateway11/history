@@ -10,14 +10,11 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         VoiceNative.setup();
-        VoiceNative.startSiren(true);
-//        VoiceNative.networkStateChange(true);
+        VoiceNative.networkStateChange(true);
     }
 }
+//09-02 09:18:51.549: W/speech.Connection(7327): websocket connect failed: No address found: apigwws.open.rokid.com, N4Poco3Net23NoAddressFoundExceptionE
 
-//08-22 10:43:51.804: E/speech.Connection(5757): initialize ssl failed: Exception: /system/etc/roots.pem
-//08-22 10:43:51.804: E/speech.Connection(5757): connect: init ssl failed
-//08-22 10:43:51.804: I/speech.Connection(5757): connect to server failed, wait a while and retry
 
 
 

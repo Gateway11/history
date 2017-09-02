@@ -10,18 +10,14 @@
 #include "Poco/Net/HTTPRequest.h"
 #include "Poco/Net/HTTPResponse.h"
 #include "Poco/Net/HTTPMessage.h"
-#include "Poco/Exception.h"
+#include "Poco/Net/SSLException.h"
 #include "Poco/SharedPtr.h"
 #include "Poco/Net/PrivateKeyPassphraseHandler.h"
 #include "Poco/Net/InvalidCertificateHandler.h"
-#include "Poco/Net/ConsoleCertificateHandler.h"
+#include "Poco/Net/AcceptCertificateHandler.h"
 #include "Poco/Net/KeyConsoleHandler.h"
 #include "Poco/Net/SSLManager.h"
 #include "Poco/Net/Context.h"
-
-#ifndef PRIu64
-#define PRIu64  "I64u"
-#endif
 
 #define MIN_BUF_SIZE 4096
 #define CONNECT_RETRY_TIMEOUT 30000
@@ -46,11 +42,13 @@ using Poco::Net::HTTPResponse;
 using Poco::Net::HTTPMessage;
 using Poco::Net::WebSocket;
 using Poco::Exception;
+using Poco::Net::NetException;
+using Poco::Net::SSLException;
 using Poco::SharedPtr;
 using Poco::Net::PrivateKeyPassphraseHandler;
 using Poco::Net::KeyConsoleHandler;
 using Poco::Net::InvalidCertificateHandler;
-using Poco::Net::ConsoleCertificateHandler;
+using Poco::Net::AcceptCertificateHandler;
 using Poco::Net::SSLManager;
 using Poco::Net::Context;
 using Poco::Net::HTTPClientSession;
@@ -60,19 +58,6 @@ namespace rokid {
 namespace speech {
 
 bool SpeechConnection::ssl_initialized_ = false;
-
-/** comment temporary
-static std::string get_ssl_roots_pem(const char* pem_file) {
-	Log::d(CONN_TAG, "ssl_roots_pem is %s", pem_file);
-	if (pem_file == NULL)
-		return "";
-	std::ifstream stream(pem_file);
-	std::stringstream ss;
-	ss << stream.rdbuf();
-	stream.close();
-	return ss.str();
-}
-*/
 
 SpeechConnection::SpeechConnection() : initialized_(false) {
 }
@@ -171,29 +156,24 @@ shared_ptr<WebSocket> SpeechConnection::connect() {
 	const char* branch = config_->get("branch", "/");
 	int port = atoi(port_str);
 
-	const char* ssl_roots_pem = config_->get("ssl_roots_pem", NULL);
-	if (ssl_roots_pem == NULL) {
-		cs = new HTTPClientSession(host, port);
-	} else {
-		if (!init_ssl(config_)) {
-			Log::e(CONN_TAG, "connect: init ssl failed");
-			return NULL;
-		}
-		cs = new HTTPSClientSession(host, port);
+	if (!init_ssl()) {
+		Log::e(CONN_TAG, "connect: init ssl failed");
+		return NULL;
 	}
+	cs = new HTTPSClientSession(host, port);
 	HTTPRequest request(HTTPRequest::HTTP_GET, branch,
 			HTTPMessage::HTTP_1_1);
 	HTTPResponse response;
 	shared_ptr<WebSocket> sock;
 
-	Log::d(CONN_TAG, "server address is %s:%d%s, use ssl %d",
-			host, port, branch, ssl_initialized_);
+	Log::d(CONN_TAG, "server address is %s:%d%s",
+			host, port, branch);
 
 	try {
 		sock.reset(new WebSocket(*cs, request, response));
-	} catch (Exception e) {
-		Log::w(CONN_TAG, "websocket connect failed: %s",
-				e.displayText().c_str());
+	} catch (Exception& e) {
+		Log::w(CONN_TAG, "websocket connect failed: %s, %s",
+				e.displayText().c_str(), e.className());
 		delete cs;
 		return NULL;
 	}
@@ -291,7 +271,7 @@ bool SpeechConnection::do_socket_poll() {
 			Log::d(CONN_TAG, "socket recv %d bytes, flags 0x%x", c, flags);
 			Log::d(CONN_TAG, "after recv frame, avail = %d", web_socket_->available());
 #endif
-		} catch (Exception e) {
+		} catch (Exception& e) {
 			Log::w(CONN_TAG, "websocket receive failed, exception = %s",
 					e.displayText().c_str());
 			push_error_resp();
@@ -385,6 +365,8 @@ void SpeechConnection::ping() {
 			| WebSocket::FRAME_OP_PING);
 }
 
+#define PRIu64          "llu"
+
 string SpeechConnection::timestamp() {
 	struct timeval tv;
 	uint64_t usecs;
@@ -451,26 +433,27 @@ bool SpeechConnection::send(const void* data, uint32_t length) {
 					offset, length);
 #endif
 		}
-	} catch (Exception e) {
+	} catch (Exception& e) {
 		Log::w(CONN_TAG, "send frame failed: %s", e.displayText().c_str());
 		return false;
 	}
 	return true;
 }
 
-bool SpeechConnection::init_ssl(SpeechConfig* config) {
+bool SpeechConnection::init_ssl() {
 	if (!ssl_initialized_) {
 		try {
 			Poco::Net::initializeSSL();
 			SharedPtr<PrivateKeyPassphraseHandler> key_handler
 				= new KeyConsoleHandler(false);
 			SharedPtr<InvalidCertificateHandler> cert_handler
-				= new ConsoleCertificateHandler(false);
-			Context::Ptr context = new Context(Context::CLIENT_USE, "",
-					"", config->get("ssl_roots_pem", ""));
+				= new AcceptCertificateHandler(false);
+			struct Context::Params params;
+			params.verificationMode = Context::VERIFY_RELAXED;
+			Context::Ptr context = new Context(Context::CLIENT_USE, params);
 			SSLManager::instance().initializeClient(key_handler,
 					cert_handler, context);
-		} catch (Exception e) {
+		} catch (Exception& e) {
 			Log::e(CONN_TAG, "initialize ssl failed: %s", e.displayText().c_str());
 			return false;
 		}
