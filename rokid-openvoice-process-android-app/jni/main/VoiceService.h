@@ -16,8 +16,7 @@
 #include "EventTypes.h"
 
 using namespace std;
-using namespace rokid;
-using namespace speech;
+using namespace rokid::speech;
 using namespace openvoice_process;
 
 class VoiceService {
