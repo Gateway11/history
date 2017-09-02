@@ -1,11 +1,11 @@
 package com.rokid.openvoice;
 
-public class VoiceNative{
+public class VoiceManager{
 	
 	static{
 		System.loadLibrary("openvoice2");
 	}
-	public static native boolean setup(); 
+	public static native boolean init(); 
 	
 	public static native void startSiren(boolean isopen); 
 	
