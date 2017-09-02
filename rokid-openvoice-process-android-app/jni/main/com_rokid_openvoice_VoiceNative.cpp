@@ -9,7 +9,7 @@ JNIEXPORT jboolean JNICALL
 Java_com_rokid_openvoice_VoiceNative_setup(JNIEnv *env, jclass)
 {
 	LOGD("%s", __FUNCTION__);
-    return service->setup();
+    return service->init();
 }
 
 JNIEXPORT void JNICALL 

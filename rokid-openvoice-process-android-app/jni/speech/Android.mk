@@ -57,10 +57,3 @@ LOCAL_SHARED_LIBRARIES := libpoco libcrypto libprotobuf-rokid-cpp-full
 LOCAL_EXPORT_C_INCLUDES := $(MY_LOCAL_PATH)/include
 
 include $(BUILD_SHARED_LIBRARY)
-
-include $(CLEAR_VARS)
-LOCAL_MODULE := roots.pem
-LOCAL_MODULE_CLASS := ETC
-LOCAL_MODULE_PATH := $(TARGET_OUT)/etc
-LOCAL_SRC_FILES := etc/$(LOCAL_MODULE)
-#include $(BUILD_PREBUILT)

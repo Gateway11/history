@@ -7,8 +7,7 @@
 extern "C" {
 #endif
 
-//bool init(void*);
-bool init(void*, on_voice_event_t);
+bool setup(void*, on_voice_event_t);
 
 void set_siren_state_change(int state);
 

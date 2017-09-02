@@ -26,7 +26,7 @@ siren_input_if_t siren_input = { init_input, release_input, start_input,
 
 siren_state_changed_callback_t siren_state_change = { state_changed_callback };
 
-bool init(void*token, on_voice_event_t callback) {
+bool setup(void*token, on_voice_event_t callback) {
     __token = token;
 
     if(mic_array_device_open(&mic_array_device) != 0){
@@ -63,7 +63,6 @@ int start_input(void *token) {
 //		LOGE("failed to open audio device ! \n");
 //		return -1;
 //	}
-    LOGV("%s \t %p", __FUNCTION__, mic_array_device);
     return mic_array_device->start_stream(mic_array_device);
 //	LOGE("open audio device success! \n");
 //	return 0;

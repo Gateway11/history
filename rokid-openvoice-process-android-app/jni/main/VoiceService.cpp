@@ -1,22 +1,26 @@
 #include <stdio.h>
 #include <sys/prctl.h>
-#include <functional>
 
 #include "VoiceService.h"
 #include "audio_recorder.h"
-#include "json.h"
 
 VoiceService::VoiceService() {
 	pthread_mutex_init(&event_mutex, NULL);
 	pthread_mutex_init(&speech_mutex, NULL);
 	pthread_mutex_init(&siren_mutex, NULL);
+    pthread_mutex_init(&session_mutex, NULL);
 	pthread_cond_init(&event_cond, NULL);
+
+    _voice_config = make_shared<VoiceConfig>();
+	_callback = make_shared<VoiceCallback>();
+	_speech = new_speech();
+    clear();
 }
 
-bool VoiceService::setup() {
+bool VoiceService::init() {
 	pthread_mutex_lock(&siren_mutex);
 	if (mCurrentSirenState == SIREN_STATE_UNKNOWN) {
-		if (!init(this,
+		if (!setup(this,
 				[](void *token, voice_event_t *event) {((VoiceService*)token)->voice_event_callback(event);})) {
 			LOGE("init siren failed.");
 			pthread_mutex_unlock(&siren_mutex);
@@ -26,18 +30,16 @@ bool VoiceService::setup() {
 		goto done;
 	}
 	mCurrentSirenState = SIREN_STATE_INITED;
-	if (!_speech.get()) _speech = new_speech();
 	pthread_create(&event_thread, NULL,
 			[](void* token)->void* {return ((VoiceService*)token)->onEvent();},
 			this);
-
 done: 
     pthread_mutex_unlock(&siren_mutex);
 	return true;
 }
 
-void VoiceService::start_siren(bool isopen) {
-	LOGV("%s \t flag : %d \t mCurrState : %d \t opensiren : %d",
+void VoiceService::start_siren(const bool isopen) {
+	LOGV("%s \t isopen : %d \t mCurrState : %d \t opensiren : %d",
 			__FUNCTION__, isopen, mCurrentSirenState, openSiren);
 
 	pthread_mutex_lock(&siren_mutex);
@@ -51,24 +53,28 @@ void VoiceService::start_siren(bool isopen) {
 		_stop_siren_process_stream();
 		mCurrentSirenState = SIREN_STATE_STOPED;
 	}
-	if (!isopen && mCurrentSirenState != SIREN_STATE_UNKNOWN)
-		openSiren = false;
+	if (!isopen && mCurrentSirenState != SIREN_STATE_UNKNOWN) openSiren = false;
 	pthread_mutex_unlock(&siren_mutex);
 }
 
-void VoiceService::set_siren_state(const int state) {
+void VoiceService::set_siren_state(const int32_t state) {
 	set_siren_state_change(state);
+    pthread_mutex_lock(&session_mutex);
+    if(state == SIREN_STATE_AWAKE && session_id < 0) {
+        session_id = current_id = vad_start();
+        _callback->voice_event(current_id, VoiceEvent::VOICE_START);
+    }
+    pthread_mutex_unlock(&session_mutex);
 	LOGV("current_status     >>   %d", state);
 }
 
-void VoiceService::network_state_change(bool connected) {
+void VoiceService::network_state_change(const bool connected) {
 	LOGV("network_state_change      isconnect  <<%d>>", connected);
 	pthread_mutex_lock(&speech_mutex);
-	if (!_speech.get())
-		_speech = new_speech();
 	if (connected && mCurrentSpeechState != SPEECH_STATE_PREPARED) {
-		this->config();
-		if (_speech->prepare()) {
+        if(_voice_config->config(
+                    [&](const char* key, const char* value){_speech->config(key, value);}) 
+                    && _speech->prepare()) {
 			mCurrentSpeechState = SPEECH_STATE_PREPARED;
 			pthread_create(&response_thread, NULL,
 					[](void* token)->void* {return ((VoiceService*)token)->onResponse();},
@@ -100,14 +106,20 @@ void VoiceService::network_state_change(bool connected) {
 
 void VoiceService::update_stack(const string &appid) {
 	this->appid = appid;
-	LOGE("appid  %s", this->appid.c_str());
+	LOGE("%s  %s", __FUNCTION__, this->appid.c_str());
 }
 
-void VoiceService::regist_callback(const void* callback) {
-	this->callback = make_shared < VoiceCallback > (callback);
+void VoiceService::update_config(const string& device_id, const string& device_type_id,
+                                const string& key, const string& secret) {
+    if(!_voice_config->save_config(device_id, device_type_id, key, secret)){
+    }
 }
 
-int VoiceService::vad_start() {
+void VoiceService::regist_callback(const void* _callback) {
+    this->_callback->set_callback(_callback);
+}
+
+int32_t VoiceService::vad_start() {
 	if (mCurrentSpeechState == SPEECH_STATE_PREPARED) {
 		shared_ptr<Options> options = new_options();
 		if (options.get() && has_vt) {
@@ -142,128 +154,71 @@ void VoiceService::voice_print(const voice_event_t *voice_event) {
 
 void VoiceService::voice_event_callback(voice_event_t *voice_event) {
 	pthread_mutex_lock(&event_mutex);
-	//add to siren_queue
-	voice_event_t *voice_message(new voice_event_t);
-	memcpy(voice_message, voice_event, sizeof(voice_event_t));
-	void *buff = NULL;
-	if (HAS_VOICE(voice_message->flag) || HAS_VT(voice_message->flag)) {
-		buff = new char(voice_event->length);
-		memcpy(buff, voice_event->buff, voice_event->length);
-		voice_message->buff = buff;
-	}
-	message_queue.push_back(voice_message);
-	pthread_cond_signal(&event_cond);
-	pthread_mutex_unlock(&event_mutex);
-}
-
-void VoiceService::config() {
-	json_object *json_obj = json_object_from_file(OPENVOICE_PREFILE);
-
-	if (json_obj == NULL) {
-		LOGE("%s cannot find", OPENVOICE_PREFILE);
-		return;
-	}
-	json_object *host, *port, *branch, *ssl_roots_pem, *auth_key, *device_type,
-			*device_id, *secret, *api_version;
-
-	if (TRUE == json_object_object_get_ex(json_obj, "host", &host)) {
-		_speech->config("host", json_object_get_string(host));
-		LOGE("%s", json_object_get_string(host));
-	}
-	if (TRUE == json_object_object_get_ex(json_obj, "port", &port)) {
-		_speech->config("port", json_object_get_string(port));
-		LOGE("%s", json_object_get_string(port));
-	}
-	if (TRUE == json_object_object_get_ex(json_obj, "branch", &branch)) {
-		_speech->config("branch", json_object_get_string(branch));
-		LOGE("%s", json_object_get_string(branch));
-	}
-	if (TRUE == json_object_object_get_ex(json_obj, "ssl_roots_pem",&ssl_roots_pem)) {
-		_speech->config("ssl_roots_pem", json_object_get_string(ssl_roots_pem));
-		LOGE("%s", json_object_get_string(ssl_roots_pem));
-	}
-	if (TRUE == json_object_object_get_ex(json_obj, "key", &auth_key)) {
-		_speech->config("key", json_object_get_string(auth_key));
-		LOGE("%s", json_object_get_string(auth_key));
-	}
-	if (TRUE == json_object_object_get_ex(json_obj, "device_type_id", &device_type)) {
-		_speech->config("device_type_id", json_object_get_string(device_type));
-		LOGE("%s", json_object_get_string(device_type));
-	}
-	if (TRUE == json_object_object_get_ex(json_obj, "device_id", &device_id)) {
-		_speech->config("device_id", json_object_get_string(device_id));
-		LOGE("%s", json_object_get_string(device_id));
-	}
-	if (TRUE == json_object_object_get_ex(json_obj, "api_version", &api_version)) {
-		_speech->config("api_version", json_object_get_string(api_version));
-		LOGE("%s", json_object_get_string(api_version));
-	}
-	if (TRUE == json_object_object_get_ex(json_obj, "secret", &secret)) {
-		_speech->config("secret", json_object_get_string(secret));
-		LOGE("%s", json_object_get_string(secret));
-	}
-	_speech->config("codec", "opu");
-	json_object_put(json_obj);
+    int32_t len =  0;
+    char *buff = nullptr;
+    if(voice_event->length > 0){
+        len = voice_event->length;
+    }
+    char *temp = new char[sizeof(voice_event_t) + len];
+    if(len) buff = temp + sizeof(voice_event_t);
+    
+    voice_event_t *_event_t = (voice_event_t*)temp;
+    memcpy(_event_t, voice_event, sizeof(voice_event_t));
+    
+    if ((HAS_VOICE(_event_t->flag) || HAS_VT(_event_t->flag)) && len) {
+    	memcpy(buff, voice_event->buff, len);
+    	_event_t->buff = buff;
+    }
+    _events.push_back(_event_t);
+    pthread_cond_signal(&event_cond);
+    pthread_mutex_unlock(&event_mutex);
 }
 
 void* VoiceService::onEvent() {
 	prctl(PR_SET_NAME, __FUNCTION__);
-	int id = -1;
-	while (true) {
-		pthread_mutex_lock(&event_mutex);
-		while (message_queue.empty()) {
-			pthread_cond_wait(&event_cond, &event_mutex);
-		}
-		voice_event_t *message = message_queue.front();
-		message_queue.pop_front();
-		pthread_mutex_unlock(&event_mutex);
+    while(true){
+        pthread_mutex_lock(&event_mutex);
+        while(_events.empty()) {
+            pthread_cond_wait(&event_cond, &event_mutex);
+        }
+        voice_event_t *_event = _events.front();
+        _events.pop_front();
+        pthread_mutex_unlock(&event_mutex);
 
-		LOGV("event : -------------------------%d----", message->event);
+        LOGV("event : -------------------------%d----", _event->event);
 
-		if (callback.get()) {
-			callback->voice_event(message->event, HAS_SL(message->flag),
-					message->sl, message->background_energy,
-					message->background_threshold);
-		}
-
-		switch (message->event) {
-		case SIREN_EVENT_WAKE_CMD:
-			LOGV("WAKE_CMD");
-			break;
-		case SIREN_EVENT_SLEEP:
-			LOGV("SLEEP");
-			break;
-		case SIREN_EVENT_VAD_START:
-			id = vad_start();
-			LOGV("VAD_START\t\t ID  :  <<%d>>", id);
-			break;
-		case SIREN_EVENT_VAD_DATA:
-			if (id > 0 && HAS_VOICE(message->flag)) {
-				_speech->put_voice(id, (uint8_t *) message->buff, message->length);
-			}
-			break;
-		case SIREN_EVENT_VAD_END:
-			LOGV("VAD_END\t\t ID  <<%d>> ", id);
-			if (id > 0) {
-				_speech->end_voice(id);
-				id = -1;
-			}
-			break;
-		case SIREN_EVENT_VAD_CANCEL:
-			if (id > 0) {
-				_speech->cancel(id);
-				LOGI("VAD_CANCEL\t\t ID   <<%d>>", id);
-				id = -1;
-			}
-			break;
-		case SIREN_EVENT_VOICE_PRINT:
-			voice_print(message);
-			LOGI("VOICE_PRINT");
-			break;
-		}
-		delete[] (char*) message->buff;
-		delete message;
-	}
+        switch(_event->event) {
+            case SIREN_EVENT_WAKE_PRE:
+                _callback->voice_event(-1, VoiceEvent::VOICE_COMING, _event->sl);
+                LOGV("VAD_COMING   %F", _event->sl);
+                break;
+            case SIREN_EVENT_VAD_START:
+                if(session_id < 0) {
+                    session_id = current_id = vad_start();
+                    _callback->voice_event(current_id, VoiceEvent::VOICE_START);
+                }
+                LOGV("VAD_START\t\t ID  :  <<%d>>", session_id);
+                break;
+            case SIREN_EVENT_VAD_DATA:
+                if (current_id > 0 && HAS_VOICE(_event->flag))
+                    _speech->put_voice(current_id, (uint8_t *)_event->buff, _event->length);
+                break;
+            case SIREN_EVENT_VAD_END:
+                LOGV("VAD_END\t\t ID  :   <<%d>> ", current_id);
+                if(current_id > 0) _speech->end_voice(current_id);
+                current_id = -1;
+                break;
+            case SIREN_EVENT_VAD_CANCEL:
+                if(current_id > 0) _speech->cancel(current_id);
+                LOGI("VAD_CANCEL\t\t ID  :   <<%d>>", current_id);
+                current_id = -1;
+                break;
+            case SIREN_EVENT_VOICE_PRINT:
+                voice_print(_event);
+                break;
+        }
+		delete[] (char *)_event;
+    }
 	_speech->release();
 	_speech.reset();
 	return NULL;
@@ -273,49 +228,53 @@ void* VoiceService::onResponse() {
 	prctl(PR_SET_NAME, __FUNCTION__);
 	auto arbitration = [](const string& activation)->bool {return ("fake" == activation || "reject" == activation);};
 	SpeechResult sr;
-	string activation;
+    string activation, asr;
 	json_object *nlp_obj, *activation_obj;
 	while (1) {
 		if (!_speech->poll(sr)) {
 			break;
 		}
 		LOGV("result : type \t %d \t err \t %d \t id \t %d", sr.type, sr.err, sr.id);
-		if (sr.type == SPEECH_RES_START) {
-			activation.clear();
-		} else if ((sr.type == SPEECH_RES_INTER || sr.type == SPEECH_RES_END) && !sr.extra.empty()) {
-			nlp_obj = json_tokener_parse(sr.extra.c_str());
-			if (TRUE == json_object_object_get_ex(nlp_obj, "activation", &activation_obj)) {
-				activation = json_object_get_string(activation_obj);
-				json_object_put(nlp_obj);
-				LOGV("result : activation %s", activation.c_str());
-				if (callback.get()) {
-					callback->arbitration(activation);
-				}
-				if (arbitration(activation)) {
-					set_siren_state_change(SIREN_STATE_SLEEP);
-					continue;
-				}
-			}
-		}
-		if (!arbitration(activation)) {
-			if (sr.type == SPEECH_RES_END) {
-				LOGV("result : asr\t%s", sr.asr.c_str());
-				LOGV("result : nlp\t%s", sr.nlp.c_str());
-				LOGV("result : action  %s", sr.action.c_str());
-				if (callback.get()) {
-					callback->voice_command(sr.asr, sr.nlp, sr.action);
-				} else {
-					LOGI("Java service is null , Waiting for it to initialize");
-				}
-			} else if (sr.type == SPEECH_RES_ERROR
-							&& (sr.err == SPEECH_TIMEOUT
-							|| sr.err == SPEECH_SERVER_INTERNAL)) {
-				if (callback.get()) {
-					callback->speech_error(sr.err);
-				}
-			}
-		}
+        if(sr.type >= SPEECH_RES_END){
+            clear(sr.id);
+//            if(sr.type == SPEECH_RES_CANCELLED){
+//                _callback->voice_event(sr.id, VoiceEvent::VOICE_CANCEL);
+//            }
+        }
+        if(sr.type == SPEECH_RES_START) {
+            activation.clear();
+        } else if((sr.type == SPEECH_RES_INTER || sr.type == SPEECH_RES_END) && !sr.extra.empty()) {
+            nlp_obj = json_tokener_parse(sr.extra.c_str());
+            if(TRUE == json_object_object_get_ex(nlp_obj, "activation", &activation_obj)){
+                activation = json_object_get_string(activation_obj);
+                json_object_put(nlp_obj);
+                LOGV("result : activ \t %s", activation.c_str());
+                const int32_t event = transform_string_to_event(activation);
+                if(event != -1) _callback->voice_event(sr.id, event);
+                if(arbitration(activation)) {
+                    set_siren_state_change(SIREN_STATE_SLEEP);
+                    continue;
+                }
+            }
+        }
+        if(!arbitration(activation)) {
+            if(sr.type == SPEECH_RES_INTER){
+//            if(sr.type == SPEECH_RES_INTER || sr.type == SPEECH_RES_ASR_FINISH){
+//                ALOGV("result : asr\t%s", sr.asr.c_str());
+//                _callback->intermediate_result(sr.id, sr.type, sr.asr);
+//                if(sr.type == SPEECH_RES_ASR_FINISH) asr = sr.asr;
+            }else if(sr.type == SPEECH_RES_END) {
+                LOGV("result : asr\t%s", sr.asr.c_str());
+                LOGV("result : nlp\t%s", sr.nlp.c_str());
+                LOGV("result : action  %s", sr.action.c_str());
+                _callback->voice_command(sr.id, sr.asr, sr.nlp, sr.action);
+            } else if(sr.type == SPEECH_RES_ERROR && (sr.err == SPEECH_TIMEOUT 
+                                || sr.err == SPEECH_SERVICE_UNAVAILABLE)) {
+                _callback->speech_error(sr.id, sr.err);
+            }
+        }
 	}
+    clear();
 	LOGV("exit !!");
 	return NULL;
 }

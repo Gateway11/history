@@ -1,36 +1,37 @@
 #ifndef VOICE_SERVICE_H
 #define VOICE_SERVICE_H
 
-#define OPENVOICE_PREFILE "/system/etc/openvoice_profile.json"
+#define EXTRA_ACCEPT "accept"
+#define EXTRA_REJECT "reject"
 
+#include <log.h>
 #include <pthread.h>
 #include <stdlib.h>
-#include <memory>
-#include <string>
 #include <list>
 
-#include "VoiceCallback.h"
 #include "siren.h"
 #include "speech.h"
-#include "log.h"
+#include "voice_config.h"
+#include "VoiceCallback.h"
+#include "EventTypes.h"
 
 using namespace std;
 using namespace rokid;
 using namespace speech;
+using namespace openvoice_process;
 
 class VoiceService {
 public:
-
 	VoiceService();
 	~VoiceService(){}
 
-	bool setup();
-	void config();
-	void start_siren(bool);
-	void set_siren_state(const int);
-	void network_state_change(bool);
-	void update_stack(const string&);
-	void regist_callback(const void*);
+	bool init();
+	void start_siren(const bool isopen);
+	void set_siren_state(const int32_t state);
+	void network_state_change(const bool isconnect);
+	void update_stack(const string& appid);
+    void update_config(const string&, const string&, const string&, const string&);
+	void regist_callback(const void* callback);
 
 private:
 	int mCurrentSirenState = SIREN_STATE_UNKNOWN;
@@ -45,9 +46,28 @@ private:
 		SPEECH_STATE_UNKNOWN = 0, SPEECH_STATE_PREPARED, SPEECH_STATE_RELEASED
 	};
 
+    static inline int32_t transform_string_to_event(const std::string& extra){
+        if(extra == EXTRA_ACCEPT){
+            return VoiceEvent::VOICE_ACCEPT;
+        }else if(extra == EXTRA_REJECT){
+            return VoiceEvent::VOICE_REJECT;
+        }else{
+            return -1;
+        }
+    }
+
+    inline void clear(const int32_t id = -1){
+        pthread_mutex_lock(&session_mutex);
+        if(id == -1 || id == session_id){
+            session_id = -1;
+        }
+        pthread_mutex_unlock(&session_mutex);
+    }
+
 	pthread_mutex_t event_mutex;
 	pthread_mutex_t speech_mutex;
 	pthread_mutex_t siren_mutex;
+    pthread_mutex_t session_mutex;
 	pthread_cond_t event_cond;
 	pthread_t event_thread;
 	pthread_t response_thread;
@@ -55,21 +75,24 @@ private:
 	void* onEvent();
 	void* onResponse();
 
-	int vad_start();
+	int32_t vad_start();
 	void voice_print(const voice_event_t *);
 	void voice_event_callback(voice_event_t *voice_event);
 
-	shared_ptr<Speech> _speech;
-	shared_ptr<VoiceCallback> callback;
-	list<voice_event_t*> message_queue;
+    shared_ptr<Speech> _speech;
+    shared_ptr<VoiceCallback> _callback;
+    shared_ptr<VoiceConfig> _voice_config;
+    list<voice_event_t*> _events;
 
-	string appid;
-	int vt_start;
-	int vt_end;
-	float vt_energy;
-	string vt_data;
-	bool has_vt = false;
-	bool openSiren = true;
+    string appid;
+    string vt_data;
+    int32_t current_id;
+    int32_t session_id;
+    int32_t vt_start;
+    int32_t vt_end;
+    float vt_energy;
+    bool has_vt = false;
+    bool openSiren = true;
 };
 
 #endif // VOICE_SERVICE_H

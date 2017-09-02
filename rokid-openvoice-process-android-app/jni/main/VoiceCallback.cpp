@@ -1,23 +1,14 @@
 #include "VoiceCallback.h"
 
-static const void* _callback = nullptr;
-
-VoiceCallback::VoiceCallback(const void* callback){
-	_callback = callback;
+void VoiceCallback::voice_event(const int32_t id, const int32_t event, const double sl, const double energy){
 }
 
-void VoiceCallback::voice_command(const string& asr, const string& nlp, const string& action){
-
+void VoiceCallback::intermediate_result(const int32_t id, const int32_t type, const string& asr){
 }
 
-void VoiceCallback::voice_event(int event, bool has_sl, double sl, double energy, double threshold){
-
+void VoiceCallback::voice_command(const int32_t id, const string& asr, const string& nlp, const string& action){
 }
 
-void VoiceCallback::arbitration(const std::string& extra){
-
+void VoiceCallback::speech_error(const int32_t id, const int32_t errcode){
 }
 
-void VoiceCallback::speech_error(int errcode){
-
-}
