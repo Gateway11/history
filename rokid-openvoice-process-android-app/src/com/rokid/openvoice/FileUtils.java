@@ -5,10 +5,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import android.R.integer;
-
 public class FileUtils {
 
+	//Don't modify
 	private static final String ROOT = "/sdcard/rokid";
 	
 	public static final String WORKDIR_CN = "workdir_cn";

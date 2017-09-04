@@ -1,7 +1,7 @@
 #ifndef VOICE_CONFIG_H
 #define VOICE_CONFIG_H
 
-#define OPENVOICE_PREFILE "/system/etc/openvoice_profile.json"
+#define OPENVOICE_PREFILE "/sdcard/rokid/etc/openvoice_profile.json"
 
 #include <string>
 #include "json.h"

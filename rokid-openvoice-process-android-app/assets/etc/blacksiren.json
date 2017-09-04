@@ -14,7 +14,7 @@
     },
     "alg_config": {
         "alg_use_legacy_config_file":true,
-        "alg_legacy_config_file_path":"/system/workdir_cn",
+        "alg_legacy_config_file_path":"/sdcard/rokid/workdir_cn",
         "alg_lan":"zh",
         "alg_rs_mics":[0,1,2,3,4,5,6,7],
         "alg_aec":true,
@@ -47,8 +47,8 @@
             "alg_sl_mics":[0,1,2,3,4,5],
             "alg_bf_mics":[0,1,2,3,4,5],
             "alg_opus_compress":true,
-            "alg_vt_phomod":"/system/workdir_cn/phonetable",
-            "alg_vt_dnnmod":"/system/workdir_cn/final.svd.mod",
+            "alg_vt_phomod":"/sdcard/rokid/workdir_cn/phonetable",
+            "alg_vt_dnnmod":"/sdcard/rokid/workdir_cn/final.svd.mod",
             "alg_def_vt":[
                 {
                     "vt_type":1,
@@ -62,7 +62,7 @@
                     "vt_remote_check_without_aec":true,
                     "vt_local_classify_check":true,
                     "vt_classify_shield":-0.3,
-                    "vt_nnet_path":"/system/workdir_cn/final.ruoqi.mod"
+                    "vt_nnet_path":"/sdcard/rokid/workdir_cn/final.ruoqi.mod"
                 },
                 {
                     "vt_type":2,

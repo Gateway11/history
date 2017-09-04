@@ -1,7 +1,5 @@
 package com.rokid.openvoice;
 
-
-
 import android.app.Activity;
 import android.os.Bundle;
 
