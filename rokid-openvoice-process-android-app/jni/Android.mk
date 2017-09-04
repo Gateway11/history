@@ -31,7 +31,7 @@ include $(BUILD_SHARED_LIBRARY)
 #
 include $(CLEAR_VARS)
 LOCAL_MODULE := libopenvoice2
-LOCAL_SRC_FILES := main/com_rokid_openvoice_VoiceNative.cpp
+LOCAL_SRC_FILES := main/com_rokid_openvoice_VoiceManager.cpp
         
 LOCAL_LDLIBS := -llog
 LOCAL_SHARED_LIBRARIES := libopenvoice
