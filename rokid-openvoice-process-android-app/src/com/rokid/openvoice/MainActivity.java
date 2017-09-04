@@ -11,11 +11,12 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        VoiceManager.init();
-        VoiceManager.networkStateChange(true);
         
         mConfigManager = new ConfigManager(this);
         mConfigManager.install();
+        
+        VoiceManager.init();
+        VoiceManager.networkStateChange(true);
     }
 }
 
