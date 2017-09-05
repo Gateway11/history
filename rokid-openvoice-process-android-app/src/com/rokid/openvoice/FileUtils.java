@@ -18,15 +18,29 @@ public class FileUtils {
 		if(!file.exists()) file.mkdirs();
 	}
 	
+	public static void delete(File file){
+		if(file != null){
+			if(file.isDirectory()){
+				File[] files = file.listFiles();
+				for (File file2 : files) {
+					delete(file2);
+				}
+				file.delete();
+			}else{
+				file.delete();
+			}
+		}
+	}
+	
 	public static String mkdirs(String path){
 		File file = new File(ROOT, path);
-		if(!file.exists() || file.delete()){
-			file.mkdirs();
-			return file.getAbsolutePath();
+		if(file.exists()){
+			delete(file);
 		}
-		return "";
+		file.mkdirs();
+		return file.getAbsolutePath();
 	}
-
+	
 	public static void copyFrom(InputStream current, FileOutputStream target) {
 		if(current != null && target != null){
 			int len;
