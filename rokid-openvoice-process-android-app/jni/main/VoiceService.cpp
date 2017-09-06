@@ -59,12 +59,12 @@ void VoiceService::start_siren(const bool isopen) {
 
 void VoiceService::set_siren_state(const int32_t state) {
 	set_siren_state_change(state);
-    pthread_mutex_lock(&session_mutex);
-    if(state == SIREN_STATE_AWAKE && session_id < 0) {
-        session_id = current_id = vad_start();
-        _callback->voice_event(current_id, VoiceEvent::VOICE_START);
-    }
-    pthread_mutex_unlock(&session_mutex);
+//    pthread_mutex_lock(&session_mutex);
+//    if(state == SIREN_STATE_AWAKE && session_id < 0) {
+//        session_id = current_id = vad_start();
+//        _callback->voice_event(current_id, VoiceEvent::VOICE_START);
+//    }
+//    pthread_mutex_unlock(&session_mutex);
 	LOGV("current_status     >>   %d", state);
 }
 
@@ -193,7 +193,8 @@ void* VoiceService::onEvent() {
                 LOGV("VAD_COMING   %F", _event->sl);
                 break;
             case SIREN_EVENT_VAD_START:
-                if(session_id < 0) {
+ //               if(session_id < 0) {
+                if(current_id < 0) {
                     session_id = current_id = vad_start();
                     _callback->voice_event(current_id, VoiceEvent::VOICE_START);
                 }
@@ -236,7 +237,7 @@ void* VoiceService::onResponse() {
 		}
 		LOGV("result : type \t %d \t err \t %d \t id \t %d", sr.type, sr.err, sr.id);
         if(sr.type >= SPEECH_RES_END){
-            clear(sr.id);
+//            clear(sr.id);
 //            if(sr.type == SPEECH_RES_CANCELLED){
 //                _callback->voice_event(sr.id, VoiceEvent::VOICE_CANCEL);
 //            }

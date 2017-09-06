@@ -13,34 +13,34 @@ define all-named-files-under
 $(call find-files-in-subdirs, $(LOCAL_PATH), "$(1)",$(2))
 endef
 
-include $(CLEAR_VARS)
-LOCAL_MODULE := curl
-LOCAL_SRC_FILES := ../prebuilt/libcurl/libs/libcurl.so
-include $(PREBUILT_SHARED_LIBRARY)
+#include $(CLEAR_VARS)
+#LOCAL_MODULE := curl
+#LOCAL_SRC_FILES := ../prebuilt/libcurl/libs/libcurl.so
+#include $(PREBUILT_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := r2ssp
-LOCAL_SRC_FILES := ../prebuilt/support/$(TARGET_ARCH)/libs/libr2ssp.so 
+LOCAL_SRC_FILES := ../prebuilt/support/libs/android/armv7eabi/libr2ssp.so 
 include $(PREBUILT_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := ztvad
-LOCAL_SRC_FILES := ../prebuilt/support/$(TARGET_ARCH)/libs/libztvad.so 
-include $(PREBUILT_SHARED_LIBRARY)
-
-include $(CLEAR_VARS)
-LOCAL_MODULE := r2audio
-LOCAL_SRC_FILES := ../prebuilt/support/$(TARGET_ARCH)/libs/legacy/libr2audio.so 
+LOCAL_SRC_FILES := ../prebuilt/support/libs/android/armv7eabi/libztvad.so 
 include $(PREBUILT_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := r2vt
-LOCAL_SRC_FILES := ../prebuilt/support/$(TARGET_ARCH)/libs/legacy/libr2vt.so
+LOCAL_SRC_FILES := ../prebuilt/support/libs/android/armv7eabi/legacy/libr2vt.so
+include $(PREBUILT_SHARED_LIBRARY)
+
+include $(CLEAR_VARS)
+LOCAL_MODULE := r2mvdrbf
+LOCAL_SRC_FILES := ../prebuilt/support/libs/android/armv7eabi/libr2mvdrbf.so
 include $(PREBUILT_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE    := opus
-LOCAL_SRC_FILES := ../prebuilt/support/$(TARGET_ARCH)/libs/libopus.a
+LOCAL_SRC_FILES := ../prebuilt/support/libs/android/armv7eabi/libopus.a
 include $(PREBUILT_STATIC_LIBRARY)
 
 include $(CLEAR_VARS)
@@ -99,7 +99,7 @@ endif
 THIRD_INCLUDES += \
 	$(CURRENT_PATH)/../libjsonc/include \
 	$(CURRENT_PATH)/prebuilt/libcurl/include \
-	$(CURRENT_PATH)/prebuilt/support/$(TARGET_ARCH)/include 
+	$(CURRENT_PATH)/prebuilt/support/include 
 
 include $(CLEAR_VARS)
 SRC := $(call all-named-files-under,*.cpp, ../src) 
@@ -110,10 +110,11 @@ LOCAL_C_INCLUDES += \
 		$(THIRD_INCLUDES) \
 		$(CURRENT_PATH)/include 
 
-LOCAL_CFLAGS:= $(L_CFLAGS) -Wall -Wextra -std=c++11
+LOCAL_CFLAGS:= $(L_CFLAGS) -Wall -Wextra -std=c++11 -DANDROID_VERSION=$(ANDROID_VERSION)
 LOCAL_MODULE:= libbsiren
 LOCAL_LDLIBS:= -L$(SYSROOT)/usr/lib -llog
-LOCAL_SHARED_LIBRARIES := libr2ssp libztvad libr2vt libr2audio libcurl  
+LOCAL_SHARED_LIBRARIES := libr2ssp libztvad libr2vt 
+#LOCAL_SHARED_LIBRARIES += libcurl
 LOCAL_STATIC_LIBRARIES += libjsonc_static libopus
 
 include $(BUILD_SHARED_LIBRARY)

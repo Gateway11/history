@@ -1,5 +1,6 @@
 #git clone https://bitbucket.org/victorlazzarini/android-audiotest
 
+
 LOCAL_PATH := $(call my-dir)
 
 include $(call all-subdir-makefiles)
@@ -21,6 +22,7 @@ LOCAL_C_INCLUDES := \
 		$(LOCAL_PATH)/include \
 		$(LOCAL_PATH)/blacksiren/libbsiren/include \
 		$(LOCAL_PATH)/blacksiren/libjsonc/include
+
 
 LOCAL_LDLIBS := -llog -lOpenSLES
 LOCAL_CPPFLAGS += -std=c++11

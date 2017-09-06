@@ -9,6 +9,6 @@ APP_STL := stlport_static
 APP_ABI := armeabi-v7a
 
 #APP_OPTIM := debug
-APP_PLATFORM := android-23
+APP_PLATFORM := android-19
 
 APP_CFLAGS += -Wno-error=format-security

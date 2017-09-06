@@ -274,6 +274,7 @@ bool SirenAudioVBVProcessor::hasVTInfo(int prop, char *data) {
 
 void SirenAudioVBVProcessor::setSysState(int state, bool shouldCallback) {
     r2v_state = (r2v_sys_state)state;
+    pImpl->setState(r2v_state);
     if (shouldCallback) {
         stateCallback((int)r2v_state);
     }
@@ -345,7 +346,7 @@ int SirenAudioVBVProcessor::process(PreprocessVoicePackage *voicePackage,
     }
 
     for (int i = 0; i < block_num; i++) {
-        if (ppR2ad_msg_block[i]->iMsgId == r2ad_awake_nocmd) {
+        if (ppR2ad_msg_block[i]->iMsgId == r2ad_awake_cmd) {
             r2v_state = r2ssp_state_awake;
         }
 
@@ -360,8 +361,9 @@ int SirenAudioVBVProcessor::process(PreprocessVoicePackage *voicePackage,
             //clear length
             len = 0;
             hasSL = 1;
-            std::string::size_type sz;
-            sl = std::stod(std::string(ppR2ad_msg_block[i]->pMsgData), &sz);
+            //std::string::size_type sz;
+            //sl = std::stod(std::string(ppR2ad_msg_block[i]->pMsgData), &sz);
+            sl = atof(ppR2ad_msg_block[i]->pMsgData);
         } else {
             hasSL = 0;
             sl = 0.0;
@@ -433,8 +435,9 @@ int SirenAudioVBVProcessor::process(PreprocessVoicePackage *voicePackage,
             //clear length
             len = 0;
             hasSL = 1;
-            std::string::size_type sz;
-            sl = std::stod(std::string(ppR2ad_msg_block[i]->pMsgData), &sz);
+            //std::string::size_type sz;
+            //sl = std::stod(std::string(ppR2ad_msg_block[i]->pMsgData), &sz);
+            sl = atof(ppR2ad_msg_block[i]->pMsgData);
         } else {
             hasSL = 0;
             sl = 0.0;

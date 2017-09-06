@@ -108,7 +108,7 @@ bool RecordingThread::start() {
         siren_printf(SIREN_INFO, "start recording thread failed");
         return false;
     }
-    siren_printf(SIREN_INFO, "start recording done !");
+
     {
         std::unique_lock<decltype(startMutex)> lock(startMutex);
         recordingStart = true;
@@ -181,6 +181,7 @@ void RecordingThread::recordingFn() {
                 siren_printf(SIREN_INFO, "proxy recording thread exit...");
                 return;
             }
+
             len = pSiren->input_callback->read_input(pSiren->token, frameBuffer, frameSize);
             if (doMicRecording) {
                 micRecordingStream.write(frameBuffer, frameSize);
@@ -678,8 +679,8 @@ siren_vt_t SirenProxy::add_vt_word(siren_vt_word *word, bool use_default_setting
         word->alg_config.vt_block_min_score = 2.7f;
         word->alg_config.vt_left_sil_det = true;
         word->alg_config.vt_right_sil_det = false;
-        word->alg_config.vt_remote_check_with_aec = false;
-        word->alg_config.vt_remote_check_without_aec = false;
+        word->alg_config.vt_remote_check_with_aec = true;
+        word->alg_config.vt_remote_check_without_aec = true;
         word->alg_config.vt_local_classify_check = false;
         word->alg_config.vt_classify_shield = -0.3;
         word->alg_config.nnet_path = "";

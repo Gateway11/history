@@ -14,7 +14,7 @@ LOCAL_MODULE_TAGS := optional
 LOCAL_CPP_EXTENSION := .cc
 
 LOCAL_C_INCLUDES := \
-	$(LOCAL_PATH)/include \
+	$(LOCAL_PATH)/include/$(ANDROID_VERSION) \
 	$(MY_LOCAL_PATH)/proto \
 	$(MY_LOCAL_PATH)/include \
 	$(MY_LOCAL_PATH)/src/common

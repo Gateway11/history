@@ -1,0 +1,9 @@
+#!/bin/sh
+#export NDK_HOME=/Users/hadoop/software/android-ndk-r10e
+export NDK_HOME=/root/android/android-ndk-r14b
+#export NDK_HOME=/Users/daixiang/Android/AndroidIDE/ndk-r14
+export PATH=$NDK_HOME:$PATH
+
+ndk-build clean
+ndk-build
+

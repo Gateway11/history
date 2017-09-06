@@ -1,14 +1,14 @@
 SDK_BLACKSIREN := blacksiren/libbsiren/libs/armeabi-v7a
-SDK_SPEECH	   := support
+DEP_LIBRARIES  := support/$(ANDROID_VERSION)
 
 include $(CLEAR_VARS)
-LOCAL_MODULE := bsiren
+LOCAL_MODULE := libbsiren
 LOCAL_SRC_FILES := $(SDK_BLACKSIREN)/libbsiren.so
 include $(PREBUILT_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
-LOCAL_MODULE := libr2audio
-LOCAL_SRC_FILES := $(SDK_BLACKSIREN)/libr2audio.so
+LOCAL_MODULE := libr2mvdrbf
+LOCAL_SRC_FILES := $(SDK_BLACKSIREN)/libr2mvdrbf.so
 include $(PREBUILT_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
@@ -29,39 +29,24 @@ include $(PREBUILT_SHARED_LIBRARY)
 include $(CLEAR_VARS)
 LOCAL_MODULE := libcurl
 LOCAL_SRC_FILES := $(SDK_BLACKSIREN)/libcurl.so
-include $(PREBUILT_SHARED_LIBRARY)
-
-include $(CLEAR_VARS)
-LOCAL_MODULE := libpoco
-LOCAL_SRC_FILES := $(SDK_SPEECH)/libpoco.so
-#include $(PREBUILT_SHARED_LIBRARY)
-
-include $(CLEAR_VARS)
-LOCAL_MODULE := libprotobuf-rokid-cpp-full
-LOCAL_SRC_FILES := $(SDK_SPEECH)/libprotobuf-rokid-cpp-full.so
-#include $(PREBUILT_SHARED_LIBRARY)
-
-include $(CLEAR_VARS)
-LOCAL_MODULE := libspeech
-LOCAL_SRC_FILES := $(SDK_SPEECH)/libspeech.so
 #include $(PREBUILT_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := libtinyalsa
-LOCAL_SRC_FILES := support/libtinyalsa.so
+LOCAL_SRC_FILES := $(DEP_LIBRARIES)/libtinyalsa.so
 include $(PREBUILT_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := libssl
-LOCAL_SRC_FILES := support/libssl.so
+LOCAL_SRC_FILES := $(DEP_LIBRARIES)/libssl.so
 include $(PREBUILT_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := libcrypto
-LOCAL_SRC_FILES := support/libcrypto.so
+LOCAL_SRC_FILES := $(DEP_LIBRARIES)/libcrypto.so
 include $(PREBUILT_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := libz
-LOCAL_SRC_FILES := support/libz.so
+LOCAL_SRC_FILES := $(DEP_LIBRARIES)/libz.so
 include $(PREBUILT_SHARED_LIBRARY)

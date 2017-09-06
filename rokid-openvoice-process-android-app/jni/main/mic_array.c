@@ -26,7 +26,7 @@
 #include <asoundlib.h>
 
 #define MIC_SAMPLE_RATE 48000
-#define MIC_CHANNEL 8
+#define MIC_CHANNEL 16
 #define FRAME_COUNT 15360
 
 #define PCM_CARD 0
@@ -35,8 +35,8 @@
 static struct pcm_config pcm_config_in = {
     .channels = MIC_CHANNEL,
     .rate = MIC_SAMPLE_RATE,
-    .period_size = 1024,
-    .period_count = 8,
+    .period_size = 8192,
+    .period_count = 16,
     .format = PCM_FORMAT_S32_LE,
 };
 
@@ -215,28 +215,16 @@ static int mic_array_device_close(struct mic_array_device_t *mic_array_device)
 
 static int mic_array_device_start_stream(struct mic_array_device_t* dev)
 {
-	char **values = "0";
-    struct mixer* mixer;
     struct pcm* pcm = NULL;
 
     int card = 0;//find_snd("USB-Audio");
     LOGI("find card with %d", card);
     if (card <= 0) {
         card = PCM_CARD;
-        mixer = mixer_open(card);
-        if (!mixer) {
-            LOGE("Failed to open mixer +++%s\n", strerror(errno));
-            return -1;
-        }
-        //tinymix_set_value(mixer, "MultiMedia1 Mixer QUAT_MI2S_TX", &values, 1);
-        mixer_close(mixer);
-        pcm = pcm_open(card, PCM_DEVICE, PCM_IN, &pcm_config_in);
-    } else {
-        pcm = pcm_open(card, PCM_DEVICE, PCM_IN, &pcm_config_in);
     }
-    
-    if (pcm == NULL && !pcm_is_ready(pcm)) {
-        LOGE("pcm open failed");
+    pcm = pcm_open(card, PCM_DEVICE, PCM_IN, &pcm_config_in);
+    if (!pcm || !pcm_is_ready(pcm)) {
+        LOGE("Unable to open PCM device %u (%s)\n", card, pcm_get_error(pcm));
         if (pcm != NULL) {
             pcm_close(pcm);
             pcm = NULL;

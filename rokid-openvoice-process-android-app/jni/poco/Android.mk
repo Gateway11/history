@@ -420,7 +420,11 @@ LOCAL_SRC_FILES := $(Foundation_SRC_FILES) $(Net_SRC_FILES) $(NetSSL_SRC_FILES) 
 LOCAL_MODULE := libpoco
 LOCAL_CFLAGS := -DPOCO_ANDROID -DPOCO_NO_FPENVIRONMENT -DPOCO_NO_WSTRING \
 	-DPOCO_NO_SHAREDMEMORY -DHAVE_EXPAT_CONFIG_H
-LOCAL_CPPFLAGS := -frtti -fexceptions -std=c++11 $(IGNORE_ERRORS) -DUSE_BORING_SSL
+LOCAL_CPPFLAGS := -frtti -fexceptions -std=c++11 $(IGNORE_ERRORS) 
+
+ifeq ($(ANDROID_VERSION), 21)
+LOCAL_CPPFLAGS += -DUSE_BORING_SSL
+endif
 
 LOCAL_C_INCLUDES := \
 	$(LOCAL_PATH)/$(PocoFoundationDir)/include \
@@ -430,7 +434,7 @@ LOCAL_C_INCLUDES := \
 	$(LOCAL_PATH)/$(PocoUtilDir)/include \
 	$(LOCAL_PATH)/$(PocoXMLDir)/include \
 	$(LOCAL_PATH)/$(PocoJSONDir)/include \
-	$(LOCAL_PATH)/include
+	$(LOCAL_PATH)/include/$(ANDROID_VERSION)
 
 LOCAL_SHARED_LIBRARIES := libssl libcrypto
 

@@ -15,6 +15,8 @@ public class MainActivity extends Activity {
         mConfigManager = new ConfigManager(this);
         mConfigManager.install();
         
+        
+        
         VoiceManager.init();
         VoiceManager.networkStateChange(true);
     }

@@ -14,6 +14,7 @@
 #include "lfqueue.h"
 
 #ifndef futex
+#define SYS_futex __NR_futex
 #define futex(...)  syscall(SYS_futex, __VA_ARGS__)
 #endif
 
@@ -112,8 +113,10 @@ int LFCounter::dec(struct timespec *timeout) {
     return val;
 }
 
+
 void LFCounter::wake() {
-    futex_wake(&this->val, INT32_MAX);
+    futex_wake(&this->val, 2147483647);
+//    futex_wake(&this->val, INT32_MAX);
 }
 
 void LFCounter::wake_if_needed() {

@@ -8,6 +8,7 @@
 
 #include "NNVadIntf.h"
 #include "r2ssp.h"
+#include "legacy/r2ad2.h"
 #include "legacy/zvbvapi.h"
 #include "legacy/zvtapi.h"
 
@@ -517,7 +518,9 @@ void SirenProcessorImpl::process(char *datain, int lenin, int aecflag, int awake
             addMsg(r2ad_hotword, unit.m_pMmem_bf->getinfo_sl());
         }
 
-        unit.m_pMem_vad2->setvadendparam(-1);
+        if (config.alg_config.alg_vad_enable) {
+            unit.m_pMem_vad2->setvadendparam(-1);
+        }
     }
 
     if (cmd) {
@@ -532,10 +535,13 @@ void SirenProcessorImpl::process(char *datain, int lenin, int aecflag, int awake
         if (hotwordCmd) {
         }
 
-        unit.m_pMem_vad2->setvadendparam(-1);
+        if (config.alg_config.alg_vad_enable) {
+            unit.m_pMem_vad2->setvadendparam(-1);
+        }
     }
 
     if (state.vadStart) {
+        //siren_printf(SIREN_INFO, "cod process");
         unit.m_pMem_cod->process(data_sig, len_sig);
         if (!state.dataOutput) {
             if (cmd || noCmd) {
@@ -544,7 +550,7 @@ void SirenProcessorImpl::process(char *datain, int lenin, int aecflag, int awake
                 if (cmd) {
                     siren_printf(SIREN_INFO, "vad output with awake pre");
                     addMsg(r2ad_vad_start, unit.m_pMmem_bf->getinfo_sl());
-    
+
                 } else {
                     state.canceled = true;
                     unit.m_pMem_cod->pause();
@@ -559,28 +565,33 @@ void SirenProcessorImpl::process(char *datain, int lenin, int aecflag, int awake
 
         if (state.dataOutput) {
             if (!state.canceled) {
-                if (unit.m_pMem_cod->istoolong()) {
-                    state.canceled = true;
-                    siren_printf(SIREN_INFO, "Cancel since asr too long");
+                if (config.alg_config.alg_vad_enable) {
+                    if (unit.m_pMem_cod->istoolong()) {
+                        state.canceled = true;
+                        siren_printf(SIREN_INFO, "Cancel since asr too long");
+                    }
                 }
-
+                //if (!asr) {
                 if (!state.awke && !asr) {
                     state.canceled = true;
                     siren_printf(SIREN_INFO, "Cancel since no asr flag");
                 }
 
                 if (state.canceled) {
+                    siren_printf(SIREN_INFO, "add cancel");
                     unit.m_pMem_cod->pause();
                     addMsg(r2ad_vad_cancel, 0, nullptr);
                 }
             }
 
-            if (state.canceled && state.awke) {
-                if (unit.m_pMem_cod->isneedresume()) {
-                    siren_printf(SIREN_INFO, "reset output since asr too long");
-                    state.canceled = false;
-                    unit.m_pMem_cod->resume();
-                    addMsg(r2ad_vad_start, unit.m_pMmem_bf->getinfo_sl());
+            if (config.alg_config.alg_vad_enable) {
+                if (state.canceled && state.awke) {
+                    if (unit.m_pMem_cod->isneedresume()) {
+                        siren_printf(SIREN_INFO, "reset output since asr too long");
+                        state.canceled = false;
+                        unit.m_pMem_cod->resume();
+                        addMsg(r2ad_vad_start, unit.m_pMmem_bf->getinfo_sl());
+                    }
                 }
             }
 
@@ -597,7 +608,7 @@ void SirenProcessorImpl::process(char *datain, int lenin, int aecflag, int awake
     }
 
     if (vad2 & r2vad_audio_end) {
-        unit.m_pMem_vad2->setvadendparam(-1);
+        siren_printf(SIREN_INFO, "vad end");
         if (state.dataOutput && !state.canceled) {
             addMsg(r2ad_vad_end, 0, nullptr);
         }
@@ -605,13 +616,15 @@ void SirenProcessorImpl::process(char *datain, int lenin, int aecflag, int awake
         if (state.awke) {
             unit.m_pMem_cod->pause();
             unit.m_pMem_cod->resume();
-            //addMsg(r2ad_debug_audio, unit.m_pMem_cod);
         }
 
         state.awke = false;
-        state.asr = false;
-        state.vadStart = false;
-        state.dataOutput = false;
+        if (config.alg_config.alg_vt_enable) {
+            unit.m_pMem_vad2->setvadendparam(-1);
+            state.asr = false;
+            state.vadStart = false;
+            state.dataOutput = false;
+        }
         state.canceled = false;
 
         if (bf_record) {
@@ -622,6 +635,12 @@ void SirenProcessorImpl::process(char *datain, int lenin, int aecflag, int awake
 }
 
 
+
+void SirenProcessorImpl::setState(r2v_sys_state awake_state) {
+    if (awake_state == r2ssp_state_sleep && state.awke) {
+        state.awke = false;
+    }
+}
 
 
 void SirenProcessorImpl::setSLSteer(float ho, float ver) {
@@ -760,7 +779,9 @@ void SirenProcessorImpl::clearMsgLst() {
 
 void SirenProcessorImpl::resetASR() {
     if (state.dataOutput && !state.canceled) {
-        addMsg(r2ad_vad_cancel, 0, nullptr);
+        if (config.alg_config.alg_vad_enable) {
+            addMsg(r2ad_vad_cancel, 0, nullptr);
+        }
     }
 
     state.asr = false;
@@ -865,7 +886,7 @@ void SirenProcessorImpl::syncVTWord(std::vector<siren_vt_word> &words) {
         micinfo.m_pWordLst[i].iWordType = (WordType)word.vt_type;
         strcpy(micinfo.m_pWordLst[i].pWordContent_UTF8, word.vt_word.c_str());
         strcpy(micinfo.m_pWordLst[i].pWordContent_PHONE, word.vt_phone.c_str());
-        
+
         micinfo.m_pWordLst[i].fBlockAvgScore = word.alg_config.vt_block_avg_score;
         micinfo.m_pWordLst[i].fBlockMinScore = word.alg_config.vt_block_min_score;
 
@@ -918,7 +939,7 @@ int SirenProcessorImpl::getVTInfo(std::string &vt_word, int &start, int &end, fl
         vt_word = unit.m_pMem_vbv3->m_pWordInfo->pWordContent_UTF8;
         //end from back to front
         start = unit.m_pMem_vbv3->m_pWordDetInfo->iWordPos_Start;
-        //start 
+        //start
         end = unit.m_pMem_vbv3->m_pWordDetInfo->iWordPos_End;
         siren_printf(SIREN_INFO, "end=%d", end);
         end -= 20 * state.frmSize;
@@ -930,8 +951,8 @@ int SirenProcessorImpl::getVTInfo(std::string &vt_word, int &start, int &end, fl
         return 0;
     } else {
         siren_printf(SIREN_ERROR, "failed since: %d %d",
-                unit.m_pMem_vbv3 == nullptr, 
-                unit.m_pMem_vbv3->m_pWordInfo == nullptr);
+                     unit.m_pMem_vbv3 == nullptr,
+                     unit.m_pMem_vbv3->m_pWordInfo == nullptr);
         return -1;
     }
 
