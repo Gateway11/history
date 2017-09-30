@@ -1,0 +1,12 @@
+{
+	"host": "apigwws.open.rokid.com",
+	"event_req_host": "apigwrest.open.rokid.com",
+	"port": "443",
+	"branch": "/api",
+	"key": "your_auth_key",
+	"device_type_id": "your_device_type_id",
+	"device_id": "your_device_id",
+	"api_version": "1",
+	"secret": "your_secret",
+	"codec": "opu"
+}

@@ -1,0 +1,19 @@
+#!/bin/sh
+
+export NDK_HOME=/home/daixiang/bin/ndk-r14
+export PATH=$NDK_HOME:$PATH
+#cd $(pwd)/${0%/*}
+
+cd blacksiren/libjsonc/jni
+#ndk-build clean
+ndk-build -j8
+
+cd ../../libbsiren/jni
+#ndk-build clean
+ndk-build -j8
+
+cd ../../../
+#ndk-build clean
+ndk-build -j8
+
+exit
