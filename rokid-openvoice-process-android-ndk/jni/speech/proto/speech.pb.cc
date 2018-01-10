@@ -18,35 +18,23 @@
 
 namespace rokid {
 namespace open {
+namespace speech {
+namespace v2 {
 
 namespace {
 
-const ::google::protobuf::Descriptor* AuthRequest_descriptor_ = NULL;
+const ::google::protobuf::Descriptor* SpeechOptions_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
-  AuthRequest_reflection_ = NULL;
-const ::google::protobuf::Descriptor* AuthResponse_descriptor_ = NULL;
-const ::google::protobuf::internal::GeneratedMessageReflection*
-  AuthResponse_reflection_ = NULL;
-const ::google::protobuf::Descriptor* AsrRequest_descriptor_ = NULL;
-const ::google::protobuf::internal::GeneratedMessageReflection*
-  AsrRequest_reflection_ = NULL;
-const ::google::protobuf::Descriptor* AsrResponse_descriptor_ = NULL;
-const ::google::protobuf::internal::GeneratedMessageReflection*
-  AsrResponse_reflection_ = NULL;
-const ::google::protobuf::Descriptor* TtsRequest_descriptor_ = NULL;
-const ::google::protobuf::internal::GeneratedMessageReflection*
-  TtsRequest_reflection_ = NULL;
-const ::google::protobuf::Descriptor* TtsResponse_descriptor_ = NULL;
-const ::google::protobuf::internal::GeneratedMessageReflection*
-  TtsResponse_reflection_ = NULL;
+  SpeechOptions_reflection_ = NULL;
 const ::google::protobuf::Descriptor* SpeechRequest_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   SpeechRequest_reflection_ = NULL;
 const ::google::protobuf::Descriptor* SpeechResponse_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   SpeechResponse_reflection_ = NULL;
-const ::google::protobuf::EnumDescriptor* SpeechErrorCode_descriptor_ = NULL;
-const ::google::protobuf::EnumDescriptor* ReqType_descriptor_ = NULL;
+const ::google::protobuf::EnumDescriptor* RespType_descriptor_ = NULL;
+const ::google::protobuf::EnumDescriptor* Lang_descriptor_ = NULL;
+const ::google::protobuf::EnumDescriptor* VadMode_descriptor_ = NULL;
 
 }  // namespace
 
@@ -57,128 +45,39 @@ void protobuf_AssignDesc_speech_2eproto() {
     ::google::protobuf::DescriptorPool::generated_pool()->FindFileByName(
       "speech.proto");
   GOOGLE_CHECK(file != NULL);
-  AuthRequest_descriptor_ = file->message_type(0);
-  static const int AuthRequest_offsets_[7] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AuthRequest, key_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AuthRequest, device_type_id_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AuthRequest, device_id_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AuthRequest, service_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AuthRequest, version_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AuthRequest, timestamp_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AuthRequest, sign_),
+  SpeechOptions_descriptor_ = file->message_type(0);
+  static const int SpeechOptions_offsets_[12] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SpeechOptions, lang_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SpeechOptions, codec_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SpeechOptions, vad_mode_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SpeechOptions, vend_timeout_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SpeechOptions, no_nlp_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SpeechOptions, no_intermediate_asr_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SpeechOptions, stack_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SpeechOptions, voice_trigger_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SpeechOptions, voice_power_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SpeechOptions, trigger_start_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SpeechOptions, trigger_length_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SpeechOptions, skill_options_),
   };
-  AuthRequest_reflection_ =
+  SpeechOptions_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
-      AuthRequest_descriptor_,
-      AuthRequest::default_instance_,
-      AuthRequest_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AuthRequest, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AuthRequest, _unknown_fields_),
+      SpeechOptions_descriptor_,
+      SpeechOptions::default_instance_,
+      SpeechOptions_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SpeechOptions, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SpeechOptions, _unknown_fields_),
       -1,
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(AuthRequest));
-  AuthResponse_descriptor_ = file->message_type(1);
-  static const int AuthResponse_offsets_[1] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AuthResponse, result_),
-  };
-  AuthResponse_reflection_ =
-    new ::google::protobuf::internal::GeneratedMessageReflection(
-      AuthResponse_descriptor_,
-      AuthResponse::default_instance_,
-      AuthResponse_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AuthResponse, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AuthResponse, _unknown_fields_),
-      -1,
-      ::google::protobuf::DescriptorPool::generated_pool(),
-      ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(AuthResponse));
-  AsrRequest_descriptor_ = file->message_type(2);
-  static const int AsrRequest_offsets_[6] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AsrRequest, id_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AsrRequest, type_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AsrRequest, voice_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AsrRequest, lang_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AsrRequest, codec_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AsrRequest, vt_),
-  };
-  AsrRequest_reflection_ =
-    new ::google::protobuf::internal::GeneratedMessageReflection(
-      AsrRequest_descriptor_,
-      AsrRequest::default_instance_,
-      AsrRequest_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AsrRequest, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AsrRequest, _unknown_fields_),
-      -1,
-      ::google::protobuf::DescriptorPool::generated_pool(),
-      ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(AsrRequest));
-  AsrResponse_descriptor_ = file->message_type(3);
-  static const int AsrResponse_offsets_[4] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AsrResponse, id_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AsrResponse, result_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AsrResponse, asr_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AsrResponse, finish_),
-  };
-  AsrResponse_reflection_ =
-    new ::google::protobuf::internal::GeneratedMessageReflection(
-      AsrResponse_descriptor_,
-      AsrResponse::default_instance_,
-      AsrResponse_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AsrResponse, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AsrResponse, _unknown_fields_),
-      -1,
-      ::google::protobuf::DescriptorPool::generated_pool(),
-      ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(AsrResponse));
-  TtsRequest_descriptor_ = file->message_type(4);
-  static const int TtsRequest_offsets_[4] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TtsRequest, id_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TtsRequest, text_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TtsRequest, declaimer_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TtsRequest, codec_),
-  };
-  TtsRequest_reflection_ =
-    new ::google::protobuf::internal::GeneratedMessageReflection(
-      TtsRequest_descriptor_,
-      TtsRequest::default_instance_,
-      TtsRequest_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TtsRequest, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TtsRequest, _unknown_fields_),
-      -1,
-      ::google::protobuf::DescriptorPool::generated_pool(),
-      ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(TtsRequest));
-  TtsResponse_descriptor_ = file->message_type(5);
-  static const int TtsResponse_offsets_[5] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TtsResponse, id_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TtsResponse, result_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TtsResponse, text_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TtsResponse, voice_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TtsResponse, finish_),
-  };
-  TtsResponse_reflection_ =
-    new ::google::protobuf::internal::GeneratedMessageReflection(
-      TtsResponse_descriptor_,
-      TtsResponse::default_instance_,
-      TtsResponse_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TtsResponse, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(TtsResponse, _unknown_fields_),
-      -1,
-      ::google::protobuf::DescriptorPool::generated_pool(),
-      ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(TtsResponse));
-  SpeechRequest_descriptor_ = file->message_type(6);
-  static const int SpeechRequest_offsets_[9] = {
+      sizeof(SpeechOptions));
+  SpeechRequest_descriptor_ = file->message_type(1);
+  static const int SpeechRequest_offsets_[5] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SpeechRequest, id_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SpeechRequest, type_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SpeechRequest, voice_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SpeechRequest, asr_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SpeechRequest, lang_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SpeechRequest, codec_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SpeechRequest, vt_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SpeechRequest, framework_options_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SpeechRequest, skill_options_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SpeechRequest, options_),
   };
   SpeechRequest_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -191,14 +90,14 @@ void protobuf_AssignDesc_speech_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(SpeechRequest));
-  SpeechResponse_descriptor_ = file->message_type(7);
+  SpeechResponse_descriptor_ = file->message_type(2);
   static const int SpeechResponse_offsets_[7] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SpeechResponse, id_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SpeechResponse, type_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SpeechResponse, result_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SpeechResponse, asr_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SpeechResponse, nlp_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SpeechResponse, action_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SpeechResponse, finish_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(SpeechResponse, extra_),
   };
   SpeechResponse_reflection_ =
@@ -212,8 +111,9 @@ void protobuf_AssignDesc_speech_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(SpeechResponse));
-  SpeechErrorCode_descriptor_ = file->enum_type(0);
-  ReqType_descriptor_ = file->enum_type(1);
+  RespType_descriptor_ = file->enum_type(0);
+  Lang_descriptor_ = file->enum_type(1);
+  VadMode_descriptor_ = file->enum_type(2);
 }
 
 namespace {
@@ -227,17 +127,7 @@ inline void protobuf_AssignDescriptorsOnce() {
 void protobuf_RegisterTypes(const ::std::string&) {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    AuthRequest_descriptor_, &AuthRequest::default_instance());
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    AuthResponse_descriptor_, &AuthResponse::default_instance());
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    AsrRequest_descriptor_, &AsrRequest::default_instance());
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    AsrResponse_descriptor_, &AsrResponse::default_instance());
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    TtsRequest_descriptor_, &TtsRequest::default_instance());
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    TtsResponse_descriptor_, &TtsResponse::default_instance());
+    SpeechOptions_descriptor_, &SpeechOptions::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     SpeechRequest_descriptor_, &SpeechRequest::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
@@ -247,18 +137,8 @@ void protobuf_RegisterTypes(const ::std::string&) {
 }  // namespace
 
 void protobuf_ShutdownFile_speech_2eproto() {
-  delete AuthRequest::default_instance_;
-  delete AuthRequest_reflection_;
-  delete AuthResponse::default_instance_;
-  delete AuthResponse_reflection_;
-  delete AsrRequest::default_instance_;
-  delete AsrRequest_reflection_;
-  delete AsrResponse::default_instance_;
-  delete AsrResponse_reflection_;
-  delete TtsRequest::default_instance_;
-  delete TtsRequest_reflection_;
-  delete TtsResponse::default_instance_;
-  delete TtsResponse_reflection_;
+  delete SpeechOptions::default_instance_;
+  delete SpeechOptions_reflection_;
   delete SpeechRequest::default_instance_;
   delete SpeechRequest_reflection_;
   delete SpeechResponse::default_instance_;
@@ -271,53 +151,36 @@ void protobuf_AddDesc_speech_2eproto() {
   already_here = true;
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
+  ::rokid::open::speech::v1::protobuf_AddDesc_speech_5ftypes_2eproto();
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\014speech.proto\022\nrokid.open\"\210\001\n\013AuthReque"
-    "st\022\013\n\003key\030\001 \002(\t\022\026\n\016device_type_id\030\002 \002(\t\022"
-    "\021\n\tdevice_id\030\003 \002(\t\022\017\n\007service\030\004 \002(\t\022\017\n\007v"
-    "ersion\030\005 \002(\t\022\021\n\ttimestamp\030\006 \002(\t\022\014\n\004sign\030"
-    "\007 \002(\t\";\n\014AuthResponse\022+\n\006result\030\001 \002(\0162\033."
-    "rokid.open.SpeechErrorCode\"s\n\nAsrRequest"
-    "\022\n\n\002id\030\001 \002(\005\022!\n\004type\030\002 \002(\0162\023.rokid.open."
-    "ReqType\022\r\n\005voice\030\003 \001(\014\022\014\n\004lang\030\004 \001(\t\022\r\n\005"
-    "codec\030\005 \001(\t\022\n\n\002vt\030\006 \001(\t\"c\n\013AsrResponse\022\n"
-    "\n\002id\030\001 \002(\005\022+\n\006result\030\002 \002(\0162\033.rokid.open."
-    "SpeechErrorCode\022\013\n\003asr\030\003 \001(\t\022\016\n\006finish\030\004"
-    " \001(\010\"H\n\nTtsRequest\022\n\n\002id\030\001 \002(\005\022\014\n\004text\030\002"
-    " \002(\t\022\021\n\tdeclaimer\030\003 \001(\t\022\r\n\005codec\030\004 \001(\t\"s"
-    "\n\013TtsResponse\022\n\n\002id\030\001 \002(\005\022+\n\006result\030\002 \002("
-    "\0162\033.rokid.open.SpeechErrorCode\022\014\n\004text\030\003"
-    " \001(\t\022\r\n\005voice\030\004 \001(\014\022\016\n\006finish\030\005 \001(\010\"\265\001\n\r"
-    "SpeechRequest\022\n\n\002id\030\001 \002(\005\022!\n\004type\030\002 \002(\0162"
-    "\023.rokid.open.ReqType\022\r\n\005voice\030\003 \001(\014\022\013\n\003a"
-    "sr\030\004 \001(\t\022\014\n\004lang\030\005 \001(\t\022\r\n\005codec\030\006 \001(\t\022\n\n"
-    "\002vt\030\007 \001(\t\022\031\n\021framework_options\030\010 \001(\t\022\025\n\r"
-    "skill_options\030\t \001(\t\"\222\001\n\016SpeechResponse\022\n"
-    "\n\002id\030\001 \002(\005\022+\n\006result\030\002 \002(\0162\033.rokid.open."
-    "SpeechErrorCode\022\013\n\003asr\030\003 \001(\t\022\013\n\003nlp\030\004 \001("
-    "\t\022\016\n\006action\030\005 \001(\t\022\016\n\006finish\030\006 \001(\010\022\r\n\005ext"
-    "ra\030\007 \001(\t*\212\001\n\017SpeechErrorCode\022\013\n\007SUCCESS\020"
-    "\000\022\017\n\013AUTH_FAILED\020\001\022\023\n\017UNAUTHENTICATED\020\002\022"
-    "\025\n\021CONNECTION_EXCEED\020\003\022\025\n\021RESOURCE_EXHAS"
-    "TED\020\004\022\010\n\004BUSY\020\005\022\014\n\010INTERNAL\020\006*2\n\007ReqType"
-    "\022\t\n\005START\020\000\022\t\n\005VOICE\020\001\022\007\n\003END\020\002\022\010\n\004TEXT\020"
-    "\003", 1161);
+    "\n\014speech.proto\022\024rokid.open.speech.v2\032\022sp"
+    "eech_types.proto\"\332\002\n\rSpeechOptions\022(\n\004la"
+    "ng\030\001 \002(\0162\032.rokid.open.speech.v2.Lang\022*\n\005"
+    "codec\030\002 \002(\0162\033.rokid.open.speech.v1.Codec"
+    "\022/\n\010vad_mode\030\003 \002(\0162\035.rokid.open.speech.v"
+    "2.VadMode\022\024\n\014vend_timeout\030\004 \001(\r\022\016\n\006no_nl"
+    "p\030\005 \002(\010\022\033\n\023no_intermediate_asr\030\006 \002(\010\022\r\n\005"
+    "stack\030\007 \001(\t\022\025\n\rvoice_trigger\030\010 \001(\t\022\023\n\013vo"
+    "ice_power\030\t \001(\002\022\025\n\rtrigger_start\030\n \001(\r\022\026"
+    "\n\016trigger_length\030\013 \001(\r\022\025\n\rskill_options\030"
+    "\014 \001(\t\"\232\001\n\rSpeechRequest\022\n\n\002id\030\001 \002(\005\022+\n\004t"
+    "ype\030\002 \002(\0162\035.rokid.open.speech.v1.ReqType"
+    "\022\r\n\005voice\030\003 \001(\014\022\013\n\003asr\030\004 \001(\t\0224\n\007options\030"
+    "\005 \001(\0132#.rokid.open.speech.v2.SpeechOptio"
+    "ns\"\272\001\n\016SpeechResponse\022\n\n\002id\030\001 \002(\005\022,\n\004typ"
+    "e\030\002 \002(\0162\036.rokid.open.speech.v2.RespType\022"
+    "5\n\006result\030\003 \002(\0162%.rokid.open.speech.v1.S"
+    "peechErrorCode\022\013\n\003asr\030\004 \001(\t\022\013\n\003nlp\030\005 \001(\t"
+    "\022\016\n\006action\030\006 \001(\t\022\r\n\005extra\030\007 \001(\t*8\n\010RespT"
+    "ype\022\020\n\014INTERMEDIATE\020\000\022\016\n\nASR_FINISH\020\001\022\n\n"
+    "\006FINISH\020\002*\026\n\004Lang\022\006\n\002ZH\020\000\022\006\n\002EN\020\001*\037\n\007Vad"
+    "Mode\022\t\n\005LOCAL\020\000\022\t\n\005CLOUD\020\001", 866);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "speech.proto", &protobuf_RegisterTypes);
-  AuthRequest::default_instance_ = new AuthRequest();
-  AuthResponse::default_instance_ = new AuthResponse();
-  AsrRequest::default_instance_ = new AsrRequest();
-  AsrResponse::default_instance_ = new AsrResponse();
-  TtsRequest::default_instance_ = new TtsRequest();
-  TtsResponse::default_instance_ = new TtsResponse();
+  SpeechOptions::default_instance_ = new SpeechOptions();
   SpeechRequest::default_instance_ = new SpeechRequest();
   SpeechResponse::default_instance_ = new SpeechResponse();
-  AuthRequest::default_instance_->InitAsDefaultInstance();
-  AuthResponse::default_instance_->InitAsDefaultInstance();
-  AsrRequest::default_instance_->InitAsDefaultInstance();
-  AsrResponse::default_instance_->InitAsDefaultInstance();
-  TtsRequest::default_instance_->InitAsDefaultInstance();
-  TtsResponse::default_instance_->InitAsDefaultInstance();
+  SpeechOptions::default_instance_->InitAsDefaultInstance();
   SpeechRequest::default_instance_->InitAsDefaultInstance();
   SpeechResponse::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_speech_2eproto);
@@ -329,35 +192,43 @@ struct StaticDescriptorInitializer_speech_2eproto {
     protobuf_AddDesc_speech_2eproto();
   }
 } static_descriptor_initializer_speech_2eproto_;
-const ::google::protobuf::EnumDescriptor* SpeechErrorCode_descriptor() {
+const ::google::protobuf::EnumDescriptor* RespType_descriptor() {
   protobuf_AssignDescriptorsOnce();
-  return SpeechErrorCode_descriptor_;
+  return RespType_descriptor_;
 }
-bool SpeechErrorCode_IsValid(int value) {
+bool RespType_IsValid(int value) {
   switch(value) {
     case 0:
     case 1:
     case 2:
-    case 3:
-    case 4:
-    case 5:
-    case 6:
       return true;
     default:
       return false;
   }
 }
 
-const ::google::protobuf::EnumDescriptor* ReqType_descriptor() {
+const ::google::protobuf::EnumDescriptor* Lang_descriptor() {
   protobuf_AssignDescriptorsOnce();
-  return ReqType_descriptor_;
+  return Lang_descriptor_;
 }
-bool ReqType_IsValid(int value) {
+bool Lang_IsValid(int value) {
   switch(value) {
     case 0:
     case 1:
-    case 2:
-    case 3:
+      return true;
+    default:
+      return false;
+  }
+}
+
+const ::google::protobuf::EnumDescriptor* VadMode_descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return VadMode_descriptor_;
+}
+bool VadMode_IsValid(int value) {
+  switch(value) {
+    case 0:
+    case 1:
       return true;
     default:
       return false;
@@ -368,1057 +239,338 @@ bool ReqType_IsValid(int value) {
 // ===================================================================
 
 #ifndef _MSC_VER
-const int AuthRequest::kKeyFieldNumber;
-const int AuthRequest::kDeviceTypeIdFieldNumber;
-const int AuthRequest::kDeviceIdFieldNumber;
-const int AuthRequest::kServiceFieldNumber;
-const int AuthRequest::kVersionFieldNumber;
-const int AuthRequest::kTimestampFieldNumber;
-const int AuthRequest::kSignFieldNumber;
+const int SpeechOptions::kLangFieldNumber;
+const int SpeechOptions::kCodecFieldNumber;
+const int SpeechOptions::kVadModeFieldNumber;
+const int SpeechOptions::kVendTimeoutFieldNumber;
+const int SpeechOptions::kNoNlpFieldNumber;
+const int SpeechOptions::kNoIntermediateAsrFieldNumber;
+const int SpeechOptions::kStackFieldNumber;
+const int SpeechOptions::kVoiceTriggerFieldNumber;
+const int SpeechOptions::kVoicePowerFieldNumber;
+const int SpeechOptions::kTriggerStartFieldNumber;
+const int SpeechOptions::kTriggerLengthFieldNumber;
+const int SpeechOptions::kSkillOptionsFieldNumber;
 #endif  // !_MSC_VER
 
-AuthRequest::AuthRequest()
+SpeechOptions::SpeechOptions()
   : ::google::protobuf::Message() {
   SharedCtor();
-  // @@protoc_insertion_point(constructor:rokid.open.AuthRequest)
+  // @@protoc_insertion_point(constructor:rokid.open.speech.v2.SpeechOptions)
 }
 
-void AuthRequest::InitAsDefaultInstance() {
+void SpeechOptions::InitAsDefaultInstance() {
 }
 
-AuthRequest::AuthRequest(const AuthRequest& from)
+SpeechOptions::SpeechOptions(const SpeechOptions& from)
   : ::google::protobuf::Message() {
   SharedCtor();
   MergeFrom(from);
-  // @@protoc_insertion_point(copy_constructor:rokid.open.AuthRequest)
+  // @@protoc_insertion_point(copy_constructor:rokid.open.speech.v2.SpeechOptions)
 }
 
-void AuthRequest::SharedCtor() {
+void SpeechOptions::SharedCtor() {
   ::google::protobuf::internal::GetEmptyString();
   _cached_size_ = 0;
-  key_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  device_type_id_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  device_id_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  service_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  version_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  timestamp_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  sign_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  lang_ = 0;
+  codec_ = 0;
+  vad_mode_ = 0;
+  vend_timeout_ = 0u;
+  no_nlp_ = false;
+  no_intermediate_asr_ = false;
+  stack_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  voice_trigger_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  voice_power_ = 0;
+  trigger_start_ = 0u;
+  trigger_length_ = 0u;
+  skill_options_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
-AuthRequest::~AuthRequest() {
-  // @@protoc_insertion_point(destructor:rokid.open.AuthRequest)
+SpeechOptions::~SpeechOptions() {
+  // @@protoc_insertion_point(destructor:rokid.open.speech.v2.SpeechOptions)
   SharedDtor();
 }
 
-void AuthRequest::SharedDtor() {
-  if (key_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete key_;
+void SpeechOptions::SharedDtor() {
+  if (stack_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    delete stack_;
   }
-  if (device_type_id_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete device_type_id_;
+  if (voice_trigger_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    delete voice_trigger_;
   }
-  if (device_id_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete device_id_;
-  }
-  if (service_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete service_;
-  }
-  if (version_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete version_;
-  }
-  if (timestamp_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete timestamp_;
-  }
-  if (sign_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete sign_;
+  if (skill_options_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    delete skill_options_;
   }
   if (this != default_instance_) {
   }
 }
 
-void AuthRequest::SetCachedSize(int size) const {
+void SpeechOptions::SetCachedSize(int size) const {
   GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
   _cached_size_ = size;
   GOOGLE_SAFE_CONCURRENT_WRITES_END();
 }
-const ::google::protobuf::Descriptor* AuthRequest::descriptor() {
+const ::google::protobuf::Descriptor* SpeechOptions::descriptor() {
   protobuf_AssignDescriptorsOnce();
-  return AuthRequest_descriptor_;
+  return SpeechOptions_descriptor_;
 }
 
-const AuthRequest& AuthRequest::default_instance() {
+const SpeechOptions& SpeechOptions::default_instance() {
   if (default_instance_ == NULL) protobuf_AddDesc_speech_2eproto();
   return *default_instance_;
 }
 
-AuthRequest* AuthRequest::default_instance_ = NULL;
+SpeechOptions* SpeechOptions::default_instance_ = NULL;
 
-AuthRequest* AuthRequest::New() const {
-  return new AuthRequest;
+SpeechOptions* SpeechOptions::New() const {
+  return new SpeechOptions;
 }
 
-void AuthRequest::Clear() {
-  if (_has_bits_[0 / 32] & 127) {
-    if (has_key()) {
-      if (key_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-        key_->clear();
+void SpeechOptions::Clear() {
+#define OFFSET_OF_FIELD_(f) (reinterpret_cast<char*>(      \
+  &reinterpret_cast<SpeechOptions*>(16)->f) - \
+   reinterpret_cast<char*>(16))
+
+#define ZR_(first, last) do {                              \
+    size_t f = OFFSET_OF_FIELD_(first);                    \
+    size_t n = OFFSET_OF_FIELD_(last) - f + sizeof(last);  \
+    ::memset(&first, 0, n);                                \
+  } while (0)
+
+  if (_has_bits_[0 / 32] & 255) {
+    ZR_(lang_, no_intermediate_asr_);
+    if (has_stack()) {
+      if (stack_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+        stack_->clear();
       }
     }
-    if (has_device_type_id()) {
-      if (device_type_id_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-        device_type_id_->clear();
-      }
-    }
-    if (has_device_id()) {
-      if (device_id_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-        device_id_->clear();
-      }
-    }
-    if (has_service()) {
-      if (service_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-        service_->clear();
-      }
-    }
-    if (has_version()) {
-      if (version_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-        version_->clear();
-      }
-    }
-    if (has_timestamp()) {
-      if (timestamp_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-        timestamp_->clear();
-      }
-    }
-    if (has_sign()) {
-      if (sign_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-        sign_->clear();
+    if (has_voice_trigger()) {
+      if (voice_trigger_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+        voice_trigger_->clear();
       }
     }
   }
+  if (_has_bits_[8 / 32] & 3840) {
+    ZR_(trigger_start_, trigger_length_);
+    voice_power_ = 0;
+    if (has_skill_options()) {
+      if (skill_options_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+        skill_options_->clear();
+      }
+    }
+  }
+
+#undef OFFSET_OF_FIELD_
+#undef ZR_
+
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
 }
 
-bool AuthRequest::MergePartialFromCodedStream(
+bool SpeechOptions::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:rokid.open.AuthRequest)
+  // @@protoc_insertion_point(parse_start:rokid.open.speech.v2.SpeechOptions)
   for (;;) {
     ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
     tag = p.first;
     if (!p.second) goto handle_unusual;
     switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required string key = 1;
-      case 1: {
-        if (tag == 10) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_key()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-            this->key().data(), this->key().length(),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "key");
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(18)) goto parse_device_type_id;
-        break;
-      }
-
-      // required string device_type_id = 2;
-      case 2: {
-        if (tag == 18) {
-         parse_device_type_id:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_device_type_id()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-            this->device_type_id().data(), this->device_type_id().length(),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "device_type_id");
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(26)) goto parse_device_id;
-        break;
-      }
-
-      // required string device_id = 3;
-      case 3: {
-        if (tag == 26) {
-         parse_device_id:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_device_id()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-            this->device_id().data(), this->device_id().length(),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "device_id");
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(34)) goto parse_service;
-        break;
-      }
-
-      // required string service = 4;
-      case 4: {
-        if (tag == 34) {
-         parse_service:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_service()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-            this->service().data(), this->service().length(),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "service");
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(42)) goto parse_version;
-        break;
-      }
-
-      // required string version = 5;
-      case 5: {
-        if (tag == 42) {
-         parse_version:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_version()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-            this->version().data(), this->version().length(),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "version");
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(50)) goto parse_timestamp;
-        break;
-      }
-
-      // required string timestamp = 6;
-      case 6: {
-        if (tag == 50) {
-         parse_timestamp:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_timestamp()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-            this->timestamp().data(), this->timestamp().length(),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "timestamp");
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(58)) goto parse_sign;
-        break;
-      }
-
-      // required string sign = 7;
-      case 7: {
-        if (tag == 58) {
-         parse_sign:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_sign()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-            this->sign().data(), this->sign().length(),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "sign");
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectAtEnd()) goto success;
-        break;
-      }
-
-      default: {
-      handle_unusual:
-        if (tag == 0 ||
-            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          goto success;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, mutable_unknown_fields()));
-        break;
-      }
-    }
-  }
-success:
-  // @@protoc_insertion_point(parse_success:rokid.open.AuthRequest)
-  return true;
-failure:
-  // @@protoc_insertion_point(parse_failure:rokid.open.AuthRequest)
-  return false;
-#undef DO_
-}
-
-void AuthRequest::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:rokid.open.AuthRequest)
-  // required string key = 1;
-  if (has_key()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->key().data(), this->key().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "key");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      1, this->key(), output);
-  }
-
-  // required string device_type_id = 2;
-  if (has_device_type_id()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->device_type_id().data(), this->device_type_id().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "device_type_id");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      2, this->device_type_id(), output);
-  }
-
-  // required string device_id = 3;
-  if (has_device_id()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->device_id().data(), this->device_id().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "device_id");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      3, this->device_id(), output);
-  }
-
-  // required string service = 4;
-  if (has_service()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->service().data(), this->service().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "service");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      4, this->service(), output);
-  }
-
-  // required string version = 5;
-  if (has_version()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->version().data(), this->version().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "version");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      5, this->version(), output);
-  }
-
-  // required string timestamp = 6;
-  if (has_timestamp()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->timestamp().data(), this->timestamp().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "timestamp");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      6, this->timestamp(), output);
-  }
-
-  // required string sign = 7;
-  if (has_sign()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->sign().data(), this->sign().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "sign");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      7, this->sign(), output);
-  }
-
-  if (!unknown_fields().empty()) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        unknown_fields(), output);
-  }
-  // @@protoc_insertion_point(serialize_end:rokid.open.AuthRequest)
-}
-
-::google::protobuf::uint8* AuthRequest::SerializeWithCachedSizesToArray(
-    ::google::protobuf::uint8* target) const {
-  // @@protoc_insertion_point(serialize_to_array_start:rokid.open.AuthRequest)
-  // required string key = 1;
-  if (has_key()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->key().data(), this->key().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "key");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        1, this->key(), target);
-  }
-
-  // required string device_type_id = 2;
-  if (has_device_type_id()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->device_type_id().data(), this->device_type_id().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "device_type_id");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        2, this->device_type_id(), target);
-  }
-
-  // required string device_id = 3;
-  if (has_device_id()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->device_id().data(), this->device_id().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "device_id");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        3, this->device_id(), target);
-  }
-
-  // required string service = 4;
-  if (has_service()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->service().data(), this->service().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "service");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        4, this->service(), target);
-  }
-
-  // required string version = 5;
-  if (has_version()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->version().data(), this->version().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "version");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        5, this->version(), target);
-  }
-
-  // required string timestamp = 6;
-  if (has_timestamp()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->timestamp().data(), this->timestamp().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "timestamp");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        6, this->timestamp(), target);
-  }
-
-  // required string sign = 7;
-  if (has_sign()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->sign().data(), this->sign().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "sign");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        7, this->sign(), target);
-  }
-
-  if (!unknown_fields().empty()) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        unknown_fields(), target);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:rokid.open.AuthRequest)
-  return target;
-}
-
-int AuthRequest::ByteSize() const {
-  int total_size = 0;
-
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required string key = 1;
-    if (has_key()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->key());
-    }
-
-    // required string device_type_id = 2;
-    if (has_device_type_id()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->device_type_id());
-    }
-
-    // required string device_id = 3;
-    if (has_device_id()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->device_id());
-    }
-
-    // required string service = 4;
-    if (has_service()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->service());
-    }
-
-    // required string version = 5;
-    if (has_version()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->version());
-    }
-
-    // required string timestamp = 6;
-    if (has_timestamp()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->timestamp());
-    }
-
-    // required string sign = 7;
-    if (has_sign()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->sign());
-    }
-
-  }
-  if (!unknown_fields().empty()) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        unknown_fields());
-  }
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = total_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-  return total_size;
-}
-
-void AuthRequest::MergeFrom(const ::google::protobuf::Message& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  const AuthRequest* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const AuthRequest*>(
-      &from);
-  if (source == NULL) {
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-    MergeFrom(*source);
-  }
-}
-
-void AuthRequest::MergeFrom(const AuthRequest& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from.has_key()) {
-      set_key(from.key());
-    }
-    if (from.has_device_type_id()) {
-      set_device_type_id(from.device_type_id());
-    }
-    if (from.has_device_id()) {
-      set_device_id(from.device_id());
-    }
-    if (from.has_service()) {
-      set_service(from.service());
-    }
-    if (from.has_version()) {
-      set_version(from.version());
-    }
-    if (from.has_timestamp()) {
-      set_timestamp(from.timestamp());
-    }
-    if (from.has_sign()) {
-      set_sign(from.sign());
-    }
-  }
-  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
-}
-
-void AuthRequest::CopyFrom(const ::google::protobuf::Message& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void AuthRequest::CopyFrom(const AuthRequest& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool AuthRequest::IsInitialized() const {
-  if ((_has_bits_[0] & 0x0000007f) != 0x0000007f) return false;
-
-  return true;
-}
-
-void AuthRequest::Swap(AuthRequest* other) {
-  if (other != this) {
-    std::swap(key_, other->key_);
-    std::swap(device_type_id_, other->device_type_id_);
-    std::swap(device_id_, other->device_id_);
-    std::swap(service_, other->service_);
-    std::swap(version_, other->version_);
-    std::swap(timestamp_, other->timestamp_);
-    std::swap(sign_, other->sign_);
-    std::swap(_has_bits_[0], other->_has_bits_[0]);
-    _unknown_fields_.Swap(&other->_unknown_fields_);
-    std::swap(_cached_size_, other->_cached_size_);
-  }
-}
-
-::google::protobuf::Metadata AuthRequest::GetMetadata() const {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::Metadata metadata;
-  metadata.descriptor = AuthRequest_descriptor_;
-  metadata.reflection = AuthRequest_reflection_;
-  return metadata;
-}
-
-
-// ===================================================================
-
-#ifndef _MSC_VER
-const int AuthResponse::kResultFieldNumber;
-#endif  // !_MSC_VER
-
-AuthResponse::AuthResponse()
-  : ::google::protobuf::Message() {
-  SharedCtor();
-  // @@protoc_insertion_point(constructor:rokid.open.AuthResponse)
-}
-
-void AuthResponse::InitAsDefaultInstance() {
-}
-
-AuthResponse::AuthResponse(const AuthResponse& from)
-  : ::google::protobuf::Message() {
-  SharedCtor();
-  MergeFrom(from);
-  // @@protoc_insertion_point(copy_constructor:rokid.open.AuthResponse)
-}
-
-void AuthResponse::SharedCtor() {
-  _cached_size_ = 0;
-  result_ = 0;
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-}
-
-AuthResponse::~AuthResponse() {
-  // @@protoc_insertion_point(destructor:rokid.open.AuthResponse)
-  SharedDtor();
-}
-
-void AuthResponse::SharedDtor() {
-  if (this != default_instance_) {
-  }
-}
-
-void AuthResponse::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-}
-const ::google::protobuf::Descriptor* AuthResponse::descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return AuthResponse_descriptor_;
-}
-
-const AuthResponse& AuthResponse::default_instance() {
-  if (default_instance_ == NULL) protobuf_AddDesc_speech_2eproto();
-  return *default_instance_;
-}
-
-AuthResponse* AuthResponse::default_instance_ = NULL;
-
-AuthResponse* AuthResponse::New() const {
-  return new AuthResponse;
-}
-
-void AuthResponse::Clear() {
-  result_ = 0;
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-  mutable_unknown_fields()->Clear();
-}
-
-bool AuthResponse::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
-  ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:rokid.open.AuthResponse)
-  for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
-    tag = p.first;
-    if (!p.second) goto handle_unusual;
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required .rokid.open.SpeechErrorCode result = 1;
+      // required .rokid.open.speech.v2.Lang lang = 1;
       case 1: {
         if (tag == 8) {
           int value;
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
                  input, &value)));
-          if (::rokid::open::SpeechErrorCode_IsValid(value)) {
-            set_result(static_cast< ::rokid::open::SpeechErrorCode >(value));
+          if (::rokid::open::speech::v2::Lang_IsValid(value)) {
+            set_lang(static_cast< ::rokid::open::speech::v2::Lang >(value));
           } else {
             mutable_unknown_fields()->AddVarint(1, value);
           }
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectAtEnd()) goto success;
+        if (input->ExpectTag(16)) goto parse_codec;
         break;
       }
 
-      default: {
-      handle_unusual:
-        if (tag == 0 ||
-            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          goto success;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, mutable_unknown_fields()));
-        break;
-      }
-    }
-  }
-success:
-  // @@protoc_insertion_point(parse_success:rokid.open.AuthResponse)
-  return true;
-failure:
-  // @@protoc_insertion_point(parse_failure:rokid.open.AuthResponse)
-  return false;
-#undef DO_
-}
-
-void AuthResponse::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:rokid.open.AuthResponse)
-  // required .rokid.open.SpeechErrorCode result = 1;
-  if (has_result()) {
-    ::google::protobuf::internal::WireFormatLite::WriteEnum(
-      1, this->result(), output);
-  }
-
-  if (!unknown_fields().empty()) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        unknown_fields(), output);
-  }
-  // @@protoc_insertion_point(serialize_end:rokid.open.AuthResponse)
-}
-
-::google::protobuf::uint8* AuthResponse::SerializeWithCachedSizesToArray(
-    ::google::protobuf::uint8* target) const {
-  // @@protoc_insertion_point(serialize_to_array_start:rokid.open.AuthResponse)
-  // required .rokid.open.SpeechErrorCode result = 1;
-  if (has_result()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
-      1, this->result(), target);
-  }
-
-  if (!unknown_fields().empty()) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        unknown_fields(), target);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:rokid.open.AuthResponse)
-  return target;
-}
-
-int AuthResponse::ByteSize() const {
-  int total_size = 0;
-
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required .rokid.open.SpeechErrorCode result = 1;
-    if (has_result()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::EnumSize(this->result());
-    }
-
-  }
-  if (!unknown_fields().empty()) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        unknown_fields());
-  }
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = total_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-  return total_size;
-}
-
-void AuthResponse::MergeFrom(const ::google::protobuf::Message& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  const AuthResponse* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const AuthResponse*>(
-      &from);
-  if (source == NULL) {
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-    MergeFrom(*source);
-  }
-}
-
-void AuthResponse::MergeFrom(const AuthResponse& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from.has_result()) {
-      set_result(from.result());
-    }
-  }
-  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
-}
-
-void AuthResponse::CopyFrom(const ::google::protobuf::Message& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void AuthResponse::CopyFrom(const AuthResponse& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool AuthResponse::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
-
-  return true;
-}
-
-void AuthResponse::Swap(AuthResponse* other) {
-  if (other != this) {
-    std::swap(result_, other->result_);
-    std::swap(_has_bits_[0], other->_has_bits_[0]);
-    _unknown_fields_.Swap(&other->_unknown_fields_);
-    std::swap(_cached_size_, other->_cached_size_);
-  }
-}
-
-::google::protobuf::Metadata AuthResponse::GetMetadata() const {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::Metadata metadata;
-  metadata.descriptor = AuthResponse_descriptor_;
-  metadata.reflection = AuthResponse_reflection_;
-  return metadata;
-}
-
-
-// ===================================================================
-
-#ifndef _MSC_VER
-const int AsrRequest::kIdFieldNumber;
-const int AsrRequest::kTypeFieldNumber;
-const int AsrRequest::kVoiceFieldNumber;
-const int AsrRequest::kLangFieldNumber;
-const int AsrRequest::kCodecFieldNumber;
-const int AsrRequest::kVtFieldNumber;
-#endif  // !_MSC_VER
-
-AsrRequest::AsrRequest()
-  : ::google::protobuf::Message() {
-  SharedCtor();
-  // @@protoc_insertion_point(constructor:rokid.open.AsrRequest)
-}
-
-void AsrRequest::InitAsDefaultInstance() {
-}
-
-AsrRequest::AsrRequest(const AsrRequest& from)
-  : ::google::protobuf::Message() {
-  SharedCtor();
-  MergeFrom(from);
-  // @@protoc_insertion_point(copy_constructor:rokid.open.AsrRequest)
-}
-
-void AsrRequest::SharedCtor() {
-  ::google::protobuf::internal::GetEmptyString();
-  _cached_size_ = 0;
-  id_ = 0;
-  type_ = 0;
-  voice_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  lang_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  codec_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  vt_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-}
-
-AsrRequest::~AsrRequest() {
-  // @@protoc_insertion_point(destructor:rokid.open.AsrRequest)
-  SharedDtor();
-}
-
-void AsrRequest::SharedDtor() {
-  if (voice_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete voice_;
-  }
-  if (lang_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete lang_;
-  }
-  if (codec_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete codec_;
-  }
-  if (vt_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete vt_;
-  }
-  if (this != default_instance_) {
-  }
-}
-
-void AsrRequest::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-}
-const ::google::protobuf::Descriptor* AsrRequest::descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return AsrRequest_descriptor_;
-}
-
-const AsrRequest& AsrRequest::default_instance() {
-  if (default_instance_ == NULL) protobuf_AddDesc_speech_2eproto();
-  return *default_instance_;
-}
-
-AsrRequest* AsrRequest::default_instance_ = NULL;
-
-AsrRequest* AsrRequest::New() const {
-  return new AsrRequest;
-}
-
-void AsrRequest::Clear() {
-#define OFFSET_OF_FIELD_(f) (reinterpret_cast<char*>(      \
-  &reinterpret_cast<AsrRequest*>(16)->f) - \
-   reinterpret_cast<char*>(16))
-
-#define ZR_(first, last) do {                              \
-    size_t f = OFFSET_OF_FIELD_(first);                    \
-    size_t n = OFFSET_OF_FIELD_(last) - f + sizeof(last);  \
-    ::memset(&first, 0, n);                                \
-  } while (0)
-
-  if (_has_bits_[0 / 32] & 63) {
-    ZR_(id_, type_);
-    if (has_voice()) {
-      if (voice_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-        voice_->clear();
-      }
-    }
-    if (has_lang()) {
-      if (lang_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-        lang_->clear();
-      }
-    }
-    if (has_codec()) {
-      if (codec_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-        codec_->clear();
-      }
-    }
-    if (has_vt()) {
-      if (vt_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-        vt_->clear();
-      }
-    }
-  }
-
-#undef OFFSET_OF_FIELD_
-#undef ZR_
-
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-  mutable_unknown_fields()->Clear();
-}
-
-bool AsrRequest::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
-  ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:rokid.open.AsrRequest)
-  for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
-    tag = p.first;
-    if (!p.second) goto handle_unusual;
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required int32 id = 1;
-      case 1: {
-        if (tag == 8) {
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &id_)));
-          set_has_id();
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(16)) goto parse_type;
-        break;
-      }
-
-      // required .rokid.open.ReqType type = 2;
+      // required .rokid.open.speech.v1.Codec codec = 2;
       case 2: {
         if (tag == 16) {
-         parse_type:
+         parse_codec:
           int value;
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
                  input, &value)));
-          if (::rokid::open::ReqType_IsValid(value)) {
-            set_type(static_cast< ::rokid::open::ReqType >(value));
+          if (::rokid::open::speech::v1::Codec_IsValid(value)) {
+            set_codec(static_cast< ::rokid::open::speech::v1::Codec >(value));
           } else {
             mutable_unknown_fields()->AddVarint(2, value);
           }
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(26)) goto parse_voice;
+        if (input->ExpectTag(24)) goto parse_vad_mode;
         break;
       }
 
-      // optional bytes voice = 3;
+      // required .rokid.open.speech.v2.VadMode vad_mode = 3;
       case 3: {
-        if (tag == 26) {
-         parse_voice:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
-                input, this->mutable_voice()));
+        if (tag == 24) {
+         parse_vad_mode:
+          int value;
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
+                 input, &value)));
+          if (::rokid::open::speech::v2::VadMode_IsValid(value)) {
+            set_vad_mode(static_cast< ::rokid::open::speech::v2::VadMode >(value));
+          } else {
+            mutable_unknown_fields()->AddVarint(3, value);
+          }
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(34)) goto parse_lang;
+        if (input->ExpectTag(32)) goto parse_vend_timeout;
         break;
       }
 
-      // optional string lang = 4;
+      // optional uint32 vend_timeout = 4;
       case 4: {
-        if (tag == 34) {
-         parse_lang:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_lang()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-            this->lang().data(), this->lang().length(),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "lang");
+        if (tag == 32) {
+         parse_vend_timeout:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &vend_timeout_)));
+          set_has_vend_timeout();
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(42)) goto parse_codec;
+        if (input->ExpectTag(40)) goto parse_no_nlp;
         break;
       }
 
-      // optional string codec = 5;
+      // required bool no_nlp = 5;
       case 5: {
-        if (tag == 42) {
-         parse_codec:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_codec()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-            this->codec().data(), this->codec().length(),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "codec");
+        if (tag == 40) {
+         parse_no_nlp:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &no_nlp_)));
+          set_has_no_nlp();
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(50)) goto parse_vt;
+        if (input->ExpectTag(48)) goto parse_no_intermediate_asr;
         break;
       }
 
-      // optional string vt = 6;
+      // required bool no_intermediate_asr = 6;
       case 6: {
-        if (tag == 50) {
-         parse_vt:
+        if (tag == 48) {
+         parse_no_intermediate_asr:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
+                 input, &no_intermediate_asr_)));
+          set_has_no_intermediate_asr();
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(58)) goto parse_stack;
+        break;
+      }
+
+      // optional string stack = 7;
+      case 7: {
+        if (tag == 58) {
+         parse_stack:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_vt()));
+                input, this->mutable_stack()));
           ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-            this->vt().data(), this->vt().length(),
+            this->stack().data(), this->stack().length(),
             ::google::protobuf::internal::WireFormat::PARSE,
-            "vt");
+            "stack");
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(66)) goto parse_voice_trigger;
+        break;
+      }
+
+      // optional string voice_trigger = 8;
+      case 8: {
+        if (tag == 66) {
+         parse_voice_trigger:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_voice_trigger()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+            this->voice_trigger().data(), this->voice_trigger().length(),
+            ::google::protobuf::internal::WireFormat::PARSE,
+            "voice_trigger");
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(77)) goto parse_voice_power;
+        break;
+      }
+
+      // optional float voice_power = 9;
+      case 9: {
+        if (tag == 77) {
+         parse_voice_power:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   float, ::google::protobuf::internal::WireFormatLite::TYPE_FLOAT>(
+                 input, &voice_power_)));
+          set_has_voice_power();
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(80)) goto parse_trigger_start;
+        break;
+      }
+
+      // optional uint32 trigger_start = 10;
+      case 10: {
+        if (tag == 80) {
+         parse_trigger_start:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &trigger_start_)));
+          set_has_trigger_start();
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(88)) goto parse_trigger_length;
+        break;
+      }
+
+      // optional uint32 trigger_length = 11;
+      case 11: {
+        if (tag == 88) {
+         parse_trigger_length:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::uint32, ::google::protobuf::internal::WireFormatLite::TYPE_UINT32>(
+                 input, &trigger_length_)));
+          set_has_trigger_length();
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(98)) goto parse_skill_options;
+        break;
+      }
+
+      // optional string skill_options = 12;
+      case 12: {
+        if (tag == 98) {
+         parse_skill_options:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_skill_options()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+            this->skill_options().data(), this->skill_options().length(),
+            ::google::protobuf::internal::WireFormat::PARSE,
+            "skill_options");
         } else {
           goto handle_unusual;
         }
@@ -1440,176 +592,273 @@ bool AsrRequest::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:rokid.open.AsrRequest)
+  // @@protoc_insertion_point(parse_success:rokid.open.speech.v2.SpeechOptions)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:rokid.open.AsrRequest)
+  // @@protoc_insertion_point(parse_failure:rokid.open.speech.v2.SpeechOptions)
   return false;
 #undef DO_
 }
 
-void AsrRequest::SerializeWithCachedSizes(
+void SpeechOptions::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:rokid.open.AsrRequest)
-  // required int32 id = 1;
-  if (has_id()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->id(), output);
-  }
-
-  // required .rokid.open.ReqType type = 2;
-  if (has_type()) {
-    ::google::protobuf::internal::WireFormatLite::WriteEnum(
-      2, this->type(), output);
-  }
-
-  // optional bytes voice = 3;
-  if (has_voice()) {
-    ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
-      3, this->voice(), output);
-  }
-
-  // optional string lang = 4;
+  // @@protoc_insertion_point(serialize_start:rokid.open.speech.v2.SpeechOptions)
+  // required .rokid.open.speech.v2.Lang lang = 1;
   if (has_lang()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->lang().data(), this->lang().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "lang");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      4, this->lang(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteEnum(
+      1, this->lang(), output);
   }
 
-  // optional string codec = 5;
+  // required .rokid.open.speech.v1.Codec codec = 2;
   if (has_codec()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->codec().data(), this->codec().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "codec");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      5, this->codec(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteEnum(
+      2, this->codec(), output);
   }
 
-  // optional string vt = 6;
-  if (has_vt()) {
+  // required .rokid.open.speech.v2.VadMode vad_mode = 3;
+  if (has_vad_mode()) {
+    ::google::protobuf::internal::WireFormatLite::WriteEnum(
+      3, this->vad_mode(), output);
+  }
+
+  // optional uint32 vend_timeout = 4;
+  if (has_vend_timeout()) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(4, this->vend_timeout(), output);
+  }
+
+  // required bool no_nlp = 5;
+  if (has_no_nlp()) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(5, this->no_nlp(), output);
+  }
+
+  // required bool no_intermediate_asr = 6;
+  if (has_no_intermediate_asr()) {
+    ::google::protobuf::internal::WireFormatLite::WriteBool(6, this->no_intermediate_asr(), output);
+  }
+
+  // optional string stack = 7;
+  if (has_stack()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->vt().data(), this->vt().length(),
+      this->stack().data(), this->stack().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "vt");
+      "stack");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      6, this->vt(), output);
+      7, this->stack(), output);
+  }
+
+  // optional string voice_trigger = 8;
+  if (has_voice_trigger()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+      this->voice_trigger().data(), this->voice_trigger().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "voice_trigger");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      8, this->voice_trigger(), output);
+  }
+
+  // optional float voice_power = 9;
+  if (has_voice_power()) {
+    ::google::protobuf::internal::WireFormatLite::WriteFloat(9, this->voice_power(), output);
+  }
+
+  // optional uint32 trigger_start = 10;
+  if (has_trigger_start()) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(10, this->trigger_start(), output);
+  }
+
+  // optional uint32 trigger_length = 11;
+  if (has_trigger_length()) {
+    ::google::protobuf::internal::WireFormatLite::WriteUInt32(11, this->trigger_length(), output);
+  }
+
+  // optional string skill_options = 12;
+  if (has_skill_options()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+      this->skill_options().data(), this->skill_options().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "skill_options");
+    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
+      12, this->skill_options(), output);
   }
 
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
   }
-  // @@protoc_insertion_point(serialize_end:rokid.open.AsrRequest)
+  // @@protoc_insertion_point(serialize_end:rokid.open.speech.v2.SpeechOptions)
 }
 
-::google::protobuf::uint8* AsrRequest::SerializeWithCachedSizesToArray(
+::google::protobuf::uint8* SpeechOptions::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // @@protoc_insertion_point(serialize_to_array_start:rokid.open.AsrRequest)
-  // required int32 id = 1;
-  if (has_id()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->id(), target);
-  }
-
-  // required .rokid.open.ReqType type = 2;
-  if (has_type()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
-      2, this->type(), target);
-  }
-
-  // optional bytes voice = 3;
-  if (has_voice()) {
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
-        3, this->voice(), target);
-  }
-
-  // optional string lang = 4;
+  // @@protoc_insertion_point(serialize_to_array_start:rokid.open.speech.v2.SpeechOptions)
+  // required .rokid.open.speech.v2.Lang lang = 1;
   if (has_lang()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->lang().data(), this->lang().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "lang");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        4, this->lang(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
+      1, this->lang(), target);
   }
 
-  // optional string codec = 5;
+  // required .rokid.open.speech.v1.Codec codec = 2;
   if (has_codec()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->codec().data(), this->codec().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "codec");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        5, this->codec(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
+      2, this->codec(), target);
   }
 
-  // optional string vt = 6;
-  if (has_vt()) {
+  // required .rokid.open.speech.v2.VadMode vad_mode = 3;
+  if (has_vad_mode()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
+      3, this->vad_mode(), target);
+  }
+
+  // optional uint32 vend_timeout = 4;
+  if (has_vend_timeout()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(4, this->vend_timeout(), target);
+  }
+
+  // required bool no_nlp = 5;
+  if (has_no_nlp()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(5, this->no_nlp(), target);
+  }
+
+  // required bool no_intermediate_asr = 6;
+  if (has_no_intermediate_asr()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(6, this->no_intermediate_asr(), target);
+  }
+
+  // optional string stack = 7;
+  if (has_stack()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->vt().data(), this->vt().length(),
+      this->stack().data(), this->stack().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "vt");
+      "stack");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        6, this->vt(), target);
+        7, this->stack(), target);
+  }
+
+  // optional string voice_trigger = 8;
+  if (has_voice_trigger()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+      this->voice_trigger().data(), this->voice_trigger().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "voice_trigger");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        8, this->voice_trigger(), target);
+  }
+
+  // optional float voice_power = 9;
+  if (has_voice_power()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteFloatToArray(9, this->voice_power(), target);
+  }
+
+  // optional uint32 trigger_start = 10;
+  if (has_trigger_start()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(10, this->trigger_start(), target);
+  }
+
+  // optional uint32 trigger_length = 11;
+  if (has_trigger_length()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteUInt32ToArray(11, this->trigger_length(), target);
+  }
+
+  // optional string skill_options = 12;
+  if (has_skill_options()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
+      this->skill_options().data(), this->skill_options().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE,
+      "skill_options");
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        12, this->skill_options(), target);
   }
 
   if (!unknown_fields().empty()) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:rokid.open.AsrRequest)
+  // @@protoc_insertion_point(serialize_to_array_end:rokid.open.speech.v2.SpeechOptions)
   return target;
 }
 
-int AsrRequest::ByteSize() const {
+int SpeechOptions::ByteSize() const {
   int total_size = 0;
 
   if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required int32 id = 1;
-    if (has_id()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
-          this->id());
-    }
-
-    // required .rokid.open.ReqType type = 2;
-    if (has_type()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::EnumSize(this->type());
-    }
-
-    // optional bytes voice = 3;
-    if (has_voice()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::BytesSize(
-          this->voice());
-    }
-
-    // optional string lang = 4;
+    // required .rokid.open.speech.v2.Lang lang = 1;
     if (has_lang()) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->lang());
+        ::google::protobuf::internal::WireFormatLite::EnumSize(this->lang());
     }
 
-    // optional string codec = 5;
+    // required .rokid.open.speech.v1.Codec codec = 2;
     if (has_codec()) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->codec());
+        ::google::protobuf::internal::WireFormatLite::EnumSize(this->codec());
     }
 
-    // optional string vt = 6;
-    if (has_vt()) {
+    // required .rokid.open.speech.v2.VadMode vad_mode = 3;
+    if (has_vad_mode()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::EnumSize(this->vad_mode());
+    }
+
+    // optional uint32 vend_timeout = 4;
+    if (has_vend_timeout()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::UInt32Size(
+          this->vend_timeout());
+    }
+
+    // required bool no_nlp = 5;
+    if (has_no_nlp()) {
+      total_size += 1 + 1;
+    }
+
+    // required bool no_intermediate_asr = 6;
+    if (has_no_intermediate_asr()) {
+      total_size += 1 + 1;
+    }
+
+    // optional string stack = 7;
+    if (has_stack()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->vt());
+          this->stack());
+    }
+
+    // optional string voice_trigger = 8;
+    if (has_voice_trigger()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->voice_trigger());
+    }
+
+  }
+  if (_has_bits_[8 / 32] & (0xffu << (8 % 32))) {
+    // optional float voice_power = 9;
+    if (has_voice_power()) {
+      total_size += 1 + 4;
+    }
+
+    // optional uint32 trigger_start = 10;
+    if (has_trigger_start()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::UInt32Size(
+          this->trigger_start());
+    }
+
+    // optional uint32 trigger_length = 11;
+    if (has_trigger_length()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::UInt32Size(
+          this->trigger_length());
+    }
+
+    // optional string skill_options = 12;
+    if (has_skill_options()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->skill_options());
     }
 
   }
@@ -1624,10 +873,10 @@ int AsrRequest::ByteSize() const {
   return total_size;
 }
 
-void AsrRequest::MergeFrom(const ::google::protobuf::Message& from) {
+void SpeechOptions::MergeFrom(const ::google::protobuf::Message& from) {
   GOOGLE_CHECK_NE(&from, this);
-  const AsrRequest* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const AsrRequest*>(
+  const SpeechOptions* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const SpeechOptions*>(
       &from);
   if (source == NULL) {
     ::google::protobuf::internal::ReflectionOps::Merge(from, this);
@@ -1636,1278 +885,94 @@ void AsrRequest::MergeFrom(const ::google::protobuf::Message& from) {
   }
 }
 
-void AsrRequest::MergeFrom(const AsrRequest& from) {
+void SpeechOptions::MergeFrom(const SpeechOptions& from) {
   GOOGLE_CHECK_NE(&from, this);
   if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from.has_id()) {
-      set_id(from.id());
-    }
-    if (from.has_type()) {
-      set_type(from.type());
-    }
-    if (from.has_voice()) {
-      set_voice(from.voice());
-    }
     if (from.has_lang()) {
       set_lang(from.lang());
     }
     if (from.has_codec()) {
       set_codec(from.codec());
     }
-    if (from.has_vt()) {
-      set_vt(from.vt());
+    if (from.has_vad_mode()) {
+      set_vad_mode(from.vad_mode());
+    }
+    if (from.has_vend_timeout()) {
+      set_vend_timeout(from.vend_timeout());
+    }
+    if (from.has_no_nlp()) {
+      set_no_nlp(from.no_nlp());
+    }
+    if (from.has_no_intermediate_asr()) {
+      set_no_intermediate_asr(from.no_intermediate_asr());
+    }
+    if (from.has_stack()) {
+      set_stack(from.stack());
+    }
+    if (from.has_voice_trigger()) {
+      set_voice_trigger(from.voice_trigger());
+    }
+  }
+  if (from._has_bits_[8 / 32] & (0xffu << (8 % 32))) {
+    if (from.has_voice_power()) {
+      set_voice_power(from.voice_power());
+    }
+    if (from.has_trigger_start()) {
+      set_trigger_start(from.trigger_start());
+    }
+    if (from.has_trigger_length()) {
+      set_trigger_length(from.trigger_length());
+    }
+    if (from.has_skill_options()) {
+      set_skill_options(from.skill_options());
     }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
 
-void AsrRequest::CopyFrom(const ::google::protobuf::Message& from) {
+void SpeechOptions::CopyFrom(const ::google::protobuf::Message& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-void AsrRequest::CopyFrom(const AsrRequest& from) {
+void SpeechOptions::CopyFrom(const SpeechOptions& from) {
   if (&from == this) return;
   Clear();
   MergeFrom(from);
 }
 
-bool AsrRequest::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000003) != 0x00000003) return false;
+bool SpeechOptions::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000037) != 0x00000037) return false;
 
   return true;
 }
 
-void AsrRequest::Swap(AsrRequest* other) {
+void SpeechOptions::Swap(SpeechOptions* other) {
   if (other != this) {
-    std::swap(id_, other->id_);
-    std::swap(type_, other->type_);
-    std::swap(voice_, other->voice_);
     std::swap(lang_, other->lang_);
     std::swap(codec_, other->codec_);
-    std::swap(vt_, other->vt_);
+    std::swap(vad_mode_, other->vad_mode_);
+    std::swap(vend_timeout_, other->vend_timeout_);
+    std::swap(no_nlp_, other->no_nlp_);
+    std::swap(no_intermediate_asr_, other->no_intermediate_asr_);
+    std::swap(stack_, other->stack_);
+    std::swap(voice_trigger_, other->voice_trigger_);
+    std::swap(voice_power_, other->voice_power_);
+    std::swap(trigger_start_, other->trigger_start_);
+    std::swap(trigger_length_, other->trigger_length_);
+    std::swap(skill_options_, other->skill_options_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
   }
 }
 
-::google::protobuf::Metadata AsrRequest::GetMetadata() const {
+::google::protobuf::Metadata SpeechOptions::GetMetadata() const {
   protobuf_AssignDescriptorsOnce();
   ::google::protobuf::Metadata metadata;
-  metadata.descriptor = AsrRequest_descriptor_;
-  metadata.reflection = AsrRequest_reflection_;
-  return metadata;
-}
-
-
-// ===================================================================
-
-#ifndef _MSC_VER
-const int AsrResponse::kIdFieldNumber;
-const int AsrResponse::kResultFieldNumber;
-const int AsrResponse::kAsrFieldNumber;
-const int AsrResponse::kFinishFieldNumber;
-#endif  // !_MSC_VER
-
-AsrResponse::AsrResponse()
-  : ::google::protobuf::Message() {
-  SharedCtor();
-  // @@protoc_insertion_point(constructor:rokid.open.AsrResponse)
-}
-
-void AsrResponse::InitAsDefaultInstance() {
-}
-
-AsrResponse::AsrResponse(const AsrResponse& from)
-  : ::google::protobuf::Message() {
-  SharedCtor();
-  MergeFrom(from);
-  // @@protoc_insertion_point(copy_constructor:rokid.open.AsrResponse)
-}
-
-void AsrResponse::SharedCtor() {
-  ::google::protobuf::internal::GetEmptyString();
-  _cached_size_ = 0;
-  id_ = 0;
-  result_ = 0;
-  asr_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  finish_ = false;
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-}
-
-AsrResponse::~AsrResponse() {
-  // @@protoc_insertion_point(destructor:rokid.open.AsrResponse)
-  SharedDtor();
-}
-
-void AsrResponse::SharedDtor() {
-  if (asr_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete asr_;
-  }
-  if (this != default_instance_) {
-  }
-}
-
-void AsrResponse::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-}
-const ::google::protobuf::Descriptor* AsrResponse::descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return AsrResponse_descriptor_;
-}
-
-const AsrResponse& AsrResponse::default_instance() {
-  if (default_instance_ == NULL) protobuf_AddDesc_speech_2eproto();
-  return *default_instance_;
-}
-
-AsrResponse* AsrResponse::default_instance_ = NULL;
-
-AsrResponse* AsrResponse::New() const {
-  return new AsrResponse;
-}
-
-void AsrResponse::Clear() {
-#define OFFSET_OF_FIELD_(f) (reinterpret_cast<char*>(      \
-  &reinterpret_cast<AsrResponse*>(16)->f) - \
-   reinterpret_cast<char*>(16))
-
-#define ZR_(first, last) do {                              \
-    size_t f = OFFSET_OF_FIELD_(first);                    \
-    size_t n = OFFSET_OF_FIELD_(last) - f + sizeof(last);  \
-    ::memset(&first, 0, n);                                \
-  } while (0)
-
-  if (_has_bits_[0 / 32] & 15) {
-    ZR_(id_, result_);
-    if (has_asr()) {
-      if (asr_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-        asr_->clear();
-      }
-    }
-    finish_ = false;
-  }
-
-#undef OFFSET_OF_FIELD_
-#undef ZR_
-
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-  mutable_unknown_fields()->Clear();
-}
-
-bool AsrResponse::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
-  ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:rokid.open.AsrResponse)
-  for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
-    tag = p.first;
-    if (!p.second) goto handle_unusual;
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required int32 id = 1;
-      case 1: {
-        if (tag == 8) {
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &id_)));
-          set_has_id();
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(16)) goto parse_result;
-        break;
-      }
-
-      // required .rokid.open.SpeechErrorCode result = 2;
-      case 2: {
-        if (tag == 16) {
-         parse_result:
-          int value;
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
-                 input, &value)));
-          if (::rokid::open::SpeechErrorCode_IsValid(value)) {
-            set_result(static_cast< ::rokid::open::SpeechErrorCode >(value));
-          } else {
-            mutable_unknown_fields()->AddVarint(2, value);
-          }
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(26)) goto parse_asr;
-        break;
-      }
-
-      // optional string asr = 3;
-      case 3: {
-        if (tag == 26) {
-         parse_asr:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_asr()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-            this->asr().data(), this->asr().length(),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "asr");
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(32)) goto parse_finish;
-        break;
-      }
-
-      // optional bool finish = 4;
-      case 4: {
-        if (tag == 32) {
-         parse_finish:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
-                 input, &finish_)));
-          set_has_finish();
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectAtEnd()) goto success;
-        break;
-      }
-
-      default: {
-      handle_unusual:
-        if (tag == 0 ||
-            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          goto success;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, mutable_unknown_fields()));
-        break;
-      }
-    }
-  }
-success:
-  // @@protoc_insertion_point(parse_success:rokid.open.AsrResponse)
-  return true;
-failure:
-  // @@protoc_insertion_point(parse_failure:rokid.open.AsrResponse)
-  return false;
-#undef DO_
-}
-
-void AsrResponse::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:rokid.open.AsrResponse)
-  // required int32 id = 1;
-  if (has_id()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->id(), output);
-  }
-
-  // required .rokid.open.SpeechErrorCode result = 2;
-  if (has_result()) {
-    ::google::protobuf::internal::WireFormatLite::WriteEnum(
-      2, this->result(), output);
-  }
-
-  // optional string asr = 3;
-  if (has_asr()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->asr().data(), this->asr().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "asr");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      3, this->asr(), output);
-  }
-
-  // optional bool finish = 4;
-  if (has_finish()) {
-    ::google::protobuf::internal::WireFormatLite::WriteBool(4, this->finish(), output);
-  }
-
-  if (!unknown_fields().empty()) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        unknown_fields(), output);
-  }
-  // @@protoc_insertion_point(serialize_end:rokid.open.AsrResponse)
-}
-
-::google::protobuf::uint8* AsrResponse::SerializeWithCachedSizesToArray(
-    ::google::protobuf::uint8* target) const {
-  // @@protoc_insertion_point(serialize_to_array_start:rokid.open.AsrResponse)
-  // required int32 id = 1;
-  if (has_id()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->id(), target);
-  }
-
-  // required .rokid.open.SpeechErrorCode result = 2;
-  if (has_result()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
-      2, this->result(), target);
-  }
-
-  // optional string asr = 3;
-  if (has_asr()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->asr().data(), this->asr().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "asr");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        3, this->asr(), target);
-  }
-
-  // optional bool finish = 4;
-  if (has_finish()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(4, this->finish(), target);
-  }
-
-  if (!unknown_fields().empty()) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        unknown_fields(), target);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:rokid.open.AsrResponse)
-  return target;
-}
-
-int AsrResponse::ByteSize() const {
-  int total_size = 0;
-
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required int32 id = 1;
-    if (has_id()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
-          this->id());
-    }
-
-    // required .rokid.open.SpeechErrorCode result = 2;
-    if (has_result()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::EnumSize(this->result());
-    }
-
-    // optional string asr = 3;
-    if (has_asr()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->asr());
-    }
-
-    // optional bool finish = 4;
-    if (has_finish()) {
-      total_size += 1 + 1;
-    }
-
-  }
-  if (!unknown_fields().empty()) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        unknown_fields());
-  }
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = total_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-  return total_size;
-}
-
-void AsrResponse::MergeFrom(const ::google::protobuf::Message& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  const AsrResponse* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const AsrResponse*>(
-      &from);
-  if (source == NULL) {
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-    MergeFrom(*source);
-  }
-}
-
-void AsrResponse::MergeFrom(const AsrResponse& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from.has_id()) {
-      set_id(from.id());
-    }
-    if (from.has_result()) {
-      set_result(from.result());
-    }
-    if (from.has_asr()) {
-      set_asr(from.asr());
-    }
-    if (from.has_finish()) {
-      set_finish(from.finish());
-    }
-  }
-  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
-}
-
-void AsrResponse::CopyFrom(const ::google::protobuf::Message& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void AsrResponse::CopyFrom(const AsrResponse& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool AsrResponse::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000003) != 0x00000003) return false;
-
-  return true;
-}
-
-void AsrResponse::Swap(AsrResponse* other) {
-  if (other != this) {
-    std::swap(id_, other->id_);
-    std::swap(result_, other->result_);
-    std::swap(asr_, other->asr_);
-    std::swap(finish_, other->finish_);
-    std::swap(_has_bits_[0], other->_has_bits_[0]);
-    _unknown_fields_.Swap(&other->_unknown_fields_);
-    std::swap(_cached_size_, other->_cached_size_);
-  }
-}
-
-::google::protobuf::Metadata AsrResponse::GetMetadata() const {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::Metadata metadata;
-  metadata.descriptor = AsrResponse_descriptor_;
-  metadata.reflection = AsrResponse_reflection_;
-  return metadata;
-}
-
-
-// ===================================================================
-
-#ifndef _MSC_VER
-const int TtsRequest::kIdFieldNumber;
-const int TtsRequest::kTextFieldNumber;
-const int TtsRequest::kDeclaimerFieldNumber;
-const int TtsRequest::kCodecFieldNumber;
-#endif  // !_MSC_VER
-
-TtsRequest::TtsRequest()
-  : ::google::protobuf::Message() {
-  SharedCtor();
-  // @@protoc_insertion_point(constructor:rokid.open.TtsRequest)
-}
-
-void TtsRequest::InitAsDefaultInstance() {
-}
-
-TtsRequest::TtsRequest(const TtsRequest& from)
-  : ::google::protobuf::Message() {
-  SharedCtor();
-  MergeFrom(from);
-  // @@protoc_insertion_point(copy_constructor:rokid.open.TtsRequest)
-}
-
-void TtsRequest::SharedCtor() {
-  ::google::protobuf::internal::GetEmptyString();
-  _cached_size_ = 0;
-  id_ = 0;
-  text_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  declaimer_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  codec_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-}
-
-TtsRequest::~TtsRequest() {
-  // @@protoc_insertion_point(destructor:rokid.open.TtsRequest)
-  SharedDtor();
-}
-
-void TtsRequest::SharedDtor() {
-  if (text_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete text_;
-  }
-  if (declaimer_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete declaimer_;
-  }
-  if (codec_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete codec_;
-  }
-  if (this != default_instance_) {
-  }
-}
-
-void TtsRequest::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-}
-const ::google::protobuf::Descriptor* TtsRequest::descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return TtsRequest_descriptor_;
-}
-
-const TtsRequest& TtsRequest::default_instance() {
-  if (default_instance_ == NULL) protobuf_AddDesc_speech_2eproto();
-  return *default_instance_;
-}
-
-TtsRequest* TtsRequest::default_instance_ = NULL;
-
-TtsRequest* TtsRequest::New() const {
-  return new TtsRequest;
-}
-
-void TtsRequest::Clear() {
-  if (_has_bits_[0 / 32] & 15) {
-    id_ = 0;
-    if (has_text()) {
-      if (text_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-        text_->clear();
-      }
-    }
-    if (has_declaimer()) {
-      if (declaimer_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-        declaimer_->clear();
-      }
-    }
-    if (has_codec()) {
-      if (codec_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-        codec_->clear();
-      }
-    }
-  }
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-  mutable_unknown_fields()->Clear();
-}
-
-bool TtsRequest::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
-  ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:rokid.open.TtsRequest)
-  for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
-    tag = p.first;
-    if (!p.second) goto handle_unusual;
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required int32 id = 1;
-      case 1: {
-        if (tag == 8) {
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &id_)));
-          set_has_id();
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(18)) goto parse_text;
-        break;
-      }
-
-      // required string text = 2;
-      case 2: {
-        if (tag == 18) {
-         parse_text:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_text()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-            this->text().data(), this->text().length(),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "text");
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(26)) goto parse_declaimer;
-        break;
-      }
-
-      // optional string declaimer = 3;
-      case 3: {
-        if (tag == 26) {
-         parse_declaimer:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_declaimer()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-            this->declaimer().data(), this->declaimer().length(),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "declaimer");
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(34)) goto parse_codec;
-        break;
-      }
-
-      // optional string codec = 4;
-      case 4: {
-        if (tag == 34) {
-         parse_codec:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_codec()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-            this->codec().data(), this->codec().length(),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "codec");
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectAtEnd()) goto success;
-        break;
-      }
-
-      default: {
-      handle_unusual:
-        if (tag == 0 ||
-            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          goto success;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, mutable_unknown_fields()));
-        break;
-      }
-    }
-  }
-success:
-  // @@protoc_insertion_point(parse_success:rokid.open.TtsRequest)
-  return true;
-failure:
-  // @@protoc_insertion_point(parse_failure:rokid.open.TtsRequest)
-  return false;
-#undef DO_
-}
-
-void TtsRequest::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:rokid.open.TtsRequest)
-  // required int32 id = 1;
-  if (has_id()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->id(), output);
-  }
-
-  // required string text = 2;
-  if (has_text()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->text().data(), this->text().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "text");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      2, this->text(), output);
-  }
-
-  // optional string declaimer = 3;
-  if (has_declaimer()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->declaimer().data(), this->declaimer().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "declaimer");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      3, this->declaimer(), output);
-  }
-
-  // optional string codec = 4;
-  if (has_codec()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->codec().data(), this->codec().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "codec");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      4, this->codec(), output);
-  }
-
-  if (!unknown_fields().empty()) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        unknown_fields(), output);
-  }
-  // @@protoc_insertion_point(serialize_end:rokid.open.TtsRequest)
-}
-
-::google::protobuf::uint8* TtsRequest::SerializeWithCachedSizesToArray(
-    ::google::protobuf::uint8* target) const {
-  // @@protoc_insertion_point(serialize_to_array_start:rokid.open.TtsRequest)
-  // required int32 id = 1;
-  if (has_id()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->id(), target);
-  }
-
-  // required string text = 2;
-  if (has_text()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->text().data(), this->text().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "text");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        2, this->text(), target);
-  }
-
-  // optional string declaimer = 3;
-  if (has_declaimer()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->declaimer().data(), this->declaimer().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "declaimer");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        3, this->declaimer(), target);
-  }
-
-  // optional string codec = 4;
-  if (has_codec()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->codec().data(), this->codec().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "codec");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        4, this->codec(), target);
-  }
-
-  if (!unknown_fields().empty()) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        unknown_fields(), target);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:rokid.open.TtsRequest)
-  return target;
-}
-
-int TtsRequest::ByteSize() const {
-  int total_size = 0;
-
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required int32 id = 1;
-    if (has_id()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
-          this->id());
-    }
-
-    // required string text = 2;
-    if (has_text()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->text());
-    }
-
-    // optional string declaimer = 3;
-    if (has_declaimer()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->declaimer());
-    }
-
-    // optional string codec = 4;
-    if (has_codec()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->codec());
-    }
-
-  }
-  if (!unknown_fields().empty()) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        unknown_fields());
-  }
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = total_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-  return total_size;
-}
-
-void TtsRequest::MergeFrom(const ::google::protobuf::Message& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  const TtsRequest* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const TtsRequest*>(
-      &from);
-  if (source == NULL) {
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-    MergeFrom(*source);
-  }
-}
-
-void TtsRequest::MergeFrom(const TtsRequest& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from.has_id()) {
-      set_id(from.id());
-    }
-    if (from.has_text()) {
-      set_text(from.text());
-    }
-    if (from.has_declaimer()) {
-      set_declaimer(from.declaimer());
-    }
-    if (from.has_codec()) {
-      set_codec(from.codec());
-    }
-  }
-  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
-}
-
-void TtsRequest::CopyFrom(const ::google::protobuf::Message& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void TtsRequest::CopyFrom(const TtsRequest& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool TtsRequest::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000003) != 0x00000003) return false;
-
-  return true;
-}
-
-void TtsRequest::Swap(TtsRequest* other) {
-  if (other != this) {
-    std::swap(id_, other->id_);
-    std::swap(text_, other->text_);
-    std::swap(declaimer_, other->declaimer_);
-    std::swap(codec_, other->codec_);
-    std::swap(_has_bits_[0], other->_has_bits_[0]);
-    _unknown_fields_.Swap(&other->_unknown_fields_);
-    std::swap(_cached_size_, other->_cached_size_);
-  }
-}
-
-::google::protobuf::Metadata TtsRequest::GetMetadata() const {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::Metadata metadata;
-  metadata.descriptor = TtsRequest_descriptor_;
-  metadata.reflection = TtsRequest_reflection_;
-  return metadata;
-}
-
-
-// ===================================================================
-
-#ifndef _MSC_VER
-const int TtsResponse::kIdFieldNumber;
-const int TtsResponse::kResultFieldNumber;
-const int TtsResponse::kTextFieldNumber;
-const int TtsResponse::kVoiceFieldNumber;
-const int TtsResponse::kFinishFieldNumber;
-#endif  // !_MSC_VER
-
-TtsResponse::TtsResponse()
-  : ::google::protobuf::Message() {
-  SharedCtor();
-  // @@protoc_insertion_point(constructor:rokid.open.TtsResponse)
-}
-
-void TtsResponse::InitAsDefaultInstance() {
-}
-
-TtsResponse::TtsResponse(const TtsResponse& from)
-  : ::google::protobuf::Message() {
-  SharedCtor();
-  MergeFrom(from);
-  // @@protoc_insertion_point(copy_constructor:rokid.open.TtsResponse)
-}
-
-void TtsResponse::SharedCtor() {
-  ::google::protobuf::internal::GetEmptyString();
-  _cached_size_ = 0;
-  id_ = 0;
-  result_ = 0;
-  text_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  voice_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  finish_ = false;
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-}
-
-TtsResponse::~TtsResponse() {
-  // @@protoc_insertion_point(destructor:rokid.open.TtsResponse)
-  SharedDtor();
-}
-
-void TtsResponse::SharedDtor() {
-  if (text_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete text_;
-  }
-  if (voice_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete voice_;
-  }
-  if (this != default_instance_) {
-  }
-}
-
-void TtsResponse::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-}
-const ::google::protobuf::Descriptor* TtsResponse::descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return TtsResponse_descriptor_;
-}
-
-const TtsResponse& TtsResponse::default_instance() {
-  if (default_instance_ == NULL) protobuf_AddDesc_speech_2eproto();
-  return *default_instance_;
-}
-
-TtsResponse* TtsResponse::default_instance_ = NULL;
-
-TtsResponse* TtsResponse::New() const {
-  return new TtsResponse;
-}
-
-void TtsResponse::Clear() {
-#define OFFSET_OF_FIELD_(f) (reinterpret_cast<char*>(      \
-  &reinterpret_cast<TtsResponse*>(16)->f) - \
-   reinterpret_cast<char*>(16))
-
-#define ZR_(first, last) do {                              \
-    size_t f = OFFSET_OF_FIELD_(first);                    \
-    size_t n = OFFSET_OF_FIELD_(last) - f + sizeof(last);  \
-    ::memset(&first, 0, n);                                \
-  } while (0)
-
-  if (_has_bits_[0 / 32] & 31) {
-    ZR_(id_, result_);
-    if (has_text()) {
-      if (text_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-        text_->clear();
-      }
-    }
-    if (has_voice()) {
-      if (voice_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-        voice_->clear();
-      }
-    }
-    finish_ = false;
-  }
-
-#undef OFFSET_OF_FIELD_
-#undef ZR_
-
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-  mutable_unknown_fields()->Clear();
-}
-
-bool TtsResponse::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
-  ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:rokid.open.TtsResponse)
-  for (;;) {
-    ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
-    tag = p.first;
-    if (!p.second) goto handle_unusual;
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required int32 id = 1;
-      case 1: {
-        if (tag == 8) {
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &id_)));
-          set_has_id();
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(16)) goto parse_result;
-        break;
-      }
-
-      // required .rokid.open.SpeechErrorCode result = 2;
-      case 2: {
-        if (tag == 16) {
-         parse_result:
-          int value;
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
-                 input, &value)));
-          if (::rokid::open::SpeechErrorCode_IsValid(value)) {
-            set_result(static_cast< ::rokid::open::SpeechErrorCode >(value));
-          } else {
-            mutable_unknown_fields()->AddVarint(2, value);
-          }
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(26)) goto parse_text;
-        break;
-      }
-
-      // optional string text = 3;
-      case 3: {
-        if (tag == 26) {
-         parse_text:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_text()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-            this->text().data(), this->text().length(),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "text");
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(34)) goto parse_voice;
-        break;
-      }
-
-      // optional bytes voice = 4;
-      case 4: {
-        if (tag == 34) {
-         parse_voice:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadBytes(
-                input, this->mutable_voice()));
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(40)) goto parse_finish;
-        break;
-      }
-
-      // optional bool finish = 5;
-      case 5: {
-        if (tag == 40) {
-         parse_finish:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
-                 input, &finish_)));
-          set_has_finish();
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectAtEnd()) goto success;
-        break;
-      }
-
-      default: {
-      handle_unusual:
-        if (tag == 0 ||
-            ::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          goto success;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, mutable_unknown_fields()));
-        break;
-      }
-    }
-  }
-success:
-  // @@protoc_insertion_point(parse_success:rokid.open.TtsResponse)
-  return true;
-failure:
-  // @@protoc_insertion_point(parse_failure:rokid.open.TtsResponse)
-  return false;
-#undef DO_
-}
-
-void TtsResponse::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:rokid.open.TtsResponse)
-  // required int32 id = 1;
-  if (has_id()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->id(), output);
-  }
-
-  // required .rokid.open.SpeechErrorCode result = 2;
-  if (has_result()) {
-    ::google::protobuf::internal::WireFormatLite::WriteEnum(
-      2, this->result(), output);
-  }
-
-  // optional string text = 3;
-  if (has_text()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->text().data(), this->text().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "text");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      3, this->text(), output);
-  }
-
-  // optional bytes voice = 4;
-  if (has_voice()) {
-    ::google::protobuf::internal::WireFormatLite::WriteBytesMaybeAliased(
-      4, this->voice(), output);
-  }
-
-  // optional bool finish = 5;
-  if (has_finish()) {
-    ::google::protobuf::internal::WireFormatLite::WriteBool(5, this->finish(), output);
-  }
-
-  if (!unknown_fields().empty()) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        unknown_fields(), output);
-  }
-  // @@protoc_insertion_point(serialize_end:rokid.open.TtsResponse)
-}
-
-::google::protobuf::uint8* TtsResponse::SerializeWithCachedSizesToArray(
-    ::google::protobuf::uint8* target) const {
-  // @@protoc_insertion_point(serialize_to_array_start:rokid.open.TtsResponse)
-  // required int32 id = 1;
-  if (has_id()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->id(), target);
-  }
-
-  // required .rokid.open.SpeechErrorCode result = 2;
-  if (has_result()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
-      2, this->result(), target);
-  }
-
-  // optional string text = 3;
-  if (has_text()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->text().data(), this->text().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "text");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        3, this->text(), target);
-  }
-
-  // optional bytes voice = 4;
-  if (has_voice()) {
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteBytesToArray(
-        4, this->voice(), target);
-  }
-
-  // optional bool finish = 5;
-  if (has_finish()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(5, this->finish(), target);
-  }
-
-  if (!unknown_fields().empty()) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        unknown_fields(), target);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:rokid.open.TtsResponse)
-  return target;
-}
-
-int TtsResponse::ByteSize() const {
-  int total_size = 0;
-
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required int32 id = 1;
-    if (has_id()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
-          this->id());
-    }
-
-    // required .rokid.open.SpeechErrorCode result = 2;
-    if (has_result()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::EnumSize(this->result());
-    }
-
-    // optional string text = 3;
-    if (has_text()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->text());
-    }
-
-    // optional bytes voice = 4;
-    if (has_voice()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::BytesSize(
-          this->voice());
-    }
-
-    // optional bool finish = 5;
-    if (has_finish()) {
-      total_size += 1 + 1;
-    }
-
-  }
-  if (!unknown_fields().empty()) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        unknown_fields());
-  }
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = total_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-  return total_size;
-}
-
-void TtsResponse::MergeFrom(const ::google::protobuf::Message& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  const TtsResponse* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const TtsResponse*>(
-      &from);
-  if (source == NULL) {
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-    MergeFrom(*source);
-  }
-}
-
-void TtsResponse::MergeFrom(const TtsResponse& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from.has_id()) {
-      set_id(from.id());
-    }
-    if (from.has_result()) {
-      set_result(from.result());
-    }
-    if (from.has_text()) {
-      set_text(from.text());
-    }
-    if (from.has_voice()) {
-      set_voice(from.voice());
-    }
-    if (from.has_finish()) {
-      set_finish(from.finish());
-    }
-  }
-  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
-}
-
-void TtsResponse::CopyFrom(const ::google::protobuf::Message& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void TtsResponse::CopyFrom(const TtsResponse& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool TtsResponse::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000003) != 0x00000003) return false;
-
-  return true;
-}
-
-void TtsResponse::Swap(TtsResponse* other) {
-  if (other != this) {
-    std::swap(id_, other->id_);
-    std::swap(result_, other->result_);
-    std::swap(text_, other->text_);
-    std::swap(voice_, other->voice_);
-    std::swap(finish_, other->finish_);
-    std::swap(_has_bits_[0], other->_has_bits_[0]);
-    _unknown_fields_.Swap(&other->_unknown_fields_);
-    std::swap(_cached_size_, other->_cached_size_);
-  }
-}
-
-::google::protobuf::Metadata TtsResponse::GetMetadata() const {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::Metadata metadata;
-  metadata.descriptor = TtsResponse_descriptor_;
-  metadata.reflection = TtsResponse_reflection_;
+  metadata.descriptor = SpeechOptions_descriptor_;
+  metadata.reflection = SpeechOptions_reflection_;
   return metadata;
 }
 
@@ -2919,27 +984,24 @@ const int SpeechRequest::kIdFieldNumber;
 const int SpeechRequest::kTypeFieldNumber;
 const int SpeechRequest::kVoiceFieldNumber;
 const int SpeechRequest::kAsrFieldNumber;
-const int SpeechRequest::kLangFieldNumber;
-const int SpeechRequest::kCodecFieldNumber;
-const int SpeechRequest::kVtFieldNumber;
-const int SpeechRequest::kFrameworkOptionsFieldNumber;
-const int SpeechRequest::kSkillOptionsFieldNumber;
+const int SpeechRequest::kOptionsFieldNumber;
 #endif  // !_MSC_VER
 
 SpeechRequest::SpeechRequest()
   : ::google::protobuf::Message() {
   SharedCtor();
-  // @@protoc_insertion_point(constructor:rokid.open.SpeechRequest)
+  // @@protoc_insertion_point(constructor:rokid.open.speech.v2.SpeechRequest)
 }
 
 void SpeechRequest::InitAsDefaultInstance() {
+  options_ = const_cast< ::rokid::open::speech::v2::SpeechOptions*>(&::rokid::open::speech::v2::SpeechOptions::default_instance());
 }
 
 SpeechRequest::SpeechRequest(const SpeechRequest& from)
   : ::google::protobuf::Message() {
   SharedCtor();
   MergeFrom(from);
-  // @@protoc_insertion_point(copy_constructor:rokid.open.SpeechRequest)
+  // @@protoc_insertion_point(copy_constructor:rokid.open.speech.v2.SpeechRequest)
 }
 
 void SpeechRequest::SharedCtor() {
@@ -2949,16 +1011,12 @@ void SpeechRequest::SharedCtor() {
   type_ = 0;
   voice_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   asr_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  lang_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  codec_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  vt_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  framework_options_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  skill_options_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+  options_ = NULL;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
 SpeechRequest::~SpeechRequest() {
-  // @@protoc_insertion_point(destructor:rokid.open.SpeechRequest)
+  // @@protoc_insertion_point(destructor:rokid.open.speech.v2.SpeechRequest)
   SharedDtor();
 }
 
@@ -2969,22 +1027,8 @@ void SpeechRequest::SharedDtor() {
   if (asr_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
     delete asr_;
   }
-  if (lang_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete lang_;
-  }
-  if (codec_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete codec_;
-  }
-  if (vt_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete vt_;
-  }
-  if (framework_options_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete framework_options_;
-  }
-  if (skill_options_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete skill_options_;
-  }
   if (this != default_instance_) {
+    delete options_;
   }
 }
 
@@ -3020,7 +1064,7 @@ void SpeechRequest::Clear() {
     ::memset(&first, 0, n);                                \
   } while (0)
 
-  if (_has_bits_[0 / 32] & 255) {
+  if (_has_bits_[0 / 32] & 31) {
     ZR_(id_, type_);
     if (has_voice()) {
       if (voice_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
@@ -3032,30 +1076,8 @@ void SpeechRequest::Clear() {
         asr_->clear();
       }
     }
-    if (has_lang()) {
-      if (lang_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-        lang_->clear();
-      }
-    }
-    if (has_codec()) {
-      if (codec_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-        codec_->clear();
-      }
-    }
-    if (has_vt()) {
-      if (vt_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-        vt_->clear();
-      }
-    }
-    if (has_framework_options()) {
-      if (framework_options_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-        framework_options_->clear();
-      }
-    }
-  }
-  if (has_skill_options()) {
-    if (skill_options_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-      skill_options_->clear();
+    if (has_options()) {
+      if (options_ != NULL) options_->::rokid::open::speech::v2::SpeechOptions::Clear();
     }
   }
 
@@ -3070,7 +1092,7 @@ bool SpeechRequest::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:rokid.open.SpeechRequest)
+  // @@protoc_insertion_point(parse_start:rokid.open.speech.v2.SpeechRequest)
   for (;;) {
     ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
     tag = p.first;
@@ -3090,7 +1112,7 @@ bool SpeechRequest::MergePartialFromCodedStream(
         break;
       }
 
-      // required .rokid.open.ReqType type = 2;
+      // required .rokid.open.speech.v1.ReqType type = 2;
       case 2: {
         if (tag == 16) {
          parse_type:
@@ -3098,8 +1120,8 @@ bool SpeechRequest::MergePartialFromCodedStream(
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
                  input, &value)));
-          if (::rokid::open::ReqType_IsValid(value)) {
-            set_type(static_cast< ::rokid::open::ReqType >(value));
+          if (::rokid::open::speech::v1::ReqType_IsValid(value)) {
+            set_type(static_cast< ::rokid::open::speech::v1::ReqType >(value));
           } else {
             mutable_unknown_fields()->AddVarint(2, value);
           }
@@ -3136,88 +1158,16 @@ bool SpeechRequest::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(42)) goto parse_lang;
+        if (input->ExpectTag(42)) goto parse_options;
         break;
       }
 
-      // optional string lang = 5;
+      // optional .rokid.open.speech.v2.SpeechOptions options = 5;
       case 5: {
         if (tag == 42) {
-         parse_lang:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_lang()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-            this->lang().data(), this->lang().length(),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "lang");
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(50)) goto parse_codec;
-        break;
-      }
-
-      // optional string codec = 6;
-      case 6: {
-        if (tag == 50) {
-         parse_codec:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_codec()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-            this->codec().data(), this->codec().length(),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "codec");
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(58)) goto parse_vt;
-        break;
-      }
-
-      // optional string vt = 7;
-      case 7: {
-        if (tag == 58) {
-         parse_vt:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_vt()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-            this->vt().data(), this->vt().length(),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "vt");
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(66)) goto parse_framework_options;
-        break;
-      }
-
-      // optional string framework_options = 8;
-      case 8: {
-        if (tag == 66) {
-         parse_framework_options:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_framework_options()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-            this->framework_options().data(), this->framework_options().length(),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "framework_options");
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(74)) goto parse_skill_options;
-        break;
-      }
-
-      // optional string skill_options = 9;
-      case 9: {
-        if (tag == 74) {
-         parse_skill_options:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_skill_options()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-            this->skill_options().data(), this->skill_options().length(),
-            ::google::protobuf::internal::WireFormat::PARSE,
-            "skill_options");
+         parse_options:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_options()));
         } else {
           goto handle_unusual;
         }
@@ -3239,23 +1189,23 @@ bool SpeechRequest::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:rokid.open.SpeechRequest)
+  // @@protoc_insertion_point(parse_success:rokid.open.speech.v2.SpeechRequest)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:rokid.open.SpeechRequest)
+  // @@protoc_insertion_point(parse_failure:rokid.open.speech.v2.SpeechRequest)
   return false;
 #undef DO_
 }
 
 void SpeechRequest::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:rokid.open.SpeechRequest)
+  // @@protoc_insertion_point(serialize_start:rokid.open.speech.v2.SpeechRequest)
   // required int32 id = 1;
   if (has_id()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->id(), output);
   }
 
-  // required .rokid.open.ReqType type = 2;
+  // required .rokid.open.speech.v1.ReqType type = 2;
   if (has_type()) {
     ::google::protobuf::internal::WireFormatLite::WriteEnum(
       2, this->type(), output);
@@ -3277,72 +1227,28 @@ void SpeechRequest::SerializeWithCachedSizes(
       4, this->asr(), output);
   }
 
-  // optional string lang = 5;
-  if (has_lang()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->lang().data(), this->lang().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "lang");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      5, this->lang(), output);
-  }
-
-  // optional string codec = 6;
-  if (has_codec()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->codec().data(), this->codec().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "codec");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      6, this->codec(), output);
-  }
-
-  // optional string vt = 7;
-  if (has_vt()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->vt().data(), this->vt().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "vt");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      7, this->vt(), output);
-  }
-
-  // optional string framework_options = 8;
-  if (has_framework_options()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->framework_options().data(), this->framework_options().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "framework_options");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      8, this->framework_options(), output);
-  }
-
-  // optional string skill_options = 9;
-  if (has_skill_options()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->skill_options().data(), this->skill_options().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "skill_options");
-    ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      9, this->skill_options(), output);
+  // optional .rokid.open.speech.v2.SpeechOptions options = 5;
+  if (has_options()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      5, this->options(), output);
   }
 
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
   }
-  // @@protoc_insertion_point(serialize_end:rokid.open.SpeechRequest)
+  // @@protoc_insertion_point(serialize_end:rokid.open.speech.v2.SpeechRequest)
 }
 
 ::google::protobuf::uint8* SpeechRequest::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // @@protoc_insertion_point(serialize_to_array_start:rokid.open.SpeechRequest)
+  // @@protoc_insertion_point(serialize_to_array_start:rokid.open.speech.v2.SpeechRequest)
   // required int32 id = 1;
   if (has_id()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->id(), target);
   }
 
-  // required .rokid.open.ReqType type = 2;
+  // required .rokid.open.speech.v1.ReqType type = 2;
   if (has_type()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
       2, this->type(), target);
@@ -3366,66 +1272,18 @@ void SpeechRequest::SerializeWithCachedSizes(
         4, this->asr(), target);
   }
 
-  // optional string lang = 5;
-  if (has_lang()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->lang().data(), this->lang().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "lang");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        5, this->lang(), target);
-  }
-
-  // optional string codec = 6;
-  if (has_codec()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->codec().data(), this->codec().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "codec");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        6, this->codec(), target);
-  }
-
-  // optional string vt = 7;
-  if (has_vt()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->vt().data(), this->vt().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "vt");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        7, this->vt(), target);
-  }
-
-  // optional string framework_options = 8;
-  if (has_framework_options()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->framework_options().data(), this->framework_options().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "framework_options");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        8, this->framework_options(), target);
-  }
-
-  // optional string skill_options = 9;
-  if (has_skill_options()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
-      this->skill_options().data(), this->skill_options().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE,
-      "skill_options");
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        9, this->skill_options(), target);
+  // optional .rokid.open.speech.v2.SpeechOptions options = 5;
+  if (has_options()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        5, this->options(), target);
   }
 
   if (!unknown_fields().empty()) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:rokid.open.SpeechRequest)
+  // @@protoc_insertion_point(serialize_to_array_end:rokid.open.speech.v2.SpeechRequest)
   return target;
 }
 
@@ -3440,7 +1298,7 @@ int SpeechRequest::ByteSize() const {
           this->id());
     }
 
-    // required .rokid.open.ReqType type = 2;
+    // required .rokid.open.speech.v1.ReqType type = 2;
     if (has_type()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::EnumSize(this->type());
@@ -3460,41 +1318,11 @@ int SpeechRequest::ByteSize() const {
           this->asr());
     }
 
-    // optional string lang = 5;
-    if (has_lang()) {
+    // optional .rokid.open.speech.v2.SpeechOptions options = 5;
+    if (has_options()) {
       total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->lang());
-    }
-
-    // optional string codec = 6;
-    if (has_codec()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->codec());
-    }
-
-    // optional string vt = 7;
-    if (has_vt()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->vt());
-    }
-
-    // optional string framework_options = 8;
-    if (has_framework_options()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->framework_options());
-    }
-
-  }
-  if (_has_bits_[8 / 32] & (0xffu << (8 % 32))) {
-    // optional string skill_options = 9;
-    if (has_skill_options()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->skill_options());
+        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+          this->options());
     }
 
   }
@@ -3536,22 +1364,8 @@ void SpeechRequest::MergeFrom(const SpeechRequest& from) {
     if (from.has_asr()) {
       set_asr(from.asr());
     }
-    if (from.has_lang()) {
-      set_lang(from.lang());
-    }
-    if (from.has_codec()) {
-      set_codec(from.codec());
-    }
-    if (from.has_vt()) {
-      set_vt(from.vt());
-    }
-    if (from.has_framework_options()) {
-      set_framework_options(from.framework_options());
-    }
-  }
-  if (from._has_bits_[8 / 32] & (0xffu << (8 % 32))) {
-    if (from.has_skill_options()) {
-      set_skill_options(from.skill_options());
+    if (from.has_options()) {
+      mutable_options()->::rokid::open::speech::v2::SpeechOptions::MergeFrom(from.options());
     }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
@@ -3572,6 +1386,9 @@ void SpeechRequest::CopyFrom(const SpeechRequest& from) {
 bool SpeechRequest::IsInitialized() const {
   if ((_has_bits_[0] & 0x00000003) != 0x00000003) return false;
 
+  if (has_options()) {
+    if (!this->options().IsInitialized()) return false;
+  }
   return true;
 }
 
@@ -3581,11 +1398,7 @@ void SpeechRequest::Swap(SpeechRequest* other) {
     std::swap(type_, other->type_);
     std::swap(voice_, other->voice_);
     std::swap(asr_, other->asr_);
-    std::swap(lang_, other->lang_);
-    std::swap(codec_, other->codec_);
-    std::swap(vt_, other->vt_);
-    std::swap(framework_options_, other->framework_options_);
-    std::swap(skill_options_, other->skill_options_);
+    std::swap(options_, other->options_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);
@@ -3605,18 +1418,18 @@ void SpeechRequest::Swap(SpeechRequest* other) {
 
 #ifndef _MSC_VER
 const int SpeechResponse::kIdFieldNumber;
+const int SpeechResponse::kTypeFieldNumber;
 const int SpeechResponse::kResultFieldNumber;
 const int SpeechResponse::kAsrFieldNumber;
 const int SpeechResponse::kNlpFieldNumber;
 const int SpeechResponse::kActionFieldNumber;
-const int SpeechResponse::kFinishFieldNumber;
 const int SpeechResponse::kExtraFieldNumber;
 #endif  // !_MSC_VER
 
 SpeechResponse::SpeechResponse()
   : ::google::protobuf::Message() {
   SharedCtor();
-  // @@protoc_insertion_point(constructor:rokid.open.SpeechResponse)
+  // @@protoc_insertion_point(constructor:rokid.open.speech.v2.SpeechResponse)
 }
 
 void SpeechResponse::InitAsDefaultInstance() {
@@ -3626,24 +1439,24 @@ SpeechResponse::SpeechResponse(const SpeechResponse& from)
   : ::google::protobuf::Message() {
   SharedCtor();
   MergeFrom(from);
-  // @@protoc_insertion_point(copy_constructor:rokid.open.SpeechResponse)
+  // @@protoc_insertion_point(copy_constructor:rokid.open.speech.v2.SpeechResponse)
 }
 
 void SpeechResponse::SharedCtor() {
   ::google::protobuf::internal::GetEmptyString();
   _cached_size_ = 0;
   id_ = 0;
+  type_ = 0;
   result_ = 0;
   asr_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   nlp_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   action_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  finish_ = false;
   extra_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
 SpeechResponse::~SpeechResponse() {
-  // @@protoc_insertion_point(destructor:rokid.open.SpeechResponse)
+  // @@protoc_insertion_point(destructor:rokid.open.speech.v2.SpeechResponse)
   SharedDtor();
 }
 
@@ -3697,7 +1510,8 @@ void SpeechResponse::Clear() {
   } while (0)
 
   if (_has_bits_[0 / 32] & 127) {
-    ZR_(id_, result_);
+    ZR_(id_, type_);
+    result_ = 0;
     if (has_asr()) {
       if (asr_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
         asr_->clear();
@@ -3713,7 +1527,6 @@ void SpeechResponse::Clear() {
         action_->clear();
       }
     }
-    finish_ = false;
     if (has_extra()) {
       if (extra_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
         extra_->clear();
@@ -3732,7 +1545,7 @@ bool SpeechResponse::MergePartialFromCodedStream(
     ::google::protobuf::io::CodedInputStream* input) {
 #define DO_(EXPRESSION) if (!(EXPRESSION)) goto failure
   ::google::protobuf::uint32 tag;
-  // @@protoc_insertion_point(parse_start:rokid.open.SpeechResponse)
+  // @@protoc_insertion_point(parse_start:rokid.open.speech.v2.SpeechResponse)
   for (;;) {
     ::std::pair< ::google::protobuf::uint32, bool> p = input->ReadTagWithCutoff(127);
     tag = p.first;
@@ -3748,33 +1561,53 @@ bool SpeechResponse::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(16)) goto parse_result;
+        if (input->ExpectTag(16)) goto parse_type;
         break;
       }
 
-      // required .rokid.open.SpeechErrorCode result = 2;
+      // required .rokid.open.speech.v2.RespType type = 2;
       case 2: {
         if (tag == 16) {
-         parse_result:
+         parse_type:
           int value;
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
                    int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
                  input, &value)));
-          if (::rokid::open::SpeechErrorCode_IsValid(value)) {
-            set_result(static_cast< ::rokid::open::SpeechErrorCode >(value));
+          if (::rokid::open::speech::v2::RespType_IsValid(value)) {
+            set_type(static_cast< ::rokid::open::speech::v2::RespType >(value));
           } else {
             mutable_unknown_fields()->AddVarint(2, value);
           }
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(26)) goto parse_asr;
+        if (input->ExpectTag(24)) goto parse_result;
         break;
       }
 
-      // optional string asr = 3;
+      // required .rokid.open.speech.v1.SpeechErrorCode result = 3;
       case 3: {
-        if (tag == 26) {
+        if (tag == 24) {
+         parse_result:
+          int value;
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   int, ::google::protobuf::internal::WireFormatLite::TYPE_ENUM>(
+                 input, &value)));
+          if (::rokid::open::speech::v1::SpeechErrorCode_IsValid(value)) {
+            set_result(static_cast< ::rokid::open::speech::v1::SpeechErrorCode >(value));
+          } else {
+            mutable_unknown_fields()->AddVarint(3, value);
+          }
+        } else {
+          goto handle_unusual;
+        }
+        if (input->ExpectTag(34)) goto parse_asr;
+        break;
+      }
+
+      // optional string asr = 4;
+      case 4: {
+        if (tag == 34) {
          parse_asr:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_asr()));
@@ -3785,13 +1618,13 @@ bool SpeechResponse::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(34)) goto parse_nlp;
+        if (input->ExpectTag(42)) goto parse_nlp;
         break;
       }
 
-      // optional string nlp = 4;
-      case 4: {
-        if (tag == 34) {
+      // optional string nlp = 5;
+      case 5: {
+        if (tag == 42) {
          parse_nlp:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_nlp()));
@@ -3802,13 +1635,13 @@ bool SpeechResponse::MergePartialFromCodedStream(
         } else {
           goto handle_unusual;
         }
-        if (input->ExpectTag(42)) goto parse_action;
+        if (input->ExpectTag(50)) goto parse_action;
         break;
       }
 
-      // optional string action = 5;
-      case 5: {
-        if (tag == 42) {
+      // optional string action = 6;
+      case 6: {
+        if (tag == 50) {
          parse_action:
           DO_(::google::protobuf::internal::WireFormatLite::ReadString(
                 input, this->mutable_action()));
@@ -3816,21 +1649,6 @@ bool SpeechResponse::MergePartialFromCodedStream(
             this->action().data(), this->action().length(),
             ::google::protobuf::internal::WireFormat::PARSE,
             "action");
-        } else {
-          goto handle_unusual;
-        }
-        if (input->ExpectTag(48)) goto parse_finish;
-        break;
-      }
-
-      // optional bool finish = 6;
-      case 6: {
-        if (tag == 48) {
-         parse_finish:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   bool, ::google::protobuf::internal::WireFormatLite::TYPE_BOOL>(
-                 input, &finish_)));
-          set_has_finish();
         } else {
           goto handle_unusual;
         }
@@ -3869,61 +1687,62 @@ bool SpeechResponse::MergePartialFromCodedStream(
     }
   }
 success:
-  // @@protoc_insertion_point(parse_success:rokid.open.SpeechResponse)
+  // @@protoc_insertion_point(parse_success:rokid.open.speech.v2.SpeechResponse)
   return true;
 failure:
-  // @@protoc_insertion_point(parse_failure:rokid.open.SpeechResponse)
+  // @@protoc_insertion_point(parse_failure:rokid.open.speech.v2.SpeechResponse)
   return false;
 #undef DO_
 }
 
 void SpeechResponse::SerializeWithCachedSizes(
     ::google::protobuf::io::CodedOutputStream* output) const {
-  // @@protoc_insertion_point(serialize_start:rokid.open.SpeechResponse)
+  // @@protoc_insertion_point(serialize_start:rokid.open.speech.v2.SpeechResponse)
   // required int32 id = 1;
   if (has_id()) {
     ::google::protobuf::internal::WireFormatLite::WriteInt32(1, this->id(), output);
   }
 
-  // required .rokid.open.SpeechErrorCode result = 2;
-  if (has_result()) {
+  // required .rokid.open.speech.v2.RespType type = 2;
+  if (has_type()) {
     ::google::protobuf::internal::WireFormatLite::WriteEnum(
-      2, this->result(), output);
+      2, this->type(), output);
   }
 
-  // optional string asr = 3;
+  // required .rokid.open.speech.v1.SpeechErrorCode result = 3;
+  if (has_result()) {
+    ::google::protobuf::internal::WireFormatLite::WriteEnum(
+      3, this->result(), output);
+  }
+
+  // optional string asr = 4;
   if (has_asr()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->asr().data(), this->asr().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE,
       "asr");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      3, this->asr(), output);
+      4, this->asr(), output);
   }
 
-  // optional string nlp = 4;
+  // optional string nlp = 5;
   if (has_nlp()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->nlp().data(), this->nlp().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE,
       "nlp");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      4, this->nlp(), output);
+      5, this->nlp(), output);
   }
 
-  // optional string action = 5;
+  // optional string action = 6;
   if (has_action()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->action().data(), this->action().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE,
       "action");
     ::google::protobuf::internal::WireFormatLite::WriteStringMaybeAliased(
-      5, this->action(), output);
-  }
-
-  // optional bool finish = 6;
-  if (has_finish()) {
-    ::google::protobuf::internal::WireFormatLite::WriteBool(6, this->finish(), output);
+      6, this->action(), output);
   }
 
   // optional string extra = 7;
@@ -3940,24 +1759,30 @@ void SpeechResponse::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
   }
-  // @@protoc_insertion_point(serialize_end:rokid.open.SpeechResponse)
+  // @@protoc_insertion_point(serialize_end:rokid.open.speech.v2.SpeechResponse)
 }
 
 ::google::protobuf::uint8* SpeechResponse::SerializeWithCachedSizesToArray(
     ::google::protobuf::uint8* target) const {
-  // @@protoc_insertion_point(serialize_to_array_start:rokid.open.SpeechResponse)
+  // @@protoc_insertion_point(serialize_to_array_start:rokid.open.speech.v2.SpeechResponse)
   // required int32 id = 1;
   if (has_id()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(1, this->id(), target);
   }
 
-  // required .rokid.open.SpeechErrorCode result = 2;
-  if (has_result()) {
+  // required .rokid.open.speech.v2.RespType type = 2;
+  if (has_type()) {
     target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
-      2, this->result(), target);
+      2, this->type(), target);
   }
 
-  // optional string asr = 3;
+  // required .rokid.open.speech.v1.SpeechErrorCode result = 3;
+  if (has_result()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteEnumToArray(
+      3, this->result(), target);
+  }
+
+  // optional string asr = 4;
   if (has_asr()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->asr().data(), this->asr().length(),
@@ -3965,10 +1790,10 @@ void SpeechResponse::SerializeWithCachedSizes(
       "asr");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        3, this->asr(), target);
+        4, this->asr(), target);
   }
 
-  // optional string nlp = 4;
+  // optional string nlp = 5;
   if (has_nlp()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->nlp().data(), this->nlp().length(),
@@ -3976,10 +1801,10 @@ void SpeechResponse::SerializeWithCachedSizes(
       "nlp");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        4, this->nlp(), target);
+        5, this->nlp(), target);
   }
 
-  // optional string action = 5;
+  // optional string action = 6;
   if (has_action()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8StringNamedField(
       this->action().data(), this->action().length(),
@@ -3987,12 +1812,7 @@ void SpeechResponse::SerializeWithCachedSizes(
       "action");
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        5, this->action(), target);
-  }
-
-  // optional bool finish = 6;
-  if (has_finish()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteBoolToArray(6, this->finish(), target);
+        6, this->action(), target);
   }
 
   // optional string extra = 7;
@@ -4010,7 +1830,7 @@ void SpeechResponse::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
   }
-  // @@protoc_insertion_point(serialize_to_array_end:rokid.open.SpeechResponse)
+  // @@protoc_insertion_point(serialize_to_array_end:rokid.open.speech.v2.SpeechResponse)
   return target;
 }
 
@@ -4025,36 +1845,37 @@ int SpeechResponse::ByteSize() const {
           this->id());
     }
 
-    // required .rokid.open.SpeechErrorCode result = 2;
+    // required .rokid.open.speech.v2.RespType type = 2;
+    if (has_type()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::EnumSize(this->type());
+    }
+
+    // required .rokid.open.speech.v1.SpeechErrorCode result = 3;
     if (has_result()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::EnumSize(this->result());
     }
 
-    // optional string asr = 3;
+    // optional string asr = 4;
     if (has_asr()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::StringSize(
           this->asr());
     }
 
-    // optional string nlp = 4;
+    // optional string nlp = 5;
     if (has_nlp()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::StringSize(
           this->nlp());
     }
 
-    // optional string action = 5;
+    // optional string action = 6;
     if (has_action()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::StringSize(
           this->action());
-    }
-
-    // optional bool finish = 6;
-    if (has_finish()) {
-      total_size += 1 + 1;
     }
 
     // optional string extra = 7;
@@ -4094,6 +1915,9 @@ void SpeechResponse::MergeFrom(const SpeechResponse& from) {
     if (from.has_id()) {
       set_id(from.id());
     }
+    if (from.has_type()) {
+      set_type(from.type());
+    }
     if (from.has_result()) {
       set_result(from.result());
     }
@@ -4105,9 +1929,6 @@ void SpeechResponse::MergeFrom(const SpeechResponse& from) {
     }
     if (from.has_action()) {
       set_action(from.action());
-    }
-    if (from.has_finish()) {
-      set_finish(from.finish());
     }
     if (from.has_extra()) {
       set_extra(from.extra());
@@ -4129,7 +1950,7 @@ void SpeechResponse::CopyFrom(const SpeechResponse& from) {
 }
 
 bool SpeechResponse::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000003) != 0x00000003) return false;
+  if ((_has_bits_[0] & 0x00000007) != 0x00000007) return false;
 
   return true;
 }
@@ -4137,11 +1958,11 @@ bool SpeechResponse::IsInitialized() const {
 void SpeechResponse::Swap(SpeechResponse* other) {
   if (other != this) {
     std::swap(id_, other->id_);
+    std::swap(type_, other->type_);
     std::swap(result_, other->result_);
     std::swap(asr_, other->asr_);
     std::swap(nlp_, other->nlp_);
     std::swap(action_, other->action_);
-    std::swap(finish_, other->finish_);
     std::swap(extra_, other->extra_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
@@ -4160,6 +1981,8 @@ void SpeechResponse::Swap(SpeechResponse* other) {
 
 // @@protoc_insertion_point(namespace_scope)
 
+}  // namespace v2
+}  // namespace speech
 }  // namespace open
 }  // namespace rokid
 

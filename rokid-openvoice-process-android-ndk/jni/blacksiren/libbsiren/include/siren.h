@@ -45,6 +45,7 @@ typedef struct {
 typedef struct {
     int vt_type;
     std::string vt_word;
+    std::string vt_pinyin;
     std::string vt_phone;
     bool use_default_config;
     siren_vt_alg_config alg_config;

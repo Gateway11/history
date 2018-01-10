@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="init">INIT</string>
+    <string name="network_state_change">NETCHG</string>
+    <string name="start_siren">ON/OFF</string>
+    <string name="set_siren_state">SET STATE</string>
+    <string name="update_stack">UPDATE STACK</string>
+    <string name="update_config">UPDATE CONFIG</string>
+    <string name="add_vt_word">ADD VT WORD</string>
+    <string name="remove_vt_word">REMOVE VT WORD</string>
+    <string name="get_vt_words">GET VT WORDS</string>
+
+</resources>

@@ -73,6 +73,9 @@ private:
     std::ofstream *rsRecordingStream;
     std::string *aecRecordingPath;
     std::ofstream *aecRecordingStream;
+    
+    int* m_pData;
+    unsigned iByteWidth;
 
     bool firstFrm = true;
     bool doAEC = true;

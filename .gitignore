@@ -9,3 +9,5 @@ bin
 gen
 obj
 values-
+**/jni/blacksiren/libbsiren/libs/
+**/jni/blacksiren/test/

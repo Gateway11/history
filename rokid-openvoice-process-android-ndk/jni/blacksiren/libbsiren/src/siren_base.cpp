@@ -38,7 +38,8 @@ SirenBase::SirenBase(SirenConfig &config_, int socket_, SirenSocketReader &reade
     recordingExit(false),
     recordingStart(false),
     processQueue(4 * 1024, nullptr),
-    recordingQueue(256, nullptr) {
+    recordingQueue(256, nullptr),
+    state(2) {
 
     int channels = config.mic_channel_num;
     int sample = config.mic_sample_rate;
@@ -177,8 +178,10 @@ void SirenBase::responseThreadHandler() {
         case SIREN_REQUEST_MSG_SET_STATE: {
             siren_printf(SIREN_INFO, "read message SET_STATE");
             if (message->len == sizeof(int)) {
-                int *state = (int *)message->data;
-                set_siren_state(state[0], nullptr);
+                state.store(((int *)message->data)[0], std::memory_order_release);
+                spinlock.clear(std::memory_order_release);
+//                int *state = (int *)message->data;
+//                set_siren_state(state[0], nullptr);
             } else {
                 siren_printf(SIREN_ERROR, "read SET_STATE but size is not correct, expect %d but %d",
                              (int)sizeof(int), message->len);
@@ -308,6 +311,12 @@ void SirenBase::processThreadHandler() {
             continue;
         }
 
+        while(!spinlock.test_and_set(std::memory_order_acquire)){
+            int iState = state.load(std::memory_order_consume);
+            siren_printf(SIREN_INFO, "man set state to %d", iState);
+            audioProcessor.setSysState(iState, true);
+        }
+
         //handle voice process
         if (pVoicePackage->msg == SIREN_REQUEST_MSG_DATA_PROCESS) {
             if (doPreRecording) {
@@ -368,7 +377,7 @@ void SirenBase::processThreadHandler() {
             Message* msg = (Message *)pVoicePackage->data;
             std::vector<siren_vt_word> vt_words;
             int ret = getVTWordFromMessage(msg, vt_words);
-            if (ret == 0) {
+            if (ret == 0 || ret == -2) {
                 audioProcessor.syncVTWord(vt_words);
             } else {
                 siren_printf(SIREN_ERROR, "sync vt word failed with %d", ret);

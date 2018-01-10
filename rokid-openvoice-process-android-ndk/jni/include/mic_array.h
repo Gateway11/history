@@ -15,12 +15,14 @@ __BEGIN_DECLS
 #define MIC_ARRAY_HARDWARE_MODULE_ID "mic_array"
 
 struct mic_array_device_t {
-    int channels;
-    int sample_rate;
-    int bit;
-    unsigned int frame_cnt;
-    struct pcm *pcm;
 
+    struct pcm *pcm;
+    unsigned int frame_cnt;
+    unsigned int channels;
+    unsigned int period_size;
+    unsigned int period_count;
+    unsigned int sample_rate;
+    unsigned int bit;
 
     int (*get_stream_buff_size) (struct mic_array_device_t *dev);
     int (*start_stream) (struct mic_array_device_t *dev);

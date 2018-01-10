@@ -24,11 +24,7 @@ void SirenProcessorImpl::getErrorInfo(float** data_mul, std::vector<int> &errorM
 }
 
 bool SirenProcessorImpl::fixErrorMic(std::vector<int> &errorMic) {
-    if (errorMic.empty()) {
-        return false;
-    }
-
-    int cur = 0;
+    int index = 0;
     for (int i = 0; i < micinfo.m_pMicInfo_bf->iMicNum; i++) {
         bool exit = false;
         for (int j = 0; j < (int)errorMic.size(); j++) {
@@ -37,19 +33,14 @@ bool SirenProcessorImpl::fixErrorMic(std::vector<int> &errorMic) {
                 break;
             }
         }
-
         if (!exit) {
-            if (i != cur) {
-                micinfo.m_pMicInfo_bf->pMicIdLst[cur] = micinfo.m_pMicInfo_bf->pMicIdLst[i];
-            }
-            cur++;
+            micinfo.m_pMicInfo_bf->pMicIdLst[index++] = micinfo.m_pMicInfo_bf->pMicIdLst[i];
         }
     }
-
-    if (cur == micinfo.m_pMicInfo_bf->iMicNum) {
+    if(index == micinfo.m_pMicInfo_bf->iMicNum){
         return false;
-    } else {
-        micinfo.m_pMicInfo_bf->iMicNum = cur;
+    }else {
+        micinfo.m_pMicInfo_bf->iMicNum = index;
         return true;
     }
 }
@@ -144,7 +135,7 @@ int SirenProcessorImpl::init() {
     for (int i = 0; i < mic_num; i++) {
         for (int j = 0; j < 3; j++) {
             micinfo.mic_pos[i * 3 + j] =
-                config.alg_config.alg_mic_pos[i].pos[j];
+            config.alg_config.alg_mic_pos[i].pos[j];
         }
     }
 
@@ -377,8 +368,10 @@ void SirenProcessorImpl::process(char *datain, int lenin, int aecflag, int awake
 
     if (asr) {
         state.asr = true;
+//    } else if (!asr && !config.alg_config.alg_vad_enable){
+//        state.asr = false;
     }
-
+ 
     float datatmp = 0.0f;
     float** data_mul = nullptr;
     float* data_sig = nullptr;
@@ -392,11 +385,10 @@ void SirenProcessorImpl::process(char *datain, int lenin, int aecflag, int awake
         state.firstFrm = false;
         std::vector<int> errorMics;
         getErrorInfo(data_mul, errorMics);
+        for (int i = 0; i < errorMics.size(); i++) {
+            siren_printf(SIREN_WARNING, "------------   Error MIC id :    %d", errorMics[i]);
+        }
         if (fixErrorMic(errorMics)) {
-            siren_printf(SIREN_WARNING, "detect mic error:");
-            for (int i = 0; i < micinfo.m_pMicInfo_bf->iMicNum; i++) {
-                siren_printf(SIREN_WARNING, "error mic %d", micinfo.m_pMicInfo_bf->pMicIdLst[i]);
-            }
             delete unit.m_pMem_vbv3;
             delete unit.m_pMmem_bf;
 
@@ -416,9 +408,21 @@ void SirenProcessorImpl::process(char *datain, int lenin, int aecflag, int awake
     //bf
     unit.m_pMmem_bf->process(data_mul, len_mul, data_sig, len_sig);
 
+    if (config.alg_config.alg_bf_scaling == 0.0f) {
+        config.alg_config.alg_bf_scaling = 1.0f;
+    }
+
+    for (int i = 0; i < len_sig; i++) {
+        if (config.alg_config.alg_bf_scaling > 0) {
+            data_sig[i] = data_sig[i] * config.alg_config.alg_bf_scaling;
+        } else {
+            data_sig[i] = data_sig[i] / abs(config.alg_config.alg_bf_scaling);
+        }
+    }
+
     if (bf_record) {
         for (int i = 0; i < len_sig; i++) {
-            datatmp = data_sig[i];
+            datatmp = data_sig[i] ;
             bfRecordingStream.write((char *)&datatmp, sizeof(float));
         }
     }
@@ -447,6 +451,7 @@ void SirenProcessorImpl::process(char *datain, int lenin, int aecflag, int awake
     bool noCmd = awakeNoCmd || sleepNoCmd || hotwordNoCmd;
 
     int forceStart = 0;
+
     //have pre
     if (pre) {
         resetASR();
@@ -471,15 +476,32 @@ void SirenProcessorImpl::process(char *datain, int lenin, int aecflag, int awake
 
         unit.m_pMem_vbv3->GetLastAudio(allocator.dataNoNew,
                                        start, 0);
-        unit.m_pMmem_bf->process(allocator.dataNoNew,
-                                 start, data_sig, len_sig);
-
+        if(!sleepNoCmd){
+            unit.m_pMmem_bf->process(allocator.dataNoNew, start, data_sig, len_sig);
+            data_sig += 15 * state.frmSize;
+            len_sig -= 15 * state.frmSize;
+            for (int i = 0; i < len_sig; i++) {
+                if (config.alg_config.alg_bf_scaling > 0) {
+                    data_sig[i] = data_sig[i] * config.alg_config.alg_bf_scaling;
+                } else {
+                    data_sig[i] = data_sig[i] / abs(config.alg_config.alg_bf_scaling);
+                }
+            }
+        }
         forceStart = 1;
     }
 
     //siren_printf(SIREN_INFO, "vad2 process");
     int vad2 = unit.m_pMem_vad2->process(data_sig, len_sig, 0,
                                          0, forceStart, data_sig, len_sig);
+    if (!pre) {
+        if (vad_record) {
+            for (int i = 0; i < len_sig; i++) {
+                float tmp = data_sig[i] / 32768.0f;
+                vadRecordingStream.write((char *)&tmp, sizeof(float));
+            }
+        }
+    }
 
     if (vad2 & r2vad_audio_begin) {
         siren_printf(SIREN_INFO, "vad audio begin");
@@ -491,17 +513,13 @@ void SirenProcessorImpl::process(char *datain, int lenin, int aecflag, int awake
         unit.m_pMem_cod->reset();
         if (awakePre) {
             state.awke = true;
+//            if(state.dataOutput && !sleepNoCmd){
+//                state.dataOutput = false;
+//                addMsg(r2ad_sleep, unit.m_pMmem_bf->getinfo_sl());
+//            }
             addMsg(r2ad_awake_pre, unit.m_pMmem_bf->getinfo_sl());
             addMsg(r2ad_debug_audio, "");
             state.lastAwakeInfo.assign(unit.m_pMem_vbv3->m_pWordInfo->pWordContent_UTF8);
-        }
-        if (bf_record) {
-            datatmp = 10000000.0f;
-            bfRecordingStream.write((char *)&datatmp, sizeof(float));
-            for (int k = 0; k < len_sig; k++) {
-                datatmp = data_sig[k];
-                bfRecordingStream.write((char *)&datatmp, sizeof(float));
-            }
         }
     }
 
@@ -520,6 +538,8 @@ void SirenProcessorImpl::process(char *datain, int lenin, int aecflag, int awake
 
         if (config.alg_config.alg_vad_enable) {
             unit.m_pMem_vad2->setvadendparam(-1);
+        } else {
+            unit.m_pMem_vad2->setvadendparam(2000);
         }
     }
 
@@ -537,12 +557,22 @@ void SirenProcessorImpl::process(char *datain, int lenin, int aecflag, int awake
 
         if (config.alg_config.alg_vad_enable) {
             unit.m_pMem_vad2->setvadendparam(-1);
+        } else {
+            unit.m_pMem_vad2->setvadendparam(2000);
         }
     }
 
     if (state.vadStart) {
-        //siren_printf(SIREN_INFO, "cod process");
         unit.m_pMem_cod->process(data_sig, len_sig);
+        if (!pre) {
+            if (opu_record) {
+                for (int i = 0; i < len_sig; i++) {
+                    float tmp = data_sig[i] / 32768.0f;
+                    opuRecordingStream.write((char *)&tmp, sizeof(float));
+                }
+            }
+        }
+
         if (!state.dataOutput) {
             if (cmd || noCmd) {
                 state.dataOutput = true;
@@ -555,13 +585,20 @@ void SirenProcessorImpl::process(char *datain, int lenin, int aecflag, int awake
                     state.canceled = true;
                     unit.m_pMem_cod->pause();
                 }
-
             } else if (state.asr && !state.awke) {
+                float SlInfo[3] ;
+                unit.m_pMem_vbv3->GetRealSl(36, SlInfo);
+                if (!unit.m_pMmem_bf->check(SlInfo[0] , SlInfo[1])) {
+                     siren_printf(SIREN_INFO, "SL    prev  %f  curr  %f", SlInfo[0], SlInfo[1]);
+                }
+                if (!config.alg_config.alg_vad_enable) {
+                    unit.m_pMem_vad2->setvadendparam(2000);
+                }
+                siren_printf(SIREN_INFO, "vad start with !state.awke");
                 state.dataOutput = true;
                 addMsg(r2ad_vad_start, unit.m_pMmem_bf->getinfo_sl());
             }
         }
-
 
         if (state.dataOutput) {
             if (!state.canceled) {
@@ -571,16 +608,19 @@ void SirenProcessorImpl::process(char *datain, int lenin, int aecflag, int awake
                         siren_printf(SIREN_INFO, "Cancel since asr too long");
                     }
                 }
-                //if (!asr) {
                 if (!state.awke && !asr) {
                     state.canceled = true;
                     siren_printf(SIREN_INFO, "Cancel since no asr flag");
                 }
 
                 if (state.canceled) {
-                    siren_printf(SIREN_INFO, "add cancel");
                     unit.m_pMem_cod->pause();
                     addMsg(r2ad_vad_cancel, 0, nullptr);
+                    if (!config.alg_config.alg_vad_enable) {
+                        unit.m_pMem_vad2->setvadendparam(-1);
+                        state.vadStart = false;
+                        state.dataOutput = false;
+                    }
                 }
             }
 
@@ -594,19 +634,19 @@ void SirenProcessorImpl::process(char *datain, int lenin, int aecflag, int awake
                     }
                 }
             }
-
+            
             if (!state.canceled) {
-                if (unit.m_pMem_cod->getdatalen() > 100) {
+                if (!pre && unit.m_pMem_cod->getdatalen() > 100) {
                     addMsg(r2ad_vad_data, unit.m_pMem_cod);
                 }
 
-                if (vad2 & r2vad_audio_end && unit.m_pMem_cod->getdatalen() > 0) {
+                if ((vad2 & r2vad_audio_end) && unit.m_pMem_cod->getdatalen() > 0) {
                     addMsg(r2ad_vad_data, unit.m_pMem_cod);
                 }
             }
         }
     }
-
+    
     if (vad2 & r2vad_audio_end) {
         siren_printf(SIREN_INFO, "vad end");
         if (state.dataOutput && !state.canceled) {
@@ -620,17 +660,11 @@ void SirenProcessorImpl::process(char *datain, int lenin, int aecflag, int awake
 
         state.awke = false;
         if (config.alg_config.alg_vt_enable) {
-            unit.m_pMem_vad2->setvadendparam(-1);
             state.asr = false;
             state.vadStart = false;
             state.dataOutput = false;
         }
         state.canceled = false;
-
-        if (bf_record) {
-            datatmp = -10000000.0f;
-            bfRecordingStream.write((char *)&datatmp, sizeof(float));
-        }
     }
 }
 
@@ -638,8 +672,21 @@ void SirenProcessorImpl::process(char *datain, int lenin, int aecflag, int awake
 
 void SirenProcessorImpl::setState(r2v_sys_state awake_state) {
     if (awake_state == r2ssp_state_sleep && state.awke) {
-        state.awke = false;
+        state.awke = false; 
     }
+
+//    if (awake_state == r2ssp_state_awake && !config.alg_config.alg_vad_enable) {
+//        siren_printf(SIREN_INFO, "set vad start");
+//        state.asrMsgCheckFlag = 1;
+//        state.dataOutput = true;
+//        state.vadStart = true;    
+//        state.forceStart = true;
+//        state.canceled = false;
+//        unit.m_pMem_cod->reset();
+//    } else if (awake_state == r2ssp_state_sleep && !config.alg_config.alg_vad_enable) {
+//        state.forceStart = false;
+//        state.asrMsgCheckFlag = 0;
+//    }
 }
 
 
@@ -708,10 +755,6 @@ void SirenProcessorImpl::dumpMsg(r2ad_msg_block * msg) {
         if (state.asrMsgCheckFlag != 1) {
             siren_printf(SIREN_ERROR, "asrflag error");
         }
-
-        if (vad_record) {
-            vadRecordingStream.write(msg->pMsgData, msg->iMsgDataLen);
-        }
         break;
     case r2ad_vad_end:
         siren_printf(SIREN_INFO, "vad end");
@@ -722,9 +765,9 @@ void SirenProcessorImpl::dumpMsg(r2ad_msg_block * msg) {
         break;
     case r2ad_vad_cancel:
         siren_printf(SIREN_INFO, "vad cancel");
-        if (state.asrMsgCheckFlag != 1) {
-            siren_printf(SIREN_ERROR, "asrflag error");
-        }
+        //if (state.asrMsgCheckFlag != 1) {
+        //    siren_printf(SIREN_ERROR, "asrflag error");
+        //}
         state.asrMsgCheckFlag = 0;
         break;
     case r2ad_awake_vad_start:
@@ -779,14 +822,14 @@ void SirenProcessorImpl::clearMsgLst() {
 
 void SirenProcessorImpl::resetASR() {
     if (state.dataOutput && !state.canceled) {
-        if (config.alg_config.alg_vad_enable) {
-            addMsg(r2ad_vad_cancel, 0, nullptr);
-        }
+        addMsg(r2ad_vad_cancel, 0, nullptr);
     }
 
     state.asr = false;
     state.vadStart = false;
-    state.dataOutput = false;
+    if (config.alg_config.alg_vad_enable) {
+        state.dataOutput = false;
+    }
     state.canceled = false;
     state.awke = false;
 
@@ -805,16 +848,18 @@ void SirenProcessorImpl::reset() {
 }
 
 float SirenProcessorImpl::getLastFrameEnergy() {
-    return unit.m_pMem_vbv3->GetEn_LastFrm();
+//    return unit.m_pMem_vbv3->GetEn_LastFrm();
+    return unit.m_pMem_vad2->getenergy_Lastframe();
 }
 
 float SirenProcessorImpl::getLastFrameThreshold() {
-    return unit.m_pMem_vbv3->GetEn_Shield();
+//    return unit.m_pMem_vbv3->GetEn_Shield();
+    return unit.m_pMem_vad2->getenergy_Threshold();
 }
 
 void SirenProcessorImpl::syncVTWord(std::vector<siren_vt_word> &words) {
     int defaultVTWordNum = config.alg_config.def_vt_configs.size();
-    defaultVTWordNum += words.size();
+    defaultVTWordNum += words.empty() ? 0 : words.size();
     siren_printf(SIREN_INFO, "sync vt word num: %d", defaultVTWordNum);
     micinfo.currentWordNum = defaultVTWordNum;
     if (micinfo.m_pWordLst != nullptr) {
@@ -938,15 +983,10 @@ int SirenProcessorImpl::getVTInfo(std::string &vt_word, int &start, int &end, fl
     if (unit.m_pMem_vbv3 != nullptr && unit.m_pMem_vbv3->m_pWordInfo != nullptr) {
         vt_word = unit.m_pMem_vbv3->m_pWordInfo->pWordContent_UTF8;
         //end from back to front
-        start = unit.m_pMem_vbv3->m_pWordDetInfo->iWordPos_Start;
+        //start = unit.m_pMem_vbv3->m_pWordDetInfo->iWordPos_Start;
+        start = 20 * state.frmSize;
         //start
-        end = unit.m_pMem_vbv3->m_pWordDetInfo->iWordPos_End;
-        siren_printf(SIREN_INFO, "end=%d", end);
-        end -= 20 * state.frmSize;
-        siren_printf(SIREN_INFO, "frmSize=%d", state.frmSize);
-        if (end < 0) {
-            end = 0;
-        }
+        end = start + unit.m_pMem_vbv3->m_pWordDetInfo->iWordPos_Start - unit.m_pMem_vbv3->m_pWordDetInfo->iWordPos_End;
         energy = unit.m_pMem_vbv3->m_pWordDetInfo->fEnergy;
         return 0;
     } else {

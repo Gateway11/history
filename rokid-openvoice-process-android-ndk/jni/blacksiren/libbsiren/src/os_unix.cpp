@@ -16,9 +16,9 @@
 #include <sys/wait.h>
 
 #ifdef ANDROID
-#include <sys/capability.h>
+//#include <sys/capability.h>
 #include <sys/prctl.h>
-#include <private/android_filesystem_config.h>
+//#include <private/android_filesystem_config.h>
 #endif /* ANDROID */
 
 #include "../include/os.h"

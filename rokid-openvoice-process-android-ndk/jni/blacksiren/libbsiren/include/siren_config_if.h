@@ -48,11 +48,13 @@ struct MicPos {
 #define KEY_ALG_AEC_SHIELD "alg_aec_shield"
 #define KEY_ALG_AEC_AFF_CPUS "alg_aec_aff_cpus"
 #define KEY_ALG_AEC_MAT_AFF_CPUS "alg_aec_mat_aff_cpus"
+#define KEY_ALG_BF_SCALING "alg_bf_scaling"
 
 #define KEY_ALG_RAW_STREAM_SL_DIRECTION "alg_raw_stream_sl_direction"
 #define KEY_ALG_RAW_STREAM_BF "alg_raw_stream_bf"
 #define KEY_ALG_RAW_STREAM_AGC "alg_raw_stream_agc"
 
+#define KEY_ALG_RS_ENABLE "alg_rs_enable"
 #define KEY_ALG_VT_ENABLE "alg_vt_enable"
 #define KEY_ALG_VAD_ENABLE "alg_vad_enable"
 
@@ -137,19 +139,21 @@ struct AlgConfig {
     std::vector<DefVTConfig> def_vt_configs;
 
     int alg_lan;
-    
+   
     float alg_aec_shield = 200.0f;
     float alg_raw_stream_sl_direction = 180.0f;
     
     float alg_vad_baserange = 1.25f;
     float alg_vad_dynrange_min = 3.5f;
     float alg_vad_dynrange_max = 6.0f;
+    float alg_bf_scaling = 1.0f;
 
     bool alg_use_legacy_ssp_config_file = true;
     bool alg_aec = true;
     bool alg_rs_delay_on_left_right_channel;
     bool alg_raw_stream_bf = true;
     bool alg_raw_stream_agc = true;
+    bool alg_rs_enable = true;
     bool alg_vt_enable = true;
     bool alg_vad_enable = true;
     bool alg_opus_compress = false;

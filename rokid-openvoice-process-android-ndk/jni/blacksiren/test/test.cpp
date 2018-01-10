@@ -9,7 +9,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <cstdio>
-#include <curl/curl.h>
+//#include <curl/curl.h>
 #include <netdb.h>
 #include <sys/param.h>
 #include <netinet/in.h>
@@ -358,7 +358,7 @@ std::string getAddressByHostname(const char *hostname) {
 
     return t;
 }
-
+#if 0
 void test_download() {
     CURL *curl;
     CURLcode res;
@@ -423,6 +423,7 @@ void test_send() {
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 }
+#endif
 
 void dump_vt_word(siren_vt_word &vt_word) {
     siren_printf(BlackSiren::SIREN_INFO, "word=%s,phone=%s", vt_word.vt_word.c_str(), vt_word.vt_phone.c_str());

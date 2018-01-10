@@ -19,11 +19,23 @@
 
 #if defined(__ANDROID__) || defined(ANDROID)
 #include <android/log.h>
-#define ZLOG_INFO(...) {char info[512]; sprintf(info,__VA_ARGS__);__android_log_print(ANDROID_LOG_INFO,"RKUPL_r2audio",info);}
-#define ZLOG_ERROR(...) {char info[512]; sprintf(info,__VA_ARGS__);__android_log_print(ANDROID_LOG_ERROR,"RKUPL_r2audio",info);}
+#define ZLOG_INFO(...) {__android_log_print(ANDROID_LOG_INFO, "RKUPL_r2audio", __VA_ARGS__);}
+#define ZLOG_ERROR(...) {__android_log_print(ANDROID_LOG_ERROR, "RKUPL_r2audio", __VA_ARGS__);}
 #else
-#define ZLOG_INFO(...){ char info[512]; sprintf(info,__VA_ARGS__); printf(info);printf("\n");}
-#define ZLOG_ERROR(...){ char info[512]; sprintf(info,__VA_ARGS__); printf(info);printf("\n");}
+#include <unistd.h>
+#include <sys/time.h>
+#include <time.h>
+#define ZLOG_INFO(...){__dx_logtime_print('I', "RKUPL_r2audio"); printf(__VA_ARGS__); printf("\n");}
+#define ZLOG_ERROR(...){__dx_logtime_print('E', "RKUPL_r2audio"); printf(__VA_ARGS__); printf("\n");}
+#define __dx_logtime_print(level, tag) \
+	struct timeval tv; \
+	struct tm ltm; \
+	gettimeofday(&tv, NULL); \
+	localtime_r(&tv.tv_sec, &ltm); \
+	printf("%02d-%02d %02d:%02d:%02d.%03d  %04d %c %s: ", \
+			ltm.tm_mon, ltm.tm_mday, \
+			ltm.tm_hour, ltm.tm_min, ltm.tm_sec, \
+			tv.tv_usec / 1000, getpid(), level, tag);
 #endif
 
 #ifndef __ARM_ARCH_ARM__
@@ -76,7 +88,7 @@
 #define strtok_s strtok_r
 #endif
 
-#if (ANDROID_VERSION == 19)
+#if (__ANDROID_API__ < 21)
 #ifdef __ARM_ARCH_ARM__
 
 #ifdef __LP64__

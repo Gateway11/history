@@ -73,6 +73,8 @@ private:
     int socket;
 
     std::atomic_bool recordingExit;
+    std::atomic_int state;
+    std::atomic_flag spinlock = ATOMIC_FLAG_INIT;
 
     std::mutex recordingMutex;
     std::condition_variable recordingCond;

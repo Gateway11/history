@@ -10,7 +10,7 @@ COMMON_CFLAGS := \
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := libspeech
-LOCAL_MODULE_TAGS := optional
+
 LOCAL_CPP_EXTENSION := .cc
 
 LOCAL_C_INCLUDES := \
@@ -19,40 +19,25 @@ LOCAL_C_INCLUDES := \
 	$(MY_LOCAL_PATH)/include \
 	$(MY_LOCAL_PATH)/src/common
 
-COMMON_SRC := \
-	$(MY_LOCAL_PATH)/proto/speech.pb.cc \
-	$(MY_LOCAL_PATH)/src/common/speech_config.cc \
-	$(MY_LOCAL_PATH)/src/common/speech_config.h \
-	$(MY_LOCAL_PATH)/src/common/log.cc \
-	$(MY_LOCAL_PATH)/src/common/log.h \
-	$(MY_LOCAL_PATH)/src/common/speech_connection.cc \
-	$(MY_LOCAL_PATH)/src/common/speech_connection.h
-
-TTS_SRC := \
-	$(MY_LOCAL_PATH)/src/tts/tts_impl.cc \
-	$(MY_LOCAL_PATH)/src/tts/tts_impl.h \
-	$(MY_LOCAL_PATH)/src/tts/types.h
-
-ASR_SRC := \
-	$(MY_LOCAL_PATH)/src/asr/asr_impl.cc \
-	$(MY_LOCAL_PATH)/src/asr/asr_impl.h \
-	$(MY_LOCAL_PATH)/src/asr/types.h
-
-SPEECH_SRC := \
-	$(MY_LOCAL_PATH)/src/speech/speech_impl.cc \
-	$(MY_LOCAL_PATH)/src/speech/speech_impl.h \
-	$(MY_LOCAL_PATH)/src/speech/types.h
-
 LOCAL_SRC_FILES := \
-	$(COMMON_SRC) \
-	$(TTS_SRC) \
-	$(ASR_SRC) \
-	$(SPEECH_SRC)
+	$(MY_LOCAL_PATH)/proto/speech_types.pb.cc \
+	$(MY_LOCAL_PATH)/proto/auth.pb.cc \
+	$(MY_LOCAL_PATH)/proto/tts.pb.cc \
+	$(MY_LOCAL_PATH)/proto/speech.pb.cc \
+	$(MY_LOCAL_PATH)/src/common/log.cc \
+	$(MY_LOCAL_PATH)/src/common/speech_connection.cc \
+	$(MY_LOCAL_PATH)/src/speech/speech_impl.cc \
+	$(MY_LOCAL_PATH)/src/tts/tts_impl.cc
 
-LOCAL_CFLAGS := $(COMMON_CFLAGS) \
-	-std=c++11 -frtti -fexceptions
-LOCAL_LDLIBS += -llog
-LOCAL_SHARED_LIBRARIES := libpoco libcrypto libprotobuf-rokid-cpp-full
+ifneq ($(PLATFORM_SDK_VERSION), 23)
+LOCAL_CFLAGS += -D__STDC_FORMAT_MACROS
+endif
+
+LOCAL_LDLIBS += -llog -lz
+
+LOCAL_CPPFLAGS := $(COMMON_CFLAGS) -std=c++11 -fexceptions
+
+LOCAL_SHARED_LIBRARIES := libuWS libcrypto libprotobuf-rokid-cpp-full
 
 LOCAL_EXPORT_C_INCLUDES := $(MY_LOCAL_PATH)/include
 

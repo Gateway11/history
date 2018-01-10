@@ -56,6 +56,10 @@ public:
   char* m_pData_Out ;
   
   OpusEncoder *m_hEngine_Cod ;
+
+  //for amplitude norm
+  int m_iLen_Am ;
+  float m_fShield_Am ;
   
 };
 

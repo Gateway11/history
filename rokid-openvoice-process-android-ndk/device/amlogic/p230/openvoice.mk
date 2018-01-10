@@ -11,7 +11,9 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
 					libprotobuf-rokid-cpp-full \
 					libpoco \
-					libspeech
+					libspeech \
+					librokid_speech_jni \
+					librokid_opus_jni
 
 #apps
 PRODUCT_PACKAGES += \
@@ -19,9 +21,9 @@ PRODUCT_PACKAGES += \
 
 #libraries
 PRODUCT_PACKAGES += \
+					libmic_array \
 					libopenvoice \
 					libopenvoice2
 
-#config file
 PRODUCT_PACKAGES += \
-					workdir_cn \
+					workdir_cn

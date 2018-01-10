@@ -41,6 +41,9 @@ r2mem_cod::r2mem_cod(r2cod_type iCodeType){
   
   m_iShield_TooLong = R2_AUDIO_SAMPLE_RATE * 6 ;
   m_iShield_Resume = R2_AUDIO_SAMPLE_RATE * 0.5f ;
+
+  m_fShield_Am = 1.0f ;
+  m_iLen_Am = m_iLen_Frm_Cod * 3 ;
   
 }
 
@@ -120,10 +123,50 @@ int r2mem_cod::processdata(){
   
   assert(!m_bPaused) ;
   
+  if (m_iLen_Cod == 0 && m_iLen_Frm_Cod < m_iLen_In ) {
+    if (m_iLen_Am > m_iLen_In) {
+      float total = 0.0f ;
+      for (int i = 0; i < m_iLen_In ; i ++) {
+        total += fabsf(m_pData_In[i]) ;
+      }
+      total = total / m_iLen_In ;
+      if (total > 0.3f) {
+        m_fShield_Am = 0.3f / total ;
+      }else{
+        m_fShield_Am = 1.0f ;
+      }
+    }else{
+      
+      float total = 0.0f, total_max = 0.0f ; ;
+      for (int i = 0 ; i < m_iLen_In ; i ++) {
+        if (i < m_iLen_Am) {
+          total += fabsf(m_pData_In[i]) ;
+        }else{
+          total += fabsf(m_pData_In[i]) - fabsf(m_pData_In[i-m_iLen_Am]);
+          if (total > total_max) {
+            total_max = total ;
+          }
+        }
+      }
+      total_max = total_max / m_iLen_Am ;
+      if (total_max > 0.3f) {
+        m_fShield_Am = 0.3f / total_max ;
+      }else{
+        m_fShield_Am = 1.0f ;
+      }
+    }
+  }
+  
   while (m_iLen_Cod + m_iLen_Frm_Cod < m_iLen_In) {
     
     char * pData_Cod = NULL ;
     int iLen_Cod = 0 ;
+    
+    if (m_fShield_Am < 1.0f) {
+      for (int i = 0 ; i < m_iLen_Frm_Cod ; i ++) {
+        m_pData_In[m_iLen_Cod + i] = m_pData_In[m_iLen_Cod + i] * m_fShield_Am ;
+      }
+    }
     
     if (m_iCodeType == r2ad_cod_opu) {
       iLen_Cod = opus_encode_float(m_hEngine_Cod, m_pData_In + m_iLen_Cod , m_iLen_Frm_Cod,

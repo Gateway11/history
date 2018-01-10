@@ -34,7 +34,7 @@ siren_net_result SirenUDPAgent::prepareRecv() {
     }
 
 //    bzero(&from, sizeof(struct sockaddr_in));
-    memset(&addrto, 0, sizeof(struct sockaddr_in));
+    memset(&from, 0, sizeof(struct sockaddr_in));
     from.sin_family = AF_INET;
     from.sin_addr.s_addr = htonl(INADDR_ANY);
     from.sin_port = htons(config->udp_port);

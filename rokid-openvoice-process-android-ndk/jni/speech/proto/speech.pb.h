@@ -25,80 +25,91 @@
 #include <google/protobuf/extension_set.h>
 #include <google/protobuf/generated_enum_reflection.h>
 #include <google/protobuf/unknown_field_set.h>
+#include "speech_types.pb.h"
 // @@protoc_insertion_point(includes)
 
 namespace rokid {
 namespace open {
+namespace speech {
+namespace v2 {
 
 // Internal implementation detail -- do not call these.
 void  protobuf_AddDesc_speech_2eproto();
 void protobuf_AssignDesc_speech_2eproto();
 void protobuf_ShutdownFile_speech_2eproto();
 
-class AuthRequest;
-class AuthResponse;
-class AsrRequest;
-class AsrResponse;
-class TtsRequest;
-class TtsResponse;
+class SpeechOptions;
 class SpeechRequest;
 class SpeechResponse;
 
-enum SpeechErrorCode {
-  SUCCESS = 0,
-  AUTH_FAILED = 1,
-  UNAUTHENTICATED = 2,
-  CONNECTION_EXCEED = 3,
-  RESOURCE_EXHASTED = 4,
-  BUSY = 5,
-  INTERNAL = 6
+enum RespType {
+  INTERMEDIATE = 0,
+  ASR_FINISH = 1,
+  FINISH = 2
 };
-bool SpeechErrorCode_IsValid(int value);
-const SpeechErrorCode SpeechErrorCode_MIN = SUCCESS;
-const SpeechErrorCode SpeechErrorCode_MAX = INTERNAL;
-const int SpeechErrorCode_ARRAYSIZE = SpeechErrorCode_MAX + 1;
+bool RespType_IsValid(int value);
+const RespType RespType_MIN = INTERMEDIATE;
+const RespType RespType_MAX = FINISH;
+const int RespType_ARRAYSIZE = RespType_MAX + 1;
 
-const ::google::protobuf::EnumDescriptor* SpeechErrorCode_descriptor();
-inline const ::std::string& SpeechErrorCode_Name(SpeechErrorCode value) {
+const ::google::protobuf::EnumDescriptor* RespType_descriptor();
+inline const ::std::string& RespType_Name(RespType value) {
   return ::google::protobuf::internal::NameOfEnum(
-    SpeechErrorCode_descriptor(), value);
+    RespType_descriptor(), value);
 }
-inline bool SpeechErrorCode_Parse(
-    const ::std::string& name, SpeechErrorCode* value) {
-  return ::google::protobuf::internal::ParseNamedEnum<SpeechErrorCode>(
-    SpeechErrorCode_descriptor(), name, value);
+inline bool RespType_Parse(
+    const ::std::string& name, RespType* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<RespType>(
+    RespType_descriptor(), name, value);
 }
-enum ReqType {
-  START = 0,
-  VOICE = 1,
-  END = 2,
-  TEXT = 3
+enum Lang {
+  ZH = 0,
+  EN = 1
 };
-bool ReqType_IsValid(int value);
-const ReqType ReqType_MIN = START;
-const ReqType ReqType_MAX = TEXT;
-const int ReqType_ARRAYSIZE = ReqType_MAX + 1;
+bool Lang_IsValid(int value);
+const Lang Lang_MIN = ZH;
+const Lang Lang_MAX = EN;
+const int Lang_ARRAYSIZE = Lang_MAX + 1;
 
-const ::google::protobuf::EnumDescriptor* ReqType_descriptor();
-inline const ::std::string& ReqType_Name(ReqType value) {
+const ::google::protobuf::EnumDescriptor* Lang_descriptor();
+inline const ::std::string& Lang_Name(Lang value) {
   return ::google::protobuf::internal::NameOfEnum(
-    ReqType_descriptor(), value);
+    Lang_descriptor(), value);
 }
-inline bool ReqType_Parse(
-    const ::std::string& name, ReqType* value) {
-  return ::google::protobuf::internal::ParseNamedEnum<ReqType>(
-    ReqType_descriptor(), name, value);
+inline bool Lang_Parse(
+    const ::std::string& name, Lang* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<Lang>(
+    Lang_descriptor(), name, value);
+}
+enum VadMode {
+  LOCAL = 0,
+  CLOUD = 1
+};
+bool VadMode_IsValid(int value);
+const VadMode VadMode_MIN = LOCAL;
+const VadMode VadMode_MAX = CLOUD;
+const int VadMode_ARRAYSIZE = VadMode_MAX + 1;
+
+const ::google::protobuf::EnumDescriptor* VadMode_descriptor();
+inline const ::std::string& VadMode_Name(VadMode value) {
+  return ::google::protobuf::internal::NameOfEnum(
+    VadMode_descriptor(), value);
+}
+inline bool VadMode_Parse(
+    const ::std::string& name, VadMode* value) {
+  return ::google::protobuf::internal::ParseNamedEnum<VadMode>(
+    VadMode_descriptor(), name, value);
 }
 // ===================================================================
 
-class AuthRequest : public ::google::protobuf::Message {
+class SpeechOptions : public ::google::protobuf::Message {
  public:
-  AuthRequest();
-  virtual ~AuthRequest();
+  SpeechOptions();
+  virtual ~SpeechOptions();
 
-  AuthRequest(const AuthRequest& from);
+  SpeechOptions(const SpeechOptions& from);
 
-  inline AuthRequest& operator=(const AuthRequest& from) {
+  inline SpeechOptions& operator=(const SpeechOptions& from) {
     CopyFrom(from);
     return *this;
   }
@@ -112,17 +123,17 @@ class AuthRequest : public ::google::protobuf::Message {
   }
 
   static const ::google::protobuf::Descriptor* descriptor();
-  static const AuthRequest& default_instance();
+  static const SpeechOptions& default_instance();
 
-  void Swap(AuthRequest* other);
+  void Swap(SpeechOptions* other);
 
   // implements Message ----------------------------------------------
 
-  AuthRequest* New() const;
+  SpeechOptions* New() const;
   void CopyFrom(const ::google::protobuf::Message& from);
   void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const AuthRequest& from);
-  void MergeFrom(const AuthRequest& from);
+  void CopyFrom(const SpeechOptions& from);
+  void MergeFrom(const SpeechOptions& from);
   void Clear();
   bool IsInitialized() const;
 
@@ -144,719 +155,154 @@ class AuthRequest : public ::google::protobuf::Message {
 
   // accessors -------------------------------------------------------
 
-  // required string key = 1;
-  inline bool has_key() const;
-  inline void clear_key();
-  static const int kKeyFieldNumber = 1;
-  inline const ::std::string& key() const;
-  inline void set_key(const ::std::string& value);
-  inline void set_key(const char* value);
-  inline void set_key(const char* value, size_t size);
-  inline ::std::string* mutable_key();
-  inline ::std::string* release_key();
-  inline void set_allocated_key(::std::string* key);
-
-  // required string device_type_id = 2;
-  inline bool has_device_type_id() const;
-  inline void clear_device_type_id();
-  static const int kDeviceTypeIdFieldNumber = 2;
-  inline const ::std::string& device_type_id() const;
-  inline void set_device_type_id(const ::std::string& value);
-  inline void set_device_type_id(const char* value);
-  inline void set_device_type_id(const char* value, size_t size);
-  inline ::std::string* mutable_device_type_id();
-  inline ::std::string* release_device_type_id();
-  inline void set_allocated_device_type_id(::std::string* device_type_id);
-
-  // required string device_id = 3;
-  inline bool has_device_id() const;
-  inline void clear_device_id();
-  static const int kDeviceIdFieldNumber = 3;
-  inline const ::std::string& device_id() const;
-  inline void set_device_id(const ::std::string& value);
-  inline void set_device_id(const char* value);
-  inline void set_device_id(const char* value, size_t size);
-  inline ::std::string* mutable_device_id();
-  inline ::std::string* release_device_id();
-  inline void set_allocated_device_id(::std::string* device_id);
-
-  // required string service = 4;
-  inline bool has_service() const;
-  inline void clear_service();
-  static const int kServiceFieldNumber = 4;
-  inline const ::std::string& service() const;
-  inline void set_service(const ::std::string& value);
-  inline void set_service(const char* value);
-  inline void set_service(const char* value, size_t size);
-  inline ::std::string* mutable_service();
-  inline ::std::string* release_service();
-  inline void set_allocated_service(::std::string* service);
-
-  // required string version = 5;
-  inline bool has_version() const;
-  inline void clear_version();
-  static const int kVersionFieldNumber = 5;
-  inline const ::std::string& version() const;
-  inline void set_version(const ::std::string& value);
-  inline void set_version(const char* value);
-  inline void set_version(const char* value, size_t size);
-  inline ::std::string* mutable_version();
-  inline ::std::string* release_version();
-  inline void set_allocated_version(::std::string* version);
-
-  // required string timestamp = 6;
-  inline bool has_timestamp() const;
-  inline void clear_timestamp();
-  static const int kTimestampFieldNumber = 6;
-  inline const ::std::string& timestamp() const;
-  inline void set_timestamp(const ::std::string& value);
-  inline void set_timestamp(const char* value);
-  inline void set_timestamp(const char* value, size_t size);
-  inline ::std::string* mutable_timestamp();
-  inline ::std::string* release_timestamp();
-  inline void set_allocated_timestamp(::std::string* timestamp);
-
-  // required string sign = 7;
-  inline bool has_sign() const;
-  inline void clear_sign();
-  static const int kSignFieldNumber = 7;
-  inline const ::std::string& sign() const;
-  inline void set_sign(const ::std::string& value);
-  inline void set_sign(const char* value);
-  inline void set_sign(const char* value, size_t size);
-  inline ::std::string* mutable_sign();
-  inline ::std::string* release_sign();
-  inline void set_allocated_sign(::std::string* sign);
-
-  // @@protoc_insertion_point(class_scope:rokid.open.AuthRequest)
- private:
-  inline void set_has_key();
-  inline void clear_has_key();
-  inline void set_has_device_type_id();
-  inline void clear_has_device_type_id();
-  inline void set_has_device_id();
-  inline void clear_has_device_id();
-  inline void set_has_service();
-  inline void clear_has_service();
-  inline void set_has_version();
-  inline void clear_has_version();
-  inline void set_has_timestamp();
-  inline void clear_has_timestamp();
-  inline void set_has_sign();
-  inline void clear_has_sign();
-
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-
-  ::google::protobuf::uint32 _has_bits_[1];
-  mutable int _cached_size_;
-  ::std::string* key_;
-  ::std::string* device_type_id_;
-  ::std::string* device_id_;
-  ::std::string* service_;
-  ::std::string* version_;
-  ::std::string* timestamp_;
-  ::std::string* sign_;
-  friend void  protobuf_AddDesc_speech_2eproto();
-  friend void protobuf_AssignDesc_speech_2eproto();
-  friend void protobuf_ShutdownFile_speech_2eproto();
-
-  void InitAsDefaultInstance();
-  static AuthRequest* default_instance_;
-};
-// -------------------------------------------------------------------
-
-class AuthResponse : public ::google::protobuf::Message {
- public:
-  AuthResponse();
-  virtual ~AuthResponse();
-
-  AuthResponse(const AuthResponse& from);
-
-  inline AuthResponse& operator=(const AuthResponse& from) {
-    CopyFrom(from);
-    return *this;
-  }
-
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const AuthResponse& default_instance();
-
-  void Swap(AuthResponse* other);
-
-  // implements Message ----------------------------------------------
-
-  AuthResponse* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const AuthResponse& from);
-  void MergeFrom(const AuthResponse& from);
-  void Clear();
-  bool IsInitialized() const;
-
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  ::google::protobuf::Metadata GetMetadata() const;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  // required .rokid.open.SpeechErrorCode result = 1;
-  inline bool has_result() const;
-  inline void clear_result();
-  static const int kResultFieldNumber = 1;
-  inline ::rokid::open::SpeechErrorCode result() const;
-  inline void set_result(::rokid::open::SpeechErrorCode value);
-
-  // @@protoc_insertion_point(class_scope:rokid.open.AuthResponse)
- private:
-  inline void set_has_result();
-  inline void clear_has_result();
-
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-
-  ::google::protobuf::uint32 _has_bits_[1];
-  mutable int _cached_size_;
-  int result_;
-  friend void  protobuf_AddDesc_speech_2eproto();
-  friend void protobuf_AssignDesc_speech_2eproto();
-  friend void protobuf_ShutdownFile_speech_2eproto();
-
-  void InitAsDefaultInstance();
-  static AuthResponse* default_instance_;
-};
-// -------------------------------------------------------------------
-
-class AsrRequest : public ::google::protobuf::Message {
- public:
-  AsrRequest();
-  virtual ~AsrRequest();
-
-  AsrRequest(const AsrRequest& from);
-
-  inline AsrRequest& operator=(const AsrRequest& from) {
-    CopyFrom(from);
-    return *this;
-  }
-
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const AsrRequest& default_instance();
-
-  void Swap(AsrRequest* other);
-
-  // implements Message ----------------------------------------------
-
-  AsrRequest* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const AsrRequest& from);
-  void MergeFrom(const AsrRequest& from);
-  void Clear();
-  bool IsInitialized() const;
-
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  ::google::protobuf::Metadata GetMetadata() const;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  // required int32 id = 1;
-  inline bool has_id() const;
-  inline void clear_id();
-  static const int kIdFieldNumber = 1;
-  inline ::google::protobuf::int32 id() const;
-  inline void set_id(::google::protobuf::int32 value);
-
-  // required .rokid.open.ReqType type = 2;
-  inline bool has_type() const;
-  inline void clear_type();
-  static const int kTypeFieldNumber = 2;
-  inline ::rokid::open::ReqType type() const;
-  inline void set_type(::rokid::open::ReqType value);
-
-  // optional bytes voice = 3;
-  inline bool has_voice() const;
-  inline void clear_voice();
-  static const int kVoiceFieldNumber = 3;
-  inline const ::std::string& voice() const;
-  inline void set_voice(const ::std::string& value);
-  inline void set_voice(const char* value);
-  inline void set_voice(const void* value, size_t size);
-  inline ::std::string* mutable_voice();
-  inline ::std::string* release_voice();
-  inline void set_allocated_voice(::std::string* voice);
-
-  // optional string lang = 4;
+  // required .rokid.open.speech.v2.Lang lang = 1;
   inline bool has_lang() const;
   inline void clear_lang();
-  static const int kLangFieldNumber = 4;
-  inline const ::std::string& lang() const;
-  inline void set_lang(const ::std::string& value);
-  inline void set_lang(const char* value);
-  inline void set_lang(const char* value, size_t size);
-  inline ::std::string* mutable_lang();
-  inline ::std::string* release_lang();
-  inline void set_allocated_lang(::std::string* lang);
+  static const int kLangFieldNumber = 1;
+  inline ::rokid::open::speech::v2::Lang lang() const;
+  inline void set_lang(::rokid::open::speech::v2::Lang value);
 
-  // optional string codec = 5;
+  // required .rokid.open.speech.v1.Codec codec = 2;
   inline bool has_codec() const;
   inline void clear_codec();
-  static const int kCodecFieldNumber = 5;
-  inline const ::std::string& codec() const;
-  inline void set_codec(const ::std::string& value);
-  inline void set_codec(const char* value);
-  inline void set_codec(const char* value, size_t size);
-  inline ::std::string* mutable_codec();
-  inline ::std::string* release_codec();
-  inline void set_allocated_codec(::std::string* codec);
+  static const int kCodecFieldNumber = 2;
+  inline ::rokid::open::speech::v1::Codec codec() const;
+  inline void set_codec(::rokid::open::speech::v1::Codec value);
 
-  // optional string vt = 6;
-  inline bool has_vt() const;
-  inline void clear_vt();
-  static const int kVtFieldNumber = 6;
-  inline const ::std::string& vt() const;
-  inline void set_vt(const ::std::string& value);
-  inline void set_vt(const char* value);
-  inline void set_vt(const char* value, size_t size);
-  inline ::std::string* mutable_vt();
-  inline ::std::string* release_vt();
-  inline void set_allocated_vt(::std::string* vt);
+  // required .rokid.open.speech.v2.VadMode vad_mode = 3;
+  inline bool has_vad_mode() const;
+  inline void clear_vad_mode();
+  static const int kVadModeFieldNumber = 3;
+  inline ::rokid::open::speech::v2::VadMode vad_mode() const;
+  inline void set_vad_mode(::rokid::open::speech::v2::VadMode value);
 
-  // @@protoc_insertion_point(class_scope:rokid.open.AsrRequest)
+  // optional uint32 vend_timeout = 4;
+  inline bool has_vend_timeout() const;
+  inline void clear_vend_timeout();
+  static const int kVendTimeoutFieldNumber = 4;
+  inline ::google::protobuf::uint32 vend_timeout() const;
+  inline void set_vend_timeout(::google::protobuf::uint32 value);
+
+  // required bool no_nlp = 5;
+  inline bool has_no_nlp() const;
+  inline void clear_no_nlp();
+  static const int kNoNlpFieldNumber = 5;
+  inline bool no_nlp() const;
+  inline void set_no_nlp(bool value);
+
+  // required bool no_intermediate_asr = 6;
+  inline bool has_no_intermediate_asr() const;
+  inline void clear_no_intermediate_asr();
+  static const int kNoIntermediateAsrFieldNumber = 6;
+  inline bool no_intermediate_asr() const;
+  inline void set_no_intermediate_asr(bool value);
+
+  // optional string stack = 7;
+  inline bool has_stack() const;
+  inline void clear_stack();
+  static const int kStackFieldNumber = 7;
+  inline const ::std::string& stack() const;
+  inline void set_stack(const ::std::string& value);
+  inline void set_stack(const char* value);
+  inline void set_stack(const char* value, size_t size);
+  inline ::std::string* mutable_stack();
+  inline ::std::string* release_stack();
+  inline void set_allocated_stack(::std::string* stack);
+
+  // optional string voice_trigger = 8;
+  inline bool has_voice_trigger() const;
+  inline void clear_voice_trigger();
+  static const int kVoiceTriggerFieldNumber = 8;
+  inline const ::std::string& voice_trigger() const;
+  inline void set_voice_trigger(const ::std::string& value);
+  inline void set_voice_trigger(const char* value);
+  inline void set_voice_trigger(const char* value, size_t size);
+  inline ::std::string* mutable_voice_trigger();
+  inline ::std::string* release_voice_trigger();
+  inline void set_allocated_voice_trigger(::std::string* voice_trigger);
+
+  // optional float voice_power = 9;
+  inline bool has_voice_power() const;
+  inline void clear_voice_power();
+  static const int kVoicePowerFieldNumber = 9;
+  inline float voice_power() const;
+  inline void set_voice_power(float value);
+
+  // optional uint32 trigger_start = 10;
+  inline bool has_trigger_start() const;
+  inline void clear_trigger_start();
+  static const int kTriggerStartFieldNumber = 10;
+  inline ::google::protobuf::uint32 trigger_start() const;
+  inline void set_trigger_start(::google::protobuf::uint32 value);
+
+  // optional uint32 trigger_length = 11;
+  inline bool has_trigger_length() const;
+  inline void clear_trigger_length();
+  static const int kTriggerLengthFieldNumber = 11;
+  inline ::google::protobuf::uint32 trigger_length() const;
+  inline void set_trigger_length(::google::protobuf::uint32 value);
+
+  // optional string skill_options = 12;
+  inline bool has_skill_options() const;
+  inline void clear_skill_options();
+  static const int kSkillOptionsFieldNumber = 12;
+  inline const ::std::string& skill_options() const;
+  inline void set_skill_options(const ::std::string& value);
+  inline void set_skill_options(const char* value);
+  inline void set_skill_options(const char* value, size_t size);
+  inline ::std::string* mutable_skill_options();
+  inline ::std::string* release_skill_options();
+  inline void set_allocated_skill_options(::std::string* skill_options);
+
+  // @@protoc_insertion_point(class_scope:rokid.open.speech.v2.SpeechOptions)
  private:
-  inline void set_has_id();
-  inline void clear_has_id();
-  inline void set_has_type();
-  inline void clear_has_type();
-  inline void set_has_voice();
-  inline void clear_has_voice();
   inline void set_has_lang();
   inline void clear_has_lang();
   inline void set_has_codec();
   inline void clear_has_codec();
-  inline void set_has_vt();
-  inline void clear_has_vt();
+  inline void set_has_vad_mode();
+  inline void clear_has_vad_mode();
+  inline void set_has_vend_timeout();
+  inline void clear_has_vend_timeout();
+  inline void set_has_no_nlp();
+  inline void clear_has_no_nlp();
+  inline void set_has_no_intermediate_asr();
+  inline void clear_has_no_intermediate_asr();
+  inline void set_has_stack();
+  inline void clear_has_stack();
+  inline void set_has_voice_trigger();
+  inline void clear_has_voice_trigger();
+  inline void set_has_voice_power();
+  inline void clear_has_voice_power();
+  inline void set_has_trigger_start();
+  inline void clear_has_trigger_start();
+  inline void set_has_trigger_length();
+  inline void clear_has_trigger_length();
+  inline void set_has_skill_options();
+  inline void clear_has_skill_options();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
   ::google::protobuf::uint32 _has_bits_[1];
   mutable int _cached_size_;
-  ::google::protobuf::int32 id_;
-  int type_;
-  ::std::string* voice_;
-  ::std::string* lang_;
-  ::std::string* codec_;
-  ::std::string* vt_;
+  int lang_;
+  int codec_;
+  int vad_mode_;
+  ::google::protobuf::uint32 vend_timeout_;
+  bool no_nlp_;
+  bool no_intermediate_asr_;
+  float voice_power_;
+  ::std::string* stack_;
+  ::std::string* voice_trigger_;
+  ::google::protobuf::uint32 trigger_start_;
+  ::google::protobuf::uint32 trigger_length_;
+  ::std::string* skill_options_;
   friend void  protobuf_AddDesc_speech_2eproto();
   friend void protobuf_AssignDesc_speech_2eproto();
   friend void protobuf_ShutdownFile_speech_2eproto();
 
   void InitAsDefaultInstance();
-  static AsrRequest* default_instance_;
-};
-// -------------------------------------------------------------------
-
-class AsrResponse : public ::google::protobuf::Message {
- public:
-  AsrResponse();
-  virtual ~AsrResponse();
-
-  AsrResponse(const AsrResponse& from);
-
-  inline AsrResponse& operator=(const AsrResponse& from) {
-    CopyFrom(from);
-    return *this;
-  }
-
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const AsrResponse& default_instance();
-
-  void Swap(AsrResponse* other);
-
-  // implements Message ----------------------------------------------
-
-  AsrResponse* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const AsrResponse& from);
-  void MergeFrom(const AsrResponse& from);
-  void Clear();
-  bool IsInitialized() const;
-
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  ::google::protobuf::Metadata GetMetadata() const;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  // required int32 id = 1;
-  inline bool has_id() const;
-  inline void clear_id();
-  static const int kIdFieldNumber = 1;
-  inline ::google::protobuf::int32 id() const;
-  inline void set_id(::google::protobuf::int32 value);
-
-  // required .rokid.open.SpeechErrorCode result = 2;
-  inline bool has_result() const;
-  inline void clear_result();
-  static const int kResultFieldNumber = 2;
-  inline ::rokid::open::SpeechErrorCode result() const;
-  inline void set_result(::rokid::open::SpeechErrorCode value);
-
-  // optional string asr = 3;
-  inline bool has_asr() const;
-  inline void clear_asr();
-  static const int kAsrFieldNumber = 3;
-  inline const ::std::string& asr() const;
-  inline void set_asr(const ::std::string& value);
-  inline void set_asr(const char* value);
-  inline void set_asr(const char* value, size_t size);
-  inline ::std::string* mutable_asr();
-  inline ::std::string* release_asr();
-  inline void set_allocated_asr(::std::string* asr);
-
-  // optional bool finish = 4;
-  inline bool has_finish() const;
-  inline void clear_finish();
-  static const int kFinishFieldNumber = 4;
-  inline bool finish() const;
-  inline void set_finish(bool value);
-
-  // @@protoc_insertion_point(class_scope:rokid.open.AsrResponse)
- private:
-  inline void set_has_id();
-  inline void clear_has_id();
-  inline void set_has_result();
-  inline void clear_has_result();
-  inline void set_has_asr();
-  inline void clear_has_asr();
-  inline void set_has_finish();
-  inline void clear_has_finish();
-
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-
-  ::google::protobuf::uint32 _has_bits_[1];
-  mutable int _cached_size_;
-  ::google::protobuf::int32 id_;
-  int result_;
-  ::std::string* asr_;
-  bool finish_;
-  friend void  protobuf_AddDesc_speech_2eproto();
-  friend void protobuf_AssignDesc_speech_2eproto();
-  friend void protobuf_ShutdownFile_speech_2eproto();
-
-  void InitAsDefaultInstance();
-  static AsrResponse* default_instance_;
-};
-// -------------------------------------------------------------------
-
-class TtsRequest : public ::google::protobuf::Message {
- public:
-  TtsRequest();
-  virtual ~TtsRequest();
-
-  TtsRequest(const TtsRequest& from);
-
-  inline TtsRequest& operator=(const TtsRequest& from) {
-    CopyFrom(from);
-    return *this;
-  }
-
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const TtsRequest& default_instance();
-
-  void Swap(TtsRequest* other);
-
-  // implements Message ----------------------------------------------
-
-  TtsRequest* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const TtsRequest& from);
-  void MergeFrom(const TtsRequest& from);
-  void Clear();
-  bool IsInitialized() const;
-
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  ::google::protobuf::Metadata GetMetadata() const;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  // required int32 id = 1;
-  inline bool has_id() const;
-  inline void clear_id();
-  static const int kIdFieldNumber = 1;
-  inline ::google::protobuf::int32 id() const;
-  inline void set_id(::google::protobuf::int32 value);
-
-  // required string text = 2;
-  inline bool has_text() const;
-  inline void clear_text();
-  static const int kTextFieldNumber = 2;
-  inline const ::std::string& text() const;
-  inline void set_text(const ::std::string& value);
-  inline void set_text(const char* value);
-  inline void set_text(const char* value, size_t size);
-  inline ::std::string* mutable_text();
-  inline ::std::string* release_text();
-  inline void set_allocated_text(::std::string* text);
-
-  // optional string declaimer = 3;
-  inline bool has_declaimer() const;
-  inline void clear_declaimer();
-  static const int kDeclaimerFieldNumber = 3;
-  inline const ::std::string& declaimer() const;
-  inline void set_declaimer(const ::std::string& value);
-  inline void set_declaimer(const char* value);
-  inline void set_declaimer(const char* value, size_t size);
-  inline ::std::string* mutable_declaimer();
-  inline ::std::string* release_declaimer();
-  inline void set_allocated_declaimer(::std::string* declaimer);
-
-  // optional string codec = 4;
-  inline bool has_codec() const;
-  inline void clear_codec();
-  static const int kCodecFieldNumber = 4;
-  inline const ::std::string& codec() const;
-  inline void set_codec(const ::std::string& value);
-  inline void set_codec(const char* value);
-  inline void set_codec(const char* value, size_t size);
-  inline ::std::string* mutable_codec();
-  inline ::std::string* release_codec();
-  inline void set_allocated_codec(::std::string* codec);
-
-  // @@protoc_insertion_point(class_scope:rokid.open.TtsRequest)
- private:
-  inline void set_has_id();
-  inline void clear_has_id();
-  inline void set_has_text();
-  inline void clear_has_text();
-  inline void set_has_declaimer();
-  inline void clear_has_declaimer();
-  inline void set_has_codec();
-  inline void clear_has_codec();
-
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-
-  ::google::protobuf::uint32 _has_bits_[1];
-  mutable int _cached_size_;
-  ::std::string* text_;
-  ::std::string* declaimer_;
-  ::std::string* codec_;
-  ::google::protobuf::int32 id_;
-  friend void  protobuf_AddDesc_speech_2eproto();
-  friend void protobuf_AssignDesc_speech_2eproto();
-  friend void protobuf_ShutdownFile_speech_2eproto();
-
-  void InitAsDefaultInstance();
-  static TtsRequest* default_instance_;
-};
-// -------------------------------------------------------------------
-
-class TtsResponse : public ::google::protobuf::Message {
- public:
-  TtsResponse();
-  virtual ~TtsResponse();
-
-  TtsResponse(const TtsResponse& from);
-
-  inline TtsResponse& operator=(const TtsResponse& from) {
-    CopyFrom(from);
-    return *this;
-  }
-
-  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
-    return _unknown_fields_;
-  }
-
-  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
-    return &_unknown_fields_;
-  }
-
-  static const ::google::protobuf::Descriptor* descriptor();
-  static const TtsResponse& default_instance();
-
-  void Swap(TtsResponse* other);
-
-  // implements Message ----------------------------------------------
-
-  TtsResponse* New() const;
-  void CopyFrom(const ::google::protobuf::Message& from);
-  void MergeFrom(const ::google::protobuf::Message& from);
-  void CopyFrom(const TtsResponse& from);
-  void MergeFrom(const TtsResponse& from);
-  void Clear();
-  bool IsInitialized() const;
-
-  int ByteSize() const;
-  bool MergePartialFromCodedStream(
-      ::google::protobuf::io::CodedInputStream* input);
-  void SerializeWithCachedSizes(
-      ::google::protobuf::io::CodedOutputStream* output) const;
-  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
-  int GetCachedSize() const { return _cached_size_; }
-  private:
-  void SharedCtor();
-  void SharedDtor();
-  void SetCachedSize(int size) const;
-  public:
-  ::google::protobuf::Metadata GetMetadata() const;
-
-  // nested types ----------------------------------------------------
-
-  // accessors -------------------------------------------------------
-
-  // required int32 id = 1;
-  inline bool has_id() const;
-  inline void clear_id();
-  static const int kIdFieldNumber = 1;
-  inline ::google::protobuf::int32 id() const;
-  inline void set_id(::google::protobuf::int32 value);
-
-  // required .rokid.open.SpeechErrorCode result = 2;
-  inline bool has_result() const;
-  inline void clear_result();
-  static const int kResultFieldNumber = 2;
-  inline ::rokid::open::SpeechErrorCode result() const;
-  inline void set_result(::rokid::open::SpeechErrorCode value);
-
-  // optional string text = 3;
-  inline bool has_text() const;
-  inline void clear_text();
-  static const int kTextFieldNumber = 3;
-  inline const ::std::string& text() const;
-  inline void set_text(const ::std::string& value);
-  inline void set_text(const char* value);
-  inline void set_text(const char* value, size_t size);
-  inline ::std::string* mutable_text();
-  inline ::std::string* release_text();
-  inline void set_allocated_text(::std::string* text);
-
-  // optional bytes voice = 4;
-  inline bool has_voice() const;
-  inline void clear_voice();
-  static const int kVoiceFieldNumber = 4;
-  inline const ::std::string& voice() const;
-  inline void set_voice(const ::std::string& value);
-  inline void set_voice(const char* value);
-  inline void set_voice(const void* value, size_t size);
-  inline ::std::string* mutable_voice();
-  inline ::std::string* release_voice();
-  inline void set_allocated_voice(::std::string* voice);
-
-  // optional bool finish = 5;
-  inline bool has_finish() const;
-  inline void clear_finish();
-  static const int kFinishFieldNumber = 5;
-  inline bool finish() const;
-  inline void set_finish(bool value);
-
-  // @@protoc_insertion_point(class_scope:rokid.open.TtsResponse)
- private:
-  inline void set_has_id();
-  inline void clear_has_id();
-  inline void set_has_result();
-  inline void clear_has_result();
-  inline void set_has_text();
-  inline void clear_has_text();
-  inline void set_has_voice();
-  inline void clear_has_voice();
-  inline void set_has_finish();
-  inline void clear_has_finish();
-
-  ::google::protobuf::UnknownFieldSet _unknown_fields_;
-
-  ::google::protobuf::uint32 _has_bits_[1];
-  mutable int _cached_size_;
-  ::google::protobuf::int32 id_;
-  int result_;
-  ::std::string* text_;
-  ::std::string* voice_;
-  bool finish_;
-  friend void  protobuf_AddDesc_speech_2eproto();
-  friend void protobuf_AssignDesc_speech_2eproto();
-  friend void protobuf_ShutdownFile_speech_2eproto();
-
-  void InitAsDefaultInstance();
-  static TtsResponse* default_instance_;
+  static SpeechOptions* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -920,12 +366,12 @@ class SpeechRequest : public ::google::protobuf::Message {
   inline ::google::protobuf::int32 id() const;
   inline void set_id(::google::protobuf::int32 value);
 
-  // required .rokid.open.ReqType type = 2;
+  // required .rokid.open.speech.v1.ReqType type = 2;
   inline bool has_type() const;
   inline void clear_type();
   static const int kTypeFieldNumber = 2;
-  inline ::rokid::open::ReqType type() const;
-  inline void set_type(::rokid::open::ReqType value);
+  inline ::rokid::open::speech::v1::ReqType type() const;
+  inline void set_type(::rokid::open::speech::v1::ReqType value);
 
   // optional bytes voice = 3;
   inline bool has_voice() const;
@@ -951,67 +397,16 @@ class SpeechRequest : public ::google::protobuf::Message {
   inline ::std::string* release_asr();
   inline void set_allocated_asr(::std::string* asr);
 
-  // optional string lang = 5;
-  inline bool has_lang() const;
-  inline void clear_lang();
-  static const int kLangFieldNumber = 5;
-  inline const ::std::string& lang() const;
-  inline void set_lang(const ::std::string& value);
-  inline void set_lang(const char* value);
-  inline void set_lang(const char* value, size_t size);
-  inline ::std::string* mutable_lang();
-  inline ::std::string* release_lang();
-  inline void set_allocated_lang(::std::string* lang);
+  // optional .rokid.open.speech.v2.SpeechOptions options = 5;
+  inline bool has_options() const;
+  inline void clear_options();
+  static const int kOptionsFieldNumber = 5;
+  inline const ::rokid::open::speech::v2::SpeechOptions& options() const;
+  inline ::rokid::open::speech::v2::SpeechOptions* mutable_options();
+  inline ::rokid::open::speech::v2::SpeechOptions* release_options();
+  inline void set_allocated_options(::rokid::open::speech::v2::SpeechOptions* options);
 
-  // optional string codec = 6;
-  inline bool has_codec() const;
-  inline void clear_codec();
-  static const int kCodecFieldNumber = 6;
-  inline const ::std::string& codec() const;
-  inline void set_codec(const ::std::string& value);
-  inline void set_codec(const char* value);
-  inline void set_codec(const char* value, size_t size);
-  inline ::std::string* mutable_codec();
-  inline ::std::string* release_codec();
-  inline void set_allocated_codec(::std::string* codec);
-
-  // optional string vt = 7;
-  inline bool has_vt() const;
-  inline void clear_vt();
-  static const int kVtFieldNumber = 7;
-  inline const ::std::string& vt() const;
-  inline void set_vt(const ::std::string& value);
-  inline void set_vt(const char* value);
-  inline void set_vt(const char* value, size_t size);
-  inline ::std::string* mutable_vt();
-  inline ::std::string* release_vt();
-  inline void set_allocated_vt(::std::string* vt);
-
-  // optional string framework_options = 8;
-  inline bool has_framework_options() const;
-  inline void clear_framework_options();
-  static const int kFrameworkOptionsFieldNumber = 8;
-  inline const ::std::string& framework_options() const;
-  inline void set_framework_options(const ::std::string& value);
-  inline void set_framework_options(const char* value);
-  inline void set_framework_options(const char* value, size_t size);
-  inline ::std::string* mutable_framework_options();
-  inline ::std::string* release_framework_options();
-  inline void set_allocated_framework_options(::std::string* framework_options);
-
-  // optional string skill_options = 9;
-  inline bool has_skill_options() const;
-  inline void clear_skill_options();
-  static const int kSkillOptionsFieldNumber = 9;
-  inline const ::std::string& skill_options() const;
-  inline void set_skill_options(const ::std::string& value);
-  inline void set_skill_options(const char* value);
-  inline void set_skill_options(const char* value, size_t size);
-  inline ::std::string* mutable_skill_options();
-  inline ::std::string* release_skill_options();
-  inline void set_allocated_skill_options(::std::string* skill_options);
-
-  // @@protoc_insertion_point(class_scope:rokid.open.SpeechRequest)
+  // @@protoc_insertion_point(class_scope:rokid.open.speech.v2.SpeechRequest)
  private:
   inline void set_has_id();
   inline void clear_has_id();
@@ -1021,16 +416,8 @@ class SpeechRequest : public ::google::protobuf::Message {
   inline void clear_has_voice();
   inline void set_has_asr();
   inline void clear_has_asr();
-  inline void set_has_lang();
-  inline void clear_has_lang();
-  inline void set_has_codec();
-  inline void clear_has_codec();
-  inline void set_has_vt();
-  inline void clear_has_vt();
-  inline void set_has_framework_options();
-  inline void clear_has_framework_options();
-  inline void set_has_skill_options();
-  inline void clear_has_skill_options();
+  inline void set_has_options();
+  inline void clear_has_options();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
@@ -1040,11 +427,7 @@ class SpeechRequest : public ::google::protobuf::Message {
   int type_;
   ::std::string* voice_;
   ::std::string* asr_;
-  ::std::string* lang_;
-  ::std::string* codec_;
-  ::std::string* vt_;
-  ::std::string* framework_options_;
-  ::std::string* skill_options_;
+  ::rokid::open::speech::v2::SpeechOptions* options_;
   friend void  protobuf_AddDesc_speech_2eproto();
   friend void protobuf_AssignDesc_speech_2eproto();
   friend void protobuf_ShutdownFile_speech_2eproto();
@@ -1114,17 +497,24 @@ class SpeechResponse : public ::google::protobuf::Message {
   inline ::google::protobuf::int32 id() const;
   inline void set_id(::google::protobuf::int32 value);
 
-  // required .rokid.open.SpeechErrorCode result = 2;
+  // required .rokid.open.speech.v2.RespType type = 2;
+  inline bool has_type() const;
+  inline void clear_type();
+  static const int kTypeFieldNumber = 2;
+  inline ::rokid::open::speech::v2::RespType type() const;
+  inline void set_type(::rokid::open::speech::v2::RespType value);
+
+  // required .rokid.open.speech.v1.SpeechErrorCode result = 3;
   inline bool has_result() const;
   inline void clear_result();
-  static const int kResultFieldNumber = 2;
-  inline ::rokid::open::SpeechErrorCode result() const;
-  inline void set_result(::rokid::open::SpeechErrorCode value);
+  static const int kResultFieldNumber = 3;
+  inline ::rokid::open::speech::v1::SpeechErrorCode result() const;
+  inline void set_result(::rokid::open::speech::v1::SpeechErrorCode value);
 
-  // optional string asr = 3;
+  // optional string asr = 4;
   inline bool has_asr() const;
   inline void clear_asr();
-  static const int kAsrFieldNumber = 3;
+  static const int kAsrFieldNumber = 4;
   inline const ::std::string& asr() const;
   inline void set_asr(const ::std::string& value);
   inline void set_asr(const char* value);
@@ -1133,10 +523,10 @@ class SpeechResponse : public ::google::protobuf::Message {
   inline ::std::string* release_asr();
   inline void set_allocated_asr(::std::string* asr);
 
-  // optional string nlp = 4;
+  // optional string nlp = 5;
   inline bool has_nlp() const;
   inline void clear_nlp();
-  static const int kNlpFieldNumber = 4;
+  static const int kNlpFieldNumber = 5;
   inline const ::std::string& nlp() const;
   inline void set_nlp(const ::std::string& value);
   inline void set_nlp(const char* value);
@@ -1145,10 +535,10 @@ class SpeechResponse : public ::google::protobuf::Message {
   inline ::std::string* release_nlp();
   inline void set_allocated_nlp(::std::string* nlp);
 
-  // optional string action = 5;
+  // optional string action = 6;
   inline bool has_action() const;
   inline void clear_action();
-  static const int kActionFieldNumber = 5;
+  static const int kActionFieldNumber = 6;
   inline const ::std::string& action() const;
   inline void set_action(const ::std::string& value);
   inline void set_action(const char* value);
@@ -1156,13 +546,6 @@ class SpeechResponse : public ::google::protobuf::Message {
   inline ::std::string* mutable_action();
   inline ::std::string* release_action();
   inline void set_allocated_action(::std::string* action);
-
-  // optional bool finish = 6;
-  inline bool has_finish() const;
-  inline void clear_finish();
-  static const int kFinishFieldNumber = 6;
-  inline bool finish() const;
-  inline void set_finish(bool value);
 
   // optional string extra = 7;
   inline bool has_extra() const;
@@ -1176,10 +559,12 @@ class SpeechResponse : public ::google::protobuf::Message {
   inline ::std::string* release_extra();
   inline void set_allocated_extra(::std::string* extra);
 
-  // @@protoc_insertion_point(class_scope:rokid.open.SpeechResponse)
+  // @@protoc_insertion_point(class_scope:rokid.open.speech.v2.SpeechResponse)
  private:
   inline void set_has_id();
   inline void clear_has_id();
+  inline void set_has_type();
+  inline void clear_has_type();
   inline void set_has_result();
   inline void clear_has_result();
   inline void set_has_asr();
@@ -1188,8 +573,6 @@ class SpeechResponse : public ::google::protobuf::Message {
   inline void clear_has_nlp();
   inline void set_has_action();
   inline void clear_has_action();
-  inline void set_has_finish();
-  inline void clear_has_finish();
   inline void set_has_extra();
   inline void clear_has_extra();
 
@@ -1198,12 +581,12 @@ class SpeechResponse : public ::google::protobuf::Message {
   ::google::protobuf::uint32 _has_bits_[1];
   mutable int _cached_size_;
   ::google::protobuf::int32 id_;
-  int result_;
+  int type_;
   ::std::string* asr_;
   ::std::string* nlp_;
   ::std::string* action_;
   ::std::string* extra_;
-  bool finish_;
+  int result_;
   friend void  protobuf_AddDesc_speech_2eproto();
   friend void protobuf_AssignDesc_speech_2eproto();
   friend void protobuf_ShutdownFile_speech_2eproto();
@@ -1216,1562 +599,453 @@ class SpeechResponse : public ::google::protobuf::Message {
 
 // ===================================================================
 
-// AuthRequest
+// SpeechOptions
 
-// required string key = 1;
-inline bool AuthRequest::has_key() const {
+// required .rokid.open.speech.v2.Lang lang = 1;
+inline bool SpeechOptions::has_lang() const {
   return (_has_bits_[0] & 0x00000001u) != 0;
 }
-inline void AuthRequest::set_has_key() {
+inline void SpeechOptions::set_has_lang() {
   _has_bits_[0] |= 0x00000001u;
 }
-inline void AuthRequest::clear_has_key() {
+inline void SpeechOptions::clear_has_lang() {
   _has_bits_[0] &= ~0x00000001u;
 }
-inline void AuthRequest::clear_key() {
-  if (key_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    key_->clear();
-  }
-  clear_has_key();
+inline void SpeechOptions::clear_lang() {
+  lang_ = 0;
+  clear_has_lang();
 }
-inline const ::std::string& AuthRequest::key() const {
-  // @@protoc_insertion_point(field_get:rokid.open.AuthRequest.key)
-  return *key_;
+inline ::rokid::open::speech::v2::Lang SpeechOptions::lang() const {
+  // @@protoc_insertion_point(field_get:rokid.open.speech.v2.SpeechOptions.lang)
+  return static_cast< ::rokid::open::speech::v2::Lang >(lang_);
 }
-inline void AuthRequest::set_key(const ::std::string& value) {
-  set_has_key();
-  if (key_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    key_ = new ::std::string;
-  }
-  key_->assign(value);
-  // @@protoc_insertion_point(field_set:rokid.open.AuthRequest.key)
-}
-inline void AuthRequest::set_key(const char* value) {
-  set_has_key();
-  if (key_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    key_ = new ::std::string;
-  }
-  key_->assign(value);
-  // @@protoc_insertion_point(field_set_char:rokid.open.AuthRequest.key)
-}
-inline void AuthRequest::set_key(const char* value, size_t size) {
-  set_has_key();
-  if (key_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    key_ = new ::std::string;
-  }
-  key_->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:rokid.open.AuthRequest.key)
-}
-inline ::std::string* AuthRequest::mutable_key() {
-  set_has_key();
-  if (key_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    key_ = new ::std::string;
-  }
-  // @@protoc_insertion_point(field_mutable:rokid.open.AuthRequest.key)
-  return key_;
-}
-inline ::std::string* AuthRequest::release_key() {
-  clear_has_key();
-  if (key_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    return NULL;
-  } else {
-    ::std::string* temp = key_;
-    key_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-    return temp;
-  }
-}
-inline void AuthRequest::set_allocated_key(::std::string* key) {
-  if (key_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete key_;
-  }
-  if (key) {
-    set_has_key();
-    key_ = key;
-  } else {
-    clear_has_key();
-    key_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  }
-  // @@protoc_insertion_point(field_set_allocated:rokid.open.AuthRequest.key)
+inline void SpeechOptions::set_lang(::rokid::open::speech::v2::Lang value) {
+  assert(::rokid::open::speech::v2::Lang_IsValid(value));
+  set_has_lang();
+  lang_ = value;
+  // @@protoc_insertion_point(field_set:rokid.open.speech.v2.SpeechOptions.lang)
 }
 
-// required string device_type_id = 2;
-inline bool AuthRequest::has_device_type_id() const {
+// required .rokid.open.speech.v1.Codec codec = 2;
+inline bool SpeechOptions::has_codec() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void AuthRequest::set_has_device_type_id() {
+inline void SpeechOptions::set_has_codec() {
   _has_bits_[0] |= 0x00000002u;
 }
-inline void AuthRequest::clear_has_device_type_id() {
+inline void SpeechOptions::clear_has_codec() {
   _has_bits_[0] &= ~0x00000002u;
 }
-inline void AuthRequest::clear_device_type_id() {
-  if (device_type_id_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    device_type_id_->clear();
-  }
-  clear_has_device_type_id();
+inline void SpeechOptions::clear_codec() {
+  codec_ = 0;
+  clear_has_codec();
 }
-inline const ::std::string& AuthRequest::device_type_id() const {
-  // @@protoc_insertion_point(field_get:rokid.open.AuthRequest.device_type_id)
-  return *device_type_id_;
+inline ::rokid::open::speech::v1::Codec SpeechOptions::codec() const {
+  // @@protoc_insertion_point(field_get:rokid.open.speech.v2.SpeechOptions.codec)
+  return static_cast< ::rokid::open::speech::v1::Codec >(codec_);
 }
-inline void AuthRequest::set_device_type_id(const ::std::string& value) {
-  set_has_device_type_id();
-  if (device_type_id_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    device_type_id_ = new ::std::string;
-  }
-  device_type_id_->assign(value);
-  // @@protoc_insertion_point(field_set:rokid.open.AuthRequest.device_type_id)
-}
-inline void AuthRequest::set_device_type_id(const char* value) {
-  set_has_device_type_id();
-  if (device_type_id_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    device_type_id_ = new ::std::string;
-  }
-  device_type_id_->assign(value);
-  // @@protoc_insertion_point(field_set_char:rokid.open.AuthRequest.device_type_id)
-}
-inline void AuthRequest::set_device_type_id(const char* value, size_t size) {
-  set_has_device_type_id();
-  if (device_type_id_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    device_type_id_ = new ::std::string;
-  }
-  device_type_id_->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:rokid.open.AuthRequest.device_type_id)
-}
-inline ::std::string* AuthRequest::mutable_device_type_id() {
-  set_has_device_type_id();
-  if (device_type_id_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    device_type_id_ = new ::std::string;
-  }
-  // @@protoc_insertion_point(field_mutable:rokid.open.AuthRequest.device_type_id)
-  return device_type_id_;
-}
-inline ::std::string* AuthRequest::release_device_type_id() {
-  clear_has_device_type_id();
-  if (device_type_id_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    return NULL;
-  } else {
-    ::std::string* temp = device_type_id_;
-    device_type_id_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-    return temp;
-  }
-}
-inline void AuthRequest::set_allocated_device_type_id(::std::string* device_type_id) {
-  if (device_type_id_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete device_type_id_;
-  }
-  if (device_type_id) {
-    set_has_device_type_id();
-    device_type_id_ = device_type_id;
-  } else {
-    clear_has_device_type_id();
-    device_type_id_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  }
-  // @@protoc_insertion_point(field_set_allocated:rokid.open.AuthRequest.device_type_id)
+inline void SpeechOptions::set_codec(::rokid::open::speech::v1::Codec value) {
+  assert(::rokid::open::speech::v1::Codec_IsValid(value));
+  set_has_codec();
+  codec_ = value;
+  // @@protoc_insertion_point(field_set:rokid.open.speech.v2.SpeechOptions.codec)
 }
 
-// required string device_id = 3;
-inline bool AuthRequest::has_device_id() const {
+// required .rokid.open.speech.v2.VadMode vad_mode = 3;
+inline bool SpeechOptions::has_vad_mode() const {
   return (_has_bits_[0] & 0x00000004u) != 0;
 }
-inline void AuthRequest::set_has_device_id() {
+inline void SpeechOptions::set_has_vad_mode() {
   _has_bits_[0] |= 0x00000004u;
 }
-inline void AuthRequest::clear_has_device_id() {
+inline void SpeechOptions::clear_has_vad_mode() {
   _has_bits_[0] &= ~0x00000004u;
 }
-inline void AuthRequest::clear_device_id() {
-  if (device_id_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    device_id_->clear();
-  }
-  clear_has_device_id();
+inline void SpeechOptions::clear_vad_mode() {
+  vad_mode_ = 0;
+  clear_has_vad_mode();
 }
-inline const ::std::string& AuthRequest::device_id() const {
-  // @@protoc_insertion_point(field_get:rokid.open.AuthRequest.device_id)
-  return *device_id_;
+inline ::rokid::open::speech::v2::VadMode SpeechOptions::vad_mode() const {
+  // @@protoc_insertion_point(field_get:rokid.open.speech.v2.SpeechOptions.vad_mode)
+  return static_cast< ::rokid::open::speech::v2::VadMode >(vad_mode_);
 }
-inline void AuthRequest::set_device_id(const ::std::string& value) {
-  set_has_device_id();
-  if (device_id_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    device_id_ = new ::std::string;
-  }
-  device_id_->assign(value);
-  // @@protoc_insertion_point(field_set:rokid.open.AuthRequest.device_id)
-}
-inline void AuthRequest::set_device_id(const char* value) {
-  set_has_device_id();
-  if (device_id_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    device_id_ = new ::std::string;
-  }
-  device_id_->assign(value);
-  // @@protoc_insertion_point(field_set_char:rokid.open.AuthRequest.device_id)
-}
-inline void AuthRequest::set_device_id(const char* value, size_t size) {
-  set_has_device_id();
-  if (device_id_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    device_id_ = new ::std::string;
-  }
-  device_id_->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:rokid.open.AuthRequest.device_id)
-}
-inline ::std::string* AuthRequest::mutable_device_id() {
-  set_has_device_id();
-  if (device_id_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    device_id_ = new ::std::string;
-  }
-  // @@protoc_insertion_point(field_mutable:rokid.open.AuthRequest.device_id)
-  return device_id_;
-}
-inline ::std::string* AuthRequest::release_device_id() {
-  clear_has_device_id();
-  if (device_id_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    return NULL;
-  } else {
-    ::std::string* temp = device_id_;
-    device_id_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-    return temp;
-  }
-}
-inline void AuthRequest::set_allocated_device_id(::std::string* device_id) {
-  if (device_id_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete device_id_;
-  }
-  if (device_id) {
-    set_has_device_id();
-    device_id_ = device_id;
-  } else {
-    clear_has_device_id();
-    device_id_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  }
-  // @@protoc_insertion_point(field_set_allocated:rokid.open.AuthRequest.device_id)
+inline void SpeechOptions::set_vad_mode(::rokid::open::speech::v2::VadMode value) {
+  assert(::rokid::open::speech::v2::VadMode_IsValid(value));
+  set_has_vad_mode();
+  vad_mode_ = value;
+  // @@protoc_insertion_point(field_set:rokid.open.speech.v2.SpeechOptions.vad_mode)
 }
 
-// required string service = 4;
-inline bool AuthRequest::has_service() const {
+// optional uint32 vend_timeout = 4;
+inline bool SpeechOptions::has_vend_timeout() const {
   return (_has_bits_[0] & 0x00000008u) != 0;
 }
-inline void AuthRequest::set_has_service() {
+inline void SpeechOptions::set_has_vend_timeout() {
   _has_bits_[0] |= 0x00000008u;
 }
-inline void AuthRequest::clear_has_service() {
+inline void SpeechOptions::clear_has_vend_timeout() {
   _has_bits_[0] &= ~0x00000008u;
 }
-inline void AuthRequest::clear_service() {
-  if (service_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    service_->clear();
-  }
-  clear_has_service();
+inline void SpeechOptions::clear_vend_timeout() {
+  vend_timeout_ = 0u;
+  clear_has_vend_timeout();
 }
-inline const ::std::string& AuthRequest::service() const {
-  // @@protoc_insertion_point(field_get:rokid.open.AuthRequest.service)
-  return *service_;
+inline ::google::protobuf::uint32 SpeechOptions::vend_timeout() const {
+  // @@protoc_insertion_point(field_get:rokid.open.speech.v2.SpeechOptions.vend_timeout)
+  return vend_timeout_;
 }
-inline void AuthRequest::set_service(const ::std::string& value) {
-  set_has_service();
-  if (service_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    service_ = new ::std::string;
-  }
-  service_->assign(value);
-  // @@protoc_insertion_point(field_set:rokid.open.AuthRequest.service)
-}
-inline void AuthRequest::set_service(const char* value) {
-  set_has_service();
-  if (service_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    service_ = new ::std::string;
-  }
-  service_->assign(value);
-  // @@protoc_insertion_point(field_set_char:rokid.open.AuthRequest.service)
-}
-inline void AuthRequest::set_service(const char* value, size_t size) {
-  set_has_service();
-  if (service_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    service_ = new ::std::string;
-  }
-  service_->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:rokid.open.AuthRequest.service)
-}
-inline ::std::string* AuthRequest::mutable_service() {
-  set_has_service();
-  if (service_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    service_ = new ::std::string;
-  }
-  // @@protoc_insertion_point(field_mutable:rokid.open.AuthRequest.service)
-  return service_;
-}
-inline ::std::string* AuthRequest::release_service() {
-  clear_has_service();
-  if (service_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    return NULL;
-  } else {
-    ::std::string* temp = service_;
-    service_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-    return temp;
-  }
-}
-inline void AuthRequest::set_allocated_service(::std::string* service) {
-  if (service_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete service_;
-  }
-  if (service) {
-    set_has_service();
-    service_ = service;
-  } else {
-    clear_has_service();
-    service_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  }
-  // @@protoc_insertion_point(field_set_allocated:rokid.open.AuthRequest.service)
+inline void SpeechOptions::set_vend_timeout(::google::protobuf::uint32 value) {
+  set_has_vend_timeout();
+  vend_timeout_ = value;
+  // @@protoc_insertion_point(field_set:rokid.open.speech.v2.SpeechOptions.vend_timeout)
 }
 
-// required string version = 5;
-inline bool AuthRequest::has_version() const {
+// required bool no_nlp = 5;
+inline bool SpeechOptions::has_no_nlp() const {
   return (_has_bits_[0] & 0x00000010u) != 0;
 }
-inline void AuthRequest::set_has_version() {
+inline void SpeechOptions::set_has_no_nlp() {
   _has_bits_[0] |= 0x00000010u;
 }
-inline void AuthRequest::clear_has_version() {
+inline void SpeechOptions::clear_has_no_nlp() {
   _has_bits_[0] &= ~0x00000010u;
 }
-inline void AuthRequest::clear_version() {
-  if (version_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    version_->clear();
-  }
-  clear_has_version();
+inline void SpeechOptions::clear_no_nlp() {
+  no_nlp_ = false;
+  clear_has_no_nlp();
 }
-inline const ::std::string& AuthRequest::version() const {
-  // @@protoc_insertion_point(field_get:rokid.open.AuthRequest.version)
-  return *version_;
+inline bool SpeechOptions::no_nlp() const {
+  // @@protoc_insertion_point(field_get:rokid.open.speech.v2.SpeechOptions.no_nlp)
+  return no_nlp_;
 }
-inline void AuthRequest::set_version(const ::std::string& value) {
-  set_has_version();
-  if (version_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    version_ = new ::std::string;
-  }
-  version_->assign(value);
-  // @@protoc_insertion_point(field_set:rokid.open.AuthRequest.version)
-}
-inline void AuthRequest::set_version(const char* value) {
-  set_has_version();
-  if (version_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    version_ = new ::std::string;
-  }
-  version_->assign(value);
-  // @@protoc_insertion_point(field_set_char:rokid.open.AuthRequest.version)
-}
-inline void AuthRequest::set_version(const char* value, size_t size) {
-  set_has_version();
-  if (version_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    version_ = new ::std::string;
-  }
-  version_->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:rokid.open.AuthRequest.version)
-}
-inline ::std::string* AuthRequest::mutable_version() {
-  set_has_version();
-  if (version_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    version_ = new ::std::string;
-  }
-  // @@protoc_insertion_point(field_mutable:rokid.open.AuthRequest.version)
-  return version_;
-}
-inline ::std::string* AuthRequest::release_version() {
-  clear_has_version();
-  if (version_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    return NULL;
-  } else {
-    ::std::string* temp = version_;
-    version_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-    return temp;
-  }
-}
-inline void AuthRequest::set_allocated_version(::std::string* version) {
-  if (version_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete version_;
-  }
-  if (version) {
-    set_has_version();
-    version_ = version;
-  } else {
-    clear_has_version();
-    version_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  }
-  // @@protoc_insertion_point(field_set_allocated:rokid.open.AuthRequest.version)
+inline void SpeechOptions::set_no_nlp(bool value) {
+  set_has_no_nlp();
+  no_nlp_ = value;
+  // @@protoc_insertion_point(field_set:rokid.open.speech.v2.SpeechOptions.no_nlp)
 }
 
-// required string timestamp = 6;
-inline bool AuthRequest::has_timestamp() const {
+// required bool no_intermediate_asr = 6;
+inline bool SpeechOptions::has_no_intermediate_asr() const {
   return (_has_bits_[0] & 0x00000020u) != 0;
 }
-inline void AuthRequest::set_has_timestamp() {
+inline void SpeechOptions::set_has_no_intermediate_asr() {
   _has_bits_[0] |= 0x00000020u;
 }
-inline void AuthRequest::clear_has_timestamp() {
+inline void SpeechOptions::clear_has_no_intermediate_asr() {
   _has_bits_[0] &= ~0x00000020u;
 }
-inline void AuthRequest::clear_timestamp() {
-  if (timestamp_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    timestamp_->clear();
-  }
-  clear_has_timestamp();
+inline void SpeechOptions::clear_no_intermediate_asr() {
+  no_intermediate_asr_ = false;
+  clear_has_no_intermediate_asr();
 }
-inline const ::std::string& AuthRequest::timestamp() const {
-  // @@protoc_insertion_point(field_get:rokid.open.AuthRequest.timestamp)
-  return *timestamp_;
+inline bool SpeechOptions::no_intermediate_asr() const {
+  // @@protoc_insertion_point(field_get:rokid.open.speech.v2.SpeechOptions.no_intermediate_asr)
+  return no_intermediate_asr_;
 }
-inline void AuthRequest::set_timestamp(const ::std::string& value) {
-  set_has_timestamp();
-  if (timestamp_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    timestamp_ = new ::std::string;
-  }
-  timestamp_->assign(value);
-  // @@protoc_insertion_point(field_set:rokid.open.AuthRequest.timestamp)
-}
-inline void AuthRequest::set_timestamp(const char* value) {
-  set_has_timestamp();
-  if (timestamp_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    timestamp_ = new ::std::string;
-  }
-  timestamp_->assign(value);
-  // @@protoc_insertion_point(field_set_char:rokid.open.AuthRequest.timestamp)
-}
-inline void AuthRequest::set_timestamp(const char* value, size_t size) {
-  set_has_timestamp();
-  if (timestamp_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    timestamp_ = new ::std::string;
-  }
-  timestamp_->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:rokid.open.AuthRequest.timestamp)
-}
-inline ::std::string* AuthRequest::mutable_timestamp() {
-  set_has_timestamp();
-  if (timestamp_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    timestamp_ = new ::std::string;
-  }
-  // @@protoc_insertion_point(field_mutable:rokid.open.AuthRequest.timestamp)
-  return timestamp_;
-}
-inline ::std::string* AuthRequest::release_timestamp() {
-  clear_has_timestamp();
-  if (timestamp_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    return NULL;
-  } else {
-    ::std::string* temp = timestamp_;
-    timestamp_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-    return temp;
-  }
-}
-inline void AuthRequest::set_allocated_timestamp(::std::string* timestamp) {
-  if (timestamp_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete timestamp_;
-  }
-  if (timestamp) {
-    set_has_timestamp();
-    timestamp_ = timestamp;
-  } else {
-    clear_has_timestamp();
-    timestamp_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  }
-  // @@protoc_insertion_point(field_set_allocated:rokid.open.AuthRequest.timestamp)
+inline void SpeechOptions::set_no_intermediate_asr(bool value) {
+  set_has_no_intermediate_asr();
+  no_intermediate_asr_ = value;
+  // @@protoc_insertion_point(field_set:rokid.open.speech.v2.SpeechOptions.no_intermediate_asr)
 }
 
-// required string sign = 7;
-inline bool AuthRequest::has_sign() const {
+// optional string stack = 7;
+inline bool SpeechOptions::has_stack() const {
   return (_has_bits_[0] & 0x00000040u) != 0;
 }
-inline void AuthRequest::set_has_sign() {
+inline void SpeechOptions::set_has_stack() {
   _has_bits_[0] |= 0x00000040u;
 }
-inline void AuthRequest::clear_has_sign() {
+inline void SpeechOptions::clear_has_stack() {
   _has_bits_[0] &= ~0x00000040u;
 }
-inline void AuthRequest::clear_sign() {
-  if (sign_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    sign_->clear();
+inline void SpeechOptions::clear_stack() {
+  if (stack_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    stack_->clear();
   }
-  clear_has_sign();
+  clear_has_stack();
 }
-inline const ::std::string& AuthRequest::sign() const {
-  // @@protoc_insertion_point(field_get:rokid.open.AuthRequest.sign)
-  return *sign_;
+inline const ::std::string& SpeechOptions::stack() const {
+  // @@protoc_insertion_point(field_get:rokid.open.speech.v2.SpeechOptions.stack)
+  return *stack_;
 }
-inline void AuthRequest::set_sign(const ::std::string& value) {
-  set_has_sign();
-  if (sign_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    sign_ = new ::std::string;
+inline void SpeechOptions::set_stack(const ::std::string& value) {
+  set_has_stack();
+  if (stack_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    stack_ = new ::std::string;
   }
-  sign_->assign(value);
-  // @@protoc_insertion_point(field_set:rokid.open.AuthRequest.sign)
+  stack_->assign(value);
+  // @@protoc_insertion_point(field_set:rokid.open.speech.v2.SpeechOptions.stack)
 }
-inline void AuthRequest::set_sign(const char* value) {
-  set_has_sign();
-  if (sign_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    sign_ = new ::std::string;
+inline void SpeechOptions::set_stack(const char* value) {
+  set_has_stack();
+  if (stack_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    stack_ = new ::std::string;
   }
-  sign_->assign(value);
-  // @@protoc_insertion_point(field_set_char:rokid.open.AuthRequest.sign)
+  stack_->assign(value);
+  // @@protoc_insertion_point(field_set_char:rokid.open.speech.v2.SpeechOptions.stack)
 }
-inline void AuthRequest::set_sign(const char* value, size_t size) {
-  set_has_sign();
-  if (sign_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    sign_ = new ::std::string;
+inline void SpeechOptions::set_stack(const char* value, size_t size) {
+  set_has_stack();
+  if (stack_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    stack_ = new ::std::string;
   }
-  sign_->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:rokid.open.AuthRequest.sign)
+  stack_->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:rokid.open.speech.v2.SpeechOptions.stack)
 }
-inline ::std::string* AuthRequest::mutable_sign() {
-  set_has_sign();
-  if (sign_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    sign_ = new ::std::string;
+inline ::std::string* SpeechOptions::mutable_stack() {
+  set_has_stack();
+  if (stack_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    stack_ = new ::std::string;
   }
-  // @@protoc_insertion_point(field_mutable:rokid.open.AuthRequest.sign)
-  return sign_;
+  // @@protoc_insertion_point(field_mutable:rokid.open.speech.v2.SpeechOptions.stack)
+  return stack_;
 }
-inline ::std::string* AuthRequest::release_sign() {
-  clear_has_sign();
-  if (sign_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+inline ::std::string* SpeechOptions::release_stack() {
+  clear_has_stack();
+  if (stack_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
     return NULL;
   } else {
-    ::std::string* temp = sign_;
-    sign_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+    ::std::string* temp = stack_;
+    stack_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
     return temp;
   }
 }
-inline void AuthRequest::set_allocated_sign(::std::string* sign) {
-  if (sign_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete sign_;
+inline void SpeechOptions::set_allocated_stack(::std::string* stack) {
+  if (stack_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    delete stack_;
   }
-  if (sign) {
-    set_has_sign();
-    sign_ = sign;
+  if (stack) {
+    set_has_stack();
+    stack_ = stack;
   } else {
-    clear_has_sign();
-    sign_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+    clear_has_stack();
+    stack_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   }
-  // @@protoc_insertion_point(field_set_allocated:rokid.open.AuthRequest.sign)
+  // @@protoc_insertion_point(field_set_allocated:rokid.open.speech.v2.SpeechOptions.stack)
 }
 
-// -------------------------------------------------------------------
-
-// AuthResponse
-
-// required .rokid.open.SpeechErrorCode result = 1;
-inline bool AuthResponse::has_result() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
+// optional string voice_trigger = 8;
+inline bool SpeechOptions::has_voice_trigger() const {
+  return (_has_bits_[0] & 0x00000080u) != 0;
 }
-inline void AuthResponse::set_has_result() {
-  _has_bits_[0] |= 0x00000001u;
+inline void SpeechOptions::set_has_voice_trigger() {
+  _has_bits_[0] |= 0x00000080u;
 }
-inline void AuthResponse::clear_has_result() {
-  _has_bits_[0] &= ~0x00000001u;
+inline void SpeechOptions::clear_has_voice_trigger() {
+  _has_bits_[0] &= ~0x00000080u;
 }
-inline void AuthResponse::clear_result() {
-  result_ = 0;
-  clear_has_result();
-}
-inline ::rokid::open::SpeechErrorCode AuthResponse::result() const {
-  // @@protoc_insertion_point(field_get:rokid.open.AuthResponse.result)
-  return static_cast< ::rokid::open::SpeechErrorCode >(result_);
-}
-inline void AuthResponse::set_result(::rokid::open::SpeechErrorCode value) {
-  assert(::rokid::open::SpeechErrorCode_IsValid(value));
-  set_has_result();
-  result_ = value;
-  // @@protoc_insertion_point(field_set:rokid.open.AuthResponse.result)
-}
-
-// -------------------------------------------------------------------
-
-// AsrRequest
-
-// required int32 id = 1;
-inline bool AsrRequest::has_id() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
-}
-inline void AsrRequest::set_has_id() {
-  _has_bits_[0] |= 0x00000001u;
-}
-inline void AsrRequest::clear_has_id() {
-  _has_bits_[0] &= ~0x00000001u;
-}
-inline void AsrRequest::clear_id() {
-  id_ = 0;
-  clear_has_id();
-}
-inline ::google::protobuf::int32 AsrRequest::id() const {
-  // @@protoc_insertion_point(field_get:rokid.open.AsrRequest.id)
-  return id_;
-}
-inline void AsrRequest::set_id(::google::protobuf::int32 value) {
-  set_has_id();
-  id_ = value;
-  // @@protoc_insertion_point(field_set:rokid.open.AsrRequest.id)
-}
-
-// required .rokid.open.ReqType type = 2;
-inline bool AsrRequest::has_type() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
-}
-inline void AsrRequest::set_has_type() {
-  _has_bits_[0] |= 0x00000002u;
-}
-inline void AsrRequest::clear_has_type() {
-  _has_bits_[0] &= ~0x00000002u;
-}
-inline void AsrRequest::clear_type() {
-  type_ = 0;
-  clear_has_type();
-}
-inline ::rokid::open::ReqType AsrRequest::type() const {
-  // @@protoc_insertion_point(field_get:rokid.open.AsrRequest.type)
-  return static_cast< ::rokid::open::ReqType >(type_);
-}
-inline void AsrRequest::set_type(::rokid::open::ReqType value) {
-  assert(::rokid::open::ReqType_IsValid(value));
-  set_has_type();
-  type_ = value;
-  // @@protoc_insertion_point(field_set:rokid.open.AsrRequest.type)
-}
-
-// optional bytes voice = 3;
-inline bool AsrRequest::has_voice() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
-}
-inline void AsrRequest::set_has_voice() {
-  _has_bits_[0] |= 0x00000004u;
-}
-inline void AsrRequest::clear_has_voice() {
-  _has_bits_[0] &= ~0x00000004u;
-}
-inline void AsrRequest::clear_voice() {
-  if (voice_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    voice_->clear();
+inline void SpeechOptions::clear_voice_trigger() {
+  if (voice_trigger_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    voice_trigger_->clear();
   }
-  clear_has_voice();
+  clear_has_voice_trigger();
 }
-inline const ::std::string& AsrRequest::voice() const {
-  // @@protoc_insertion_point(field_get:rokid.open.AsrRequest.voice)
-  return *voice_;
+inline const ::std::string& SpeechOptions::voice_trigger() const {
+  // @@protoc_insertion_point(field_get:rokid.open.speech.v2.SpeechOptions.voice_trigger)
+  return *voice_trigger_;
 }
-inline void AsrRequest::set_voice(const ::std::string& value) {
-  set_has_voice();
-  if (voice_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    voice_ = new ::std::string;
+inline void SpeechOptions::set_voice_trigger(const ::std::string& value) {
+  set_has_voice_trigger();
+  if (voice_trigger_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    voice_trigger_ = new ::std::string;
   }
-  voice_->assign(value);
-  // @@protoc_insertion_point(field_set:rokid.open.AsrRequest.voice)
+  voice_trigger_->assign(value);
+  // @@protoc_insertion_point(field_set:rokid.open.speech.v2.SpeechOptions.voice_trigger)
 }
-inline void AsrRequest::set_voice(const char* value) {
-  set_has_voice();
-  if (voice_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    voice_ = new ::std::string;
+inline void SpeechOptions::set_voice_trigger(const char* value) {
+  set_has_voice_trigger();
+  if (voice_trigger_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    voice_trigger_ = new ::std::string;
   }
-  voice_->assign(value);
-  // @@protoc_insertion_point(field_set_char:rokid.open.AsrRequest.voice)
+  voice_trigger_->assign(value);
+  // @@protoc_insertion_point(field_set_char:rokid.open.speech.v2.SpeechOptions.voice_trigger)
 }
-inline void AsrRequest::set_voice(const void* value, size_t size) {
-  set_has_voice();
-  if (voice_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    voice_ = new ::std::string;
+inline void SpeechOptions::set_voice_trigger(const char* value, size_t size) {
+  set_has_voice_trigger();
+  if (voice_trigger_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    voice_trigger_ = new ::std::string;
   }
-  voice_->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:rokid.open.AsrRequest.voice)
+  voice_trigger_->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:rokid.open.speech.v2.SpeechOptions.voice_trigger)
 }
-inline ::std::string* AsrRequest::mutable_voice() {
-  set_has_voice();
-  if (voice_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    voice_ = new ::std::string;
+inline ::std::string* SpeechOptions::mutable_voice_trigger() {
+  set_has_voice_trigger();
+  if (voice_trigger_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    voice_trigger_ = new ::std::string;
   }
-  // @@protoc_insertion_point(field_mutable:rokid.open.AsrRequest.voice)
-  return voice_;
+  // @@protoc_insertion_point(field_mutable:rokid.open.speech.v2.SpeechOptions.voice_trigger)
+  return voice_trigger_;
 }
-inline ::std::string* AsrRequest::release_voice() {
-  clear_has_voice();
-  if (voice_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+inline ::std::string* SpeechOptions::release_voice_trigger() {
+  clear_has_voice_trigger();
+  if (voice_trigger_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
     return NULL;
   } else {
-    ::std::string* temp = voice_;
-    voice_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+    ::std::string* temp = voice_trigger_;
+    voice_trigger_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
     return temp;
   }
 }
-inline void AsrRequest::set_allocated_voice(::std::string* voice) {
-  if (voice_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete voice_;
+inline void SpeechOptions::set_allocated_voice_trigger(::std::string* voice_trigger) {
+  if (voice_trigger_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    delete voice_trigger_;
   }
-  if (voice) {
-    set_has_voice();
-    voice_ = voice;
+  if (voice_trigger) {
+    set_has_voice_trigger();
+    voice_trigger_ = voice_trigger;
   } else {
-    clear_has_voice();
-    voice_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+    clear_has_voice_trigger();
+    voice_trigger_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   }
-  // @@protoc_insertion_point(field_set_allocated:rokid.open.AsrRequest.voice)
+  // @@protoc_insertion_point(field_set_allocated:rokid.open.speech.v2.SpeechOptions.voice_trigger)
 }
 
-// optional string lang = 4;
-inline bool AsrRequest::has_lang() const {
-  return (_has_bits_[0] & 0x00000008u) != 0;
+// optional float voice_power = 9;
+inline bool SpeechOptions::has_voice_power() const {
+  return (_has_bits_[0] & 0x00000100u) != 0;
 }
-inline void AsrRequest::set_has_lang() {
-  _has_bits_[0] |= 0x00000008u;
+inline void SpeechOptions::set_has_voice_power() {
+  _has_bits_[0] |= 0x00000100u;
 }
-inline void AsrRequest::clear_has_lang() {
-  _has_bits_[0] &= ~0x00000008u;
+inline void SpeechOptions::clear_has_voice_power() {
+  _has_bits_[0] &= ~0x00000100u;
 }
-inline void AsrRequest::clear_lang() {
-  if (lang_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    lang_->clear();
+inline void SpeechOptions::clear_voice_power() {
+  voice_power_ = 0;
+  clear_has_voice_power();
+}
+inline float SpeechOptions::voice_power() const {
+  // @@protoc_insertion_point(field_get:rokid.open.speech.v2.SpeechOptions.voice_power)
+  return voice_power_;
+}
+inline void SpeechOptions::set_voice_power(float value) {
+  set_has_voice_power();
+  voice_power_ = value;
+  // @@protoc_insertion_point(field_set:rokid.open.speech.v2.SpeechOptions.voice_power)
+}
+
+// optional uint32 trigger_start = 10;
+inline bool SpeechOptions::has_trigger_start() const {
+  return (_has_bits_[0] & 0x00000200u) != 0;
+}
+inline void SpeechOptions::set_has_trigger_start() {
+  _has_bits_[0] |= 0x00000200u;
+}
+inline void SpeechOptions::clear_has_trigger_start() {
+  _has_bits_[0] &= ~0x00000200u;
+}
+inline void SpeechOptions::clear_trigger_start() {
+  trigger_start_ = 0u;
+  clear_has_trigger_start();
+}
+inline ::google::protobuf::uint32 SpeechOptions::trigger_start() const {
+  // @@protoc_insertion_point(field_get:rokid.open.speech.v2.SpeechOptions.trigger_start)
+  return trigger_start_;
+}
+inline void SpeechOptions::set_trigger_start(::google::protobuf::uint32 value) {
+  set_has_trigger_start();
+  trigger_start_ = value;
+  // @@protoc_insertion_point(field_set:rokid.open.speech.v2.SpeechOptions.trigger_start)
+}
+
+// optional uint32 trigger_length = 11;
+inline bool SpeechOptions::has_trigger_length() const {
+  return (_has_bits_[0] & 0x00000400u) != 0;
+}
+inline void SpeechOptions::set_has_trigger_length() {
+  _has_bits_[0] |= 0x00000400u;
+}
+inline void SpeechOptions::clear_has_trigger_length() {
+  _has_bits_[0] &= ~0x00000400u;
+}
+inline void SpeechOptions::clear_trigger_length() {
+  trigger_length_ = 0u;
+  clear_has_trigger_length();
+}
+inline ::google::protobuf::uint32 SpeechOptions::trigger_length() const {
+  // @@protoc_insertion_point(field_get:rokid.open.speech.v2.SpeechOptions.trigger_length)
+  return trigger_length_;
+}
+inline void SpeechOptions::set_trigger_length(::google::protobuf::uint32 value) {
+  set_has_trigger_length();
+  trigger_length_ = value;
+  // @@protoc_insertion_point(field_set:rokid.open.speech.v2.SpeechOptions.trigger_length)
+}
+
+// optional string skill_options = 12;
+inline bool SpeechOptions::has_skill_options() const {
+  return (_has_bits_[0] & 0x00000800u) != 0;
+}
+inline void SpeechOptions::set_has_skill_options() {
+  _has_bits_[0] |= 0x00000800u;
+}
+inline void SpeechOptions::clear_has_skill_options() {
+  _has_bits_[0] &= ~0x00000800u;
+}
+inline void SpeechOptions::clear_skill_options() {
+  if (skill_options_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    skill_options_->clear();
   }
-  clear_has_lang();
+  clear_has_skill_options();
 }
-inline const ::std::string& AsrRequest::lang() const {
-  // @@protoc_insertion_point(field_get:rokid.open.AsrRequest.lang)
-  return *lang_;
+inline const ::std::string& SpeechOptions::skill_options() const {
+  // @@protoc_insertion_point(field_get:rokid.open.speech.v2.SpeechOptions.skill_options)
+  return *skill_options_;
 }
-inline void AsrRequest::set_lang(const ::std::string& value) {
-  set_has_lang();
-  if (lang_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    lang_ = new ::std::string;
+inline void SpeechOptions::set_skill_options(const ::std::string& value) {
+  set_has_skill_options();
+  if (skill_options_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    skill_options_ = new ::std::string;
   }
-  lang_->assign(value);
-  // @@protoc_insertion_point(field_set:rokid.open.AsrRequest.lang)
+  skill_options_->assign(value);
+  // @@protoc_insertion_point(field_set:rokid.open.speech.v2.SpeechOptions.skill_options)
 }
-inline void AsrRequest::set_lang(const char* value) {
-  set_has_lang();
-  if (lang_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    lang_ = new ::std::string;
+inline void SpeechOptions::set_skill_options(const char* value) {
+  set_has_skill_options();
+  if (skill_options_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    skill_options_ = new ::std::string;
   }
-  lang_->assign(value);
-  // @@protoc_insertion_point(field_set_char:rokid.open.AsrRequest.lang)
+  skill_options_->assign(value);
+  // @@protoc_insertion_point(field_set_char:rokid.open.speech.v2.SpeechOptions.skill_options)
 }
-inline void AsrRequest::set_lang(const char* value, size_t size) {
-  set_has_lang();
-  if (lang_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    lang_ = new ::std::string;
+inline void SpeechOptions::set_skill_options(const char* value, size_t size) {
+  set_has_skill_options();
+  if (skill_options_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    skill_options_ = new ::std::string;
   }
-  lang_->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:rokid.open.AsrRequest.lang)
+  skill_options_->assign(reinterpret_cast<const char*>(value), size);
+  // @@protoc_insertion_point(field_set_pointer:rokid.open.speech.v2.SpeechOptions.skill_options)
 }
-inline ::std::string* AsrRequest::mutable_lang() {
-  set_has_lang();
-  if (lang_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    lang_ = new ::std::string;
+inline ::std::string* SpeechOptions::mutable_skill_options() {
+  set_has_skill_options();
+  if (skill_options_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    skill_options_ = new ::std::string;
   }
-  // @@protoc_insertion_point(field_mutable:rokid.open.AsrRequest.lang)
-  return lang_;
+  // @@protoc_insertion_point(field_mutable:rokid.open.speech.v2.SpeechOptions.skill_options)
+  return skill_options_;
 }
-inline ::std::string* AsrRequest::release_lang() {
-  clear_has_lang();
-  if (lang_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+inline ::std::string* SpeechOptions::release_skill_options() {
+  clear_has_skill_options();
+  if (skill_options_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
     return NULL;
   } else {
-    ::std::string* temp = lang_;
-    lang_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+    ::std::string* temp = skill_options_;
+    skill_options_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
     return temp;
   }
 }
-inline void AsrRequest::set_allocated_lang(::std::string* lang) {
-  if (lang_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete lang_;
+inline void SpeechOptions::set_allocated_skill_options(::std::string* skill_options) {
+  if (skill_options_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
+    delete skill_options_;
   }
-  if (lang) {
-    set_has_lang();
-    lang_ = lang;
+  if (skill_options) {
+    set_has_skill_options();
+    skill_options_ = skill_options;
   } else {
-    clear_has_lang();
-    lang_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
+    clear_has_skill_options();
+    skill_options_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   }
-  // @@protoc_insertion_point(field_set_allocated:rokid.open.AsrRequest.lang)
-}
-
-// optional string codec = 5;
-inline bool AsrRequest::has_codec() const {
-  return (_has_bits_[0] & 0x00000010u) != 0;
-}
-inline void AsrRequest::set_has_codec() {
-  _has_bits_[0] |= 0x00000010u;
-}
-inline void AsrRequest::clear_has_codec() {
-  _has_bits_[0] &= ~0x00000010u;
-}
-inline void AsrRequest::clear_codec() {
-  if (codec_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    codec_->clear();
-  }
-  clear_has_codec();
-}
-inline const ::std::string& AsrRequest::codec() const {
-  // @@protoc_insertion_point(field_get:rokid.open.AsrRequest.codec)
-  return *codec_;
-}
-inline void AsrRequest::set_codec(const ::std::string& value) {
-  set_has_codec();
-  if (codec_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    codec_ = new ::std::string;
-  }
-  codec_->assign(value);
-  // @@protoc_insertion_point(field_set:rokid.open.AsrRequest.codec)
-}
-inline void AsrRequest::set_codec(const char* value) {
-  set_has_codec();
-  if (codec_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    codec_ = new ::std::string;
-  }
-  codec_->assign(value);
-  // @@protoc_insertion_point(field_set_char:rokid.open.AsrRequest.codec)
-}
-inline void AsrRequest::set_codec(const char* value, size_t size) {
-  set_has_codec();
-  if (codec_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    codec_ = new ::std::string;
-  }
-  codec_->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:rokid.open.AsrRequest.codec)
-}
-inline ::std::string* AsrRequest::mutable_codec() {
-  set_has_codec();
-  if (codec_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    codec_ = new ::std::string;
-  }
-  // @@protoc_insertion_point(field_mutable:rokid.open.AsrRequest.codec)
-  return codec_;
-}
-inline ::std::string* AsrRequest::release_codec() {
-  clear_has_codec();
-  if (codec_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    return NULL;
-  } else {
-    ::std::string* temp = codec_;
-    codec_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-    return temp;
-  }
-}
-inline void AsrRequest::set_allocated_codec(::std::string* codec) {
-  if (codec_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete codec_;
-  }
-  if (codec) {
-    set_has_codec();
-    codec_ = codec;
-  } else {
-    clear_has_codec();
-    codec_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  }
-  // @@protoc_insertion_point(field_set_allocated:rokid.open.AsrRequest.codec)
-}
-
-// optional string vt = 6;
-inline bool AsrRequest::has_vt() const {
-  return (_has_bits_[0] & 0x00000020u) != 0;
-}
-inline void AsrRequest::set_has_vt() {
-  _has_bits_[0] |= 0x00000020u;
-}
-inline void AsrRequest::clear_has_vt() {
-  _has_bits_[0] &= ~0x00000020u;
-}
-inline void AsrRequest::clear_vt() {
-  if (vt_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    vt_->clear();
-  }
-  clear_has_vt();
-}
-inline const ::std::string& AsrRequest::vt() const {
-  // @@protoc_insertion_point(field_get:rokid.open.AsrRequest.vt)
-  return *vt_;
-}
-inline void AsrRequest::set_vt(const ::std::string& value) {
-  set_has_vt();
-  if (vt_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    vt_ = new ::std::string;
-  }
-  vt_->assign(value);
-  // @@protoc_insertion_point(field_set:rokid.open.AsrRequest.vt)
-}
-inline void AsrRequest::set_vt(const char* value) {
-  set_has_vt();
-  if (vt_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    vt_ = new ::std::string;
-  }
-  vt_->assign(value);
-  // @@protoc_insertion_point(field_set_char:rokid.open.AsrRequest.vt)
-}
-inline void AsrRequest::set_vt(const char* value, size_t size) {
-  set_has_vt();
-  if (vt_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    vt_ = new ::std::string;
-  }
-  vt_->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:rokid.open.AsrRequest.vt)
-}
-inline ::std::string* AsrRequest::mutable_vt() {
-  set_has_vt();
-  if (vt_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    vt_ = new ::std::string;
-  }
-  // @@protoc_insertion_point(field_mutable:rokid.open.AsrRequest.vt)
-  return vt_;
-}
-inline ::std::string* AsrRequest::release_vt() {
-  clear_has_vt();
-  if (vt_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    return NULL;
-  } else {
-    ::std::string* temp = vt_;
-    vt_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-    return temp;
-  }
-}
-inline void AsrRequest::set_allocated_vt(::std::string* vt) {
-  if (vt_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete vt_;
-  }
-  if (vt) {
-    set_has_vt();
-    vt_ = vt;
-  } else {
-    clear_has_vt();
-    vt_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  }
-  // @@protoc_insertion_point(field_set_allocated:rokid.open.AsrRequest.vt)
-}
-
-// -------------------------------------------------------------------
-
-// AsrResponse
-
-// required int32 id = 1;
-inline bool AsrResponse::has_id() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
-}
-inline void AsrResponse::set_has_id() {
-  _has_bits_[0] |= 0x00000001u;
-}
-inline void AsrResponse::clear_has_id() {
-  _has_bits_[0] &= ~0x00000001u;
-}
-inline void AsrResponse::clear_id() {
-  id_ = 0;
-  clear_has_id();
-}
-inline ::google::protobuf::int32 AsrResponse::id() const {
-  // @@protoc_insertion_point(field_get:rokid.open.AsrResponse.id)
-  return id_;
-}
-inline void AsrResponse::set_id(::google::protobuf::int32 value) {
-  set_has_id();
-  id_ = value;
-  // @@protoc_insertion_point(field_set:rokid.open.AsrResponse.id)
-}
-
-// required .rokid.open.SpeechErrorCode result = 2;
-inline bool AsrResponse::has_result() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
-}
-inline void AsrResponse::set_has_result() {
-  _has_bits_[0] |= 0x00000002u;
-}
-inline void AsrResponse::clear_has_result() {
-  _has_bits_[0] &= ~0x00000002u;
-}
-inline void AsrResponse::clear_result() {
-  result_ = 0;
-  clear_has_result();
-}
-inline ::rokid::open::SpeechErrorCode AsrResponse::result() const {
-  // @@protoc_insertion_point(field_get:rokid.open.AsrResponse.result)
-  return static_cast< ::rokid::open::SpeechErrorCode >(result_);
-}
-inline void AsrResponse::set_result(::rokid::open::SpeechErrorCode value) {
-  assert(::rokid::open::SpeechErrorCode_IsValid(value));
-  set_has_result();
-  result_ = value;
-  // @@protoc_insertion_point(field_set:rokid.open.AsrResponse.result)
-}
-
-// optional string asr = 3;
-inline bool AsrResponse::has_asr() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
-}
-inline void AsrResponse::set_has_asr() {
-  _has_bits_[0] |= 0x00000004u;
-}
-inline void AsrResponse::clear_has_asr() {
-  _has_bits_[0] &= ~0x00000004u;
-}
-inline void AsrResponse::clear_asr() {
-  if (asr_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    asr_->clear();
-  }
-  clear_has_asr();
-}
-inline const ::std::string& AsrResponse::asr() const {
-  // @@protoc_insertion_point(field_get:rokid.open.AsrResponse.asr)
-  return *asr_;
-}
-inline void AsrResponse::set_asr(const ::std::string& value) {
-  set_has_asr();
-  if (asr_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    asr_ = new ::std::string;
-  }
-  asr_->assign(value);
-  // @@protoc_insertion_point(field_set:rokid.open.AsrResponse.asr)
-}
-inline void AsrResponse::set_asr(const char* value) {
-  set_has_asr();
-  if (asr_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    asr_ = new ::std::string;
-  }
-  asr_->assign(value);
-  // @@protoc_insertion_point(field_set_char:rokid.open.AsrResponse.asr)
-}
-inline void AsrResponse::set_asr(const char* value, size_t size) {
-  set_has_asr();
-  if (asr_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    asr_ = new ::std::string;
-  }
-  asr_->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:rokid.open.AsrResponse.asr)
-}
-inline ::std::string* AsrResponse::mutable_asr() {
-  set_has_asr();
-  if (asr_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    asr_ = new ::std::string;
-  }
-  // @@protoc_insertion_point(field_mutable:rokid.open.AsrResponse.asr)
-  return asr_;
-}
-inline ::std::string* AsrResponse::release_asr() {
-  clear_has_asr();
-  if (asr_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    return NULL;
-  } else {
-    ::std::string* temp = asr_;
-    asr_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-    return temp;
-  }
-}
-inline void AsrResponse::set_allocated_asr(::std::string* asr) {
-  if (asr_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete asr_;
-  }
-  if (asr) {
-    set_has_asr();
-    asr_ = asr;
-  } else {
-    clear_has_asr();
-    asr_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  }
-  // @@protoc_insertion_point(field_set_allocated:rokid.open.AsrResponse.asr)
-}
-
-// optional bool finish = 4;
-inline bool AsrResponse::has_finish() const {
-  return (_has_bits_[0] & 0x00000008u) != 0;
-}
-inline void AsrResponse::set_has_finish() {
-  _has_bits_[0] |= 0x00000008u;
-}
-inline void AsrResponse::clear_has_finish() {
-  _has_bits_[0] &= ~0x00000008u;
-}
-inline void AsrResponse::clear_finish() {
-  finish_ = false;
-  clear_has_finish();
-}
-inline bool AsrResponse::finish() const {
-  // @@protoc_insertion_point(field_get:rokid.open.AsrResponse.finish)
-  return finish_;
-}
-inline void AsrResponse::set_finish(bool value) {
-  set_has_finish();
-  finish_ = value;
-  // @@protoc_insertion_point(field_set:rokid.open.AsrResponse.finish)
-}
-
-// -------------------------------------------------------------------
-
-// TtsRequest
-
-// required int32 id = 1;
-inline bool TtsRequest::has_id() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
-}
-inline void TtsRequest::set_has_id() {
-  _has_bits_[0] |= 0x00000001u;
-}
-inline void TtsRequest::clear_has_id() {
-  _has_bits_[0] &= ~0x00000001u;
-}
-inline void TtsRequest::clear_id() {
-  id_ = 0;
-  clear_has_id();
-}
-inline ::google::protobuf::int32 TtsRequest::id() const {
-  // @@protoc_insertion_point(field_get:rokid.open.TtsRequest.id)
-  return id_;
-}
-inline void TtsRequest::set_id(::google::protobuf::int32 value) {
-  set_has_id();
-  id_ = value;
-  // @@protoc_insertion_point(field_set:rokid.open.TtsRequest.id)
-}
-
-// required string text = 2;
-inline bool TtsRequest::has_text() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
-}
-inline void TtsRequest::set_has_text() {
-  _has_bits_[0] |= 0x00000002u;
-}
-inline void TtsRequest::clear_has_text() {
-  _has_bits_[0] &= ~0x00000002u;
-}
-inline void TtsRequest::clear_text() {
-  if (text_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    text_->clear();
-  }
-  clear_has_text();
-}
-inline const ::std::string& TtsRequest::text() const {
-  // @@protoc_insertion_point(field_get:rokid.open.TtsRequest.text)
-  return *text_;
-}
-inline void TtsRequest::set_text(const ::std::string& value) {
-  set_has_text();
-  if (text_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    text_ = new ::std::string;
-  }
-  text_->assign(value);
-  // @@protoc_insertion_point(field_set:rokid.open.TtsRequest.text)
-}
-inline void TtsRequest::set_text(const char* value) {
-  set_has_text();
-  if (text_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    text_ = new ::std::string;
-  }
-  text_->assign(value);
-  // @@protoc_insertion_point(field_set_char:rokid.open.TtsRequest.text)
-}
-inline void TtsRequest::set_text(const char* value, size_t size) {
-  set_has_text();
-  if (text_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    text_ = new ::std::string;
-  }
-  text_->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:rokid.open.TtsRequest.text)
-}
-inline ::std::string* TtsRequest::mutable_text() {
-  set_has_text();
-  if (text_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    text_ = new ::std::string;
-  }
-  // @@protoc_insertion_point(field_mutable:rokid.open.TtsRequest.text)
-  return text_;
-}
-inline ::std::string* TtsRequest::release_text() {
-  clear_has_text();
-  if (text_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    return NULL;
-  } else {
-    ::std::string* temp = text_;
-    text_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-    return temp;
-  }
-}
-inline void TtsRequest::set_allocated_text(::std::string* text) {
-  if (text_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete text_;
-  }
-  if (text) {
-    set_has_text();
-    text_ = text;
-  } else {
-    clear_has_text();
-    text_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  }
-  // @@protoc_insertion_point(field_set_allocated:rokid.open.TtsRequest.text)
-}
-
-// optional string declaimer = 3;
-inline bool TtsRequest::has_declaimer() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
-}
-inline void TtsRequest::set_has_declaimer() {
-  _has_bits_[0] |= 0x00000004u;
-}
-inline void TtsRequest::clear_has_declaimer() {
-  _has_bits_[0] &= ~0x00000004u;
-}
-inline void TtsRequest::clear_declaimer() {
-  if (declaimer_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    declaimer_->clear();
-  }
-  clear_has_declaimer();
-}
-inline const ::std::string& TtsRequest::declaimer() const {
-  // @@protoc_insertion_point(field_get:rokid.open.TtsRequest.declaimer)
-  return *declaimer_;
-}
-inline void TtsRequest::set_declaimer(const ::std::string& value) {
-  set_has_declaimer();
-  if (declaimer_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    declaimer_ = new ::std::string;
-  }
-  declaimer_->assign(value);
-  // @@protoc_insertion_point(field_set:rokid.open.TtsRequest.declaimer)
-}
-inline void TtsRequest::set_declaimer(const char* value) {
-  set_has_declaimer();
-  if (declaimer_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    declaimer_ = new ::std::string;
-  }
-  declaimer_->assign(value);
-  // @@protoc_insertion_point(field_set_char:rokid.open.TtsRequest.declaimer)
-}
-inline void TtsRequest::set_declaimer(const char* value, size_t size) {
-  set_has_declaimer();
-  if (declaimer_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    declaimer_ = new ::std::string;
-  }
-  declaimer_->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:rokid.open.TtsRequest.declaimer)
-}
-inline ::std::string* TtsRequest::mutable_declaimer() {
-  set_has_declaimer();
-  if (declaimer_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    declaimer_ = new ::std::string;
-  }
-  // @@protoc_insertion_point(field_mutable:rokid.open.TtsRequest.declaimer)
-  return declaimer_;
-}
-inline ::std::string* TtsRequest::release_declaimer() {
-  clear_has_declaimer();
-  if (declaimer_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    return NULL;
-  } else {
-    ::std::string* temp = declaimer_;
-    declaimer_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-    return temp;
-  }
-}
-inline void TtsRequest::set_allocated_declaimer(::std::string* declaimer) {
-  if (declaimer_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete declaimer_;
-  }
-  if (declaimer) {
-    set_has_declaimer();
-    declaimer_ = declaimer;
-  } else {
-    clear_has_declaimer();
-    declaimer_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  }
-  // @@protoc_insertion_point(field_set_allocated:rokid.open.TtsRequest.declaimer)
-}
-
-// optional string codec = 4;
-inline bool TtsRequest::has_codec() const {
-  return (_has_bits_[0] & 0x00000008u) != 0;
-}
-inline void TtsRequest::set_has_codec() {
-  _has_bits_[0] |= 0x00000008u;
-}
-inline void TtsRequest::clear_has_codec() {
-  _has_bits_[0] &= ~0x00000008u;
-}
-inline void TtsRequest::clear_codec() {
-  if (codec_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    codec_->clear();
-  }
-  clear_has_codec();
-}
-inline const ::std::string& TtsRequest::codec() const {
-  // @@protoc_insertion_point(field_get:rokid.open.TtsRequest.codec)
-  return *codec_;
-}
-inline void TtsRequest::set_codec(const ::std::string& value) {
-  set_has_codec();
-  if (codec_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    codec_ = new ::std::string;
-  }
-  codec_->assign(value);
-  // @@protoc_insertion_point(field_set:rokid.open.TtsRequest.codec)
-}
-inline void TtsRequest::set_codec(const char* value) {
-  set_has_codec();
-  if (codec_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    codec_ = new ::std::string;
-  }
-  codec_->assign(value);
-  // @@protoc_insertion_point(field_set_char:rokid.open.TtsRequest.codec)
-}
-inline void TtsRequest::set_codec(const char* value, size_t size) {
-  set_has_codec();
-  if (codec_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    codec_ = new ::std::string;
-  }
-  codec_->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:rokid.open.TtsRequest.codec)
-}
-inline ::std::string* TtsRequest::mutable_codec() {
-  set_has_codec();
-  if (codec_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    codec_ = new ::std::string;
-  }
-  // @@protoc_insertion_point(field_mutable:rokid.open.TtsRequest.codec)
-  return codec_;
-}
-inline ::std::string* TtsRequest::release_codec() {
-  clear_has_codec();
-  if (codec_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    return NULL;
-  } else {
-    ::std::string* temp = codec_;
-    codec_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-    return temp;
-  }
-}
-inline void TtsRequest::set_allocated_codec(::std::string* codec) {
-  if (codec_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete codec_;
-  }
-  if (codec) {
-    set_has_codec();
-    codec_ = codec;
-  } else {
-    clear_has_codec();
-    codec_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  }
-  // @@protoc_insertion_point(field_set_allocated:rokid.open.TtsRequest.codec)
-}
-
-// -------------------------------------------------------------------
-
-// TtsResponse
-
-// required int32 id = 1;
-inline bool TtsResponse::has_id() const {
-  return (_has_bits_[0] & 0x00000001u) != 0;
-}
-inline void TtsResponse::set_has_id() {
-  _has_bits_[0] |= 0x00000001u;
-}
-inline void TtsResponse::clear_has_id() {
-  _has_bits_[0] &= ~0x00000001u;
-}
-inline void TtsResponse::clear_id() {
-  id_ = 0;
-  clear_has_id();
-}
-inline ::google::protobuf::int32 TtsResponse::id() const {
-  // @@protoc_insertion_point(field_get:rokid.open.TtsResponse.id)
-  return id_;
-}
-inline void TtsResponse::set_id(::google::protobuf::int32 value) {
-  set_has_id();
-  id_ = value;
-  // @@protoc_insertion_point(field_set:rokid.open.TtsResponse.id)
-}
-
-// required .rokid.open.SpeechErrorCode result = 2;
-inline bool TtsResponse::has_result() const {
-  return (_has_bits_[0] & 0x00000002u) != 0;
-}
-inline void TtsResponse::set_has_result() {
-  _has_bits_[0] |= 0x00000002u;
-}
-inline void TtsResponse::clear_has_result() {
-  _has_bits_[0] &= ~0x00000002u;
-}
-inline void TtsResponse::clear_result() {
-  result_ = 0;
-  clear_has_result();
-}
-inline ::rokid::open::SpeechErrorCode TtsResponse::result() const {
-  // @@protoc_insertion_point(field_get:rokid.open.TtsResponse.result)
-  return static_cast< ::rokid::open::SpeechErrorCode >(result_);
-}
-inline void TtsResponse::set_result(::rokid::open::SpeechErrorCode value) {
-  assert(::rokid::open::SpeechErrorCode_IsValid(value));
-  set_has_result();
-  result_ = value;
-  // @@protoc_insertion_point(field_set:rokid.open.TtsResponse.result)
-}
-
-// optional string text = 3;
-inline bool TtsResponse::has_text() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
-}
-inline void TtsResponse::set_has_text() {
-  _has_bits_[0] |= 0x00000004u;
-}
-inline void TtsResponse::clear_has_text() {
-  _has_bits_[0] &= ~0x00000004u;
-}
-inline void TtsResponse::clear_text() {
-  if (text_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    text_->clear();
-  }
-  clear_has_text();
-}
-inline const ::std::string& TtsResponse::text() const {
-  // @@protoc_insertion_point(field_get:rokid.open.TtsResponse.text)
-  return *text_;
-}
-inline void TtsResponse::set_text(const ::std::string& value) {
-  set_has_text();
-  if (text_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    text_ = new ::std::string;
-  }
-  text_->assign(value);
-  // @@protoc_insertion_point(field_set:rokid.open.TtsResponse.text)
-}
-inline void TtsResponse::set_text(const char* value) {
-  set_has_text();
-  if (text_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    text_ = new ::std::string;
-  }
-  text_->assign(value);
-  // @@protoc_insertion_point(field_set_char:rokid.open.TtsResponse.text)
-}
-inline void TtsResponse::set_text(const char* value, size_t size) {
-  set_has_text();
-  if (text_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    text_ = new ::std::string;
-  }
-  text_->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:rokid.open.TtsResponse.text)
-}
-inline ::std::string* TtsResponse::mutable_text() {
-  set_has_text();
-  if (text_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    text_ = new ::std::string;
-  }
-  // @@protoc_insertion_point(field_mutable:rokid.open.TtsResponse.text)
-  return text_;
-}
-inline ::std::string* TtsResponse::release_text() {
-  clear_has_text();
-  if (text_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    return NULL;
-  } else {
-    ::std::string* temp = text_;
-    text_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-    return temp;
-  }
-}
-inline void TtsResponse::set_allocated_text(::std::string* text) {
-  if (text_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete text_;
-  }
-  if (text) {
-    set_has_text();
-    text_ = text;
-  } else {
-    clear_has_text();
-    text_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  }
-  // @@protoc_insertion_point(field_set_allocated:rokid.open.TtsResponse.text)
-}
-
-// optional bytes voice = 4;
-inline bool TtsResponse::has_voice() const {
-  return (_has_bits_[0] & 0x00000008u) != 0;
-}
-inline void TtsResponse::set_has_voice() {
-  _has_bits_[0] |= 0x00000008u;
-}
-inline void TtsResponse::clear_has_voice() {
-  _has_bits_[0] &= ~0x00000008u;
-}
-inline void TtsResponse::clear_voice() {
-  if (voice_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    voice_->clear();
-  }
-  clear_has_voice();
-}
-inline const ::std::string& TtsResponse::voice() const {
-  // @@protoc_insertion_point(field_get:rokid.open.TtsResponse.voice)
-  return *voice_;
-}
-inline void TtsResponse::set_voice(const ::std::string& value) {
-  set_has_voice();
-  if (voice_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    voice_ = new ::std::string;
-  }
-  voice_->assign(value);
-  // @@protoc_insertion_point(field_set:rokid.open.TtsResponse.voice)
-}
-inline void TtsResponse::set_voice(const char* value) {
-  set_has_voice();
-  if (voice_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    voice_ = new ::std::string;
-  }
-  voice_->assign(value);
-  // @@protoc_insertion_point(field_set_char:rokid.open.TtsResponse.voice)
-}
-inline void TtsResponse::set_voice(const void* value, size_t size) {
-  set_has_voice();
-  if (voice_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    voice_ = new ::std::string;
-  }
-  voice_->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:rokid.open.TtsResponse.voice)
-}
-inline ::std::string* TtsResponse::mutable_voice() {
-  set_has_voice();
-  if (voice_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    voice_ = new ::std::string;
-  }
-  // @@protoc_insertion_point(field_mutable:rokid.open.TtsResponse.voice)
-  return voice_;
-}
-inline ::std::string* TtsResponse::release_voice() {
-  clear_has_voice();
-  if (voice_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    return NULL;
-  } else {
-    ::std::string* temp = voice_;
-    voice_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-    return temp;
-  }
-}
-inline void TtsResponse::set_allocated_voice(::std::string* voice) {
-  if (voice_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete voice_;
-  }
-  if (voice) {
-    set_has_voice();
-    voice_ = voice;
-  } else {
-    clear_has_voice();
-    voice_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  }
-  // @@protoc_insertion_point(field_set_allocated:rokid.open.TtsResponse.voice)
-}
-
-// optional bool finish = 5;
-inline bool TtsResponse::has_finish() const {
-  return (_has_bits_[0] & 0x00000010u) != 0;
-}
-inline void TtsResponse::set_has_finish() {
-  _has_bits_[0] |= 0x00000010u;
-}
-inline void TtsResponse::clear_has_finish() {
-  _has_bits_[0] &= ~0x00000010u;
-}
-inline void TtsResponse::clear_finish() {
-  finish_ = false;
-  clear_has_finish();
-}
-inline bool TtsResponse::finish() const {
-  // @@protoc_insertion_point(field_get:rokid.open.TtsResponse.finish)
-  return finish_;
-}
-inline void TtsResponse::set_finish(bool value) {
-  set_has_finish();
-  finish_ = value;
-  // @@protoc_insertion_point(field_set:rokid.open.TtsResponse.finish)
+  // @@protoc_insertion_point(field_set_allocated:rokid.open.speech.v2.SpeechOptions.skill_options)
 }
 
 // -------------------------------------------------------------------
@@ -2793,16 +1067,16 @@ inline void SpeechRequest::clear_id() {
   clear_has_id();
 }
 inline ::google::protobuf::int32 SpeechRequest::id() const {
-  // @@protoc_insertion_point(field_get:rokid.open.SpeechRequest.id)
+  // @@protoc_insertion_point(field_get:rokid.open.speech.v2.SpeechRequest.id)
   return id_;
 }
 inline void SpeechRequest::set_id(::google::protobuf::int32 value) {
   set_has_id();
   id_ = value;
-  // @@protoc_insertion_point(field_set:rokid.open.SpeechRequest.id)
+  // @@protoc_insertion_point(field_set:rokid.open.speech.v2.SpeechRequest.id)
 }
 
-// required .rokid.open.ReqType type = 2;
+// required .rokid.open.speech.v1.ReqType type = 2;
 inline bool SpeechRequest::has_type() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
@@ -2816,15 +1090,15 @@ inline void SpeechRequest::clear_type() {
   type_ = 0;
   clear_has_type();
 }
-inline ::rokid::open::ReqType SpeechRequest::type() const {
-  // @@protoc_insertion_point(field_get:rokid.open.SpeechRequest.type)
-  return static_cast< ::rokid::open::ReqType >(type_);
+inline ::rokid::open::speech::v1::ReqType SpeechRequest::type() const {
+  // @@protoc_insertion_point(field_get:rokid.open.speech.v2.SpeechRequest.type)
+  return static_cast< ::rokid::open::speech::v1::ReqType >(type_);
 }
-inline void SpeechRequest::set_type(::rokid::open::ReqType value) {
-  assert(::rokid::open::ReqType_IsValid(value));
+inline void SpeechRequest::set_type(::rokid::open::speech::v1::ReqType value) {
+  assert(::rokid::open::speech::v1::ReqType_IsValid(value));
   set_has_type();
   type_ = value;
-  // @@protoc_insertion_point(field_set:rokid.open.SpeechRequest.type)
+  // @@protoc_insertion_point(field_set:rokid.open.speech.v2.SpeechRequest.type)
 }
 
 // optional bytes voice = 3;
@@ -2844,7 +1118,7 @@ inline void SpeechRequest::clear_voice() {
   clear_has_voice();
 }
 inline const ::std::string& SpeechRequest::voice() const {
-  // @@protoc_insertion_point(field_get:rokid.open.SpeechRequest.voice)
+  // @@protoc_insertion_point(field_get:rokid.open.speech.v2.SpeechRequest.voice)
   return *voice_;
 }
 inline void SpeechRequest::set_voice(const ::std::string& value) {
@@ -2853,7 +1127,7 @@ inline void SpeechRequest::set_voice(const ::std::string& value) {
     voice_ = new ::std::string;
   }
   voice_->assign(value);
-  // @@protoc_insertion_point(field_set:rokid.open.SpeechRequest.voice)
+  // @@protoc_insertion_point(field_set:rokid.open.speech.v2.SpeechRequest.voice)
 }
 inline void SpeechRequest::set_voice(const char* value) {
   set_has_voice();
@@ -2861,7 +1135,7 @@ inline void SpeechRequest::set_voice(const char* value) {
     voice_ = new ::std::string;
   }
   voice_->assign(value);
-  // @@protoc_insertion_point(field_set_char:rokid.open.SpeechRequest.voice)
+  // @@protoc_insertion_point(field_set_char:rokid.open.speech.v2.SpeechRequest.voice)
 }
 inline void SpeechRequest::set_voice(const void* value, size_t size) {
   set_has_voice();
@@ -2869,14 +1143,14 @@ inline void SpeechRequest::set_voice(const void* value, size_t size) {
     voice_ = new ::std::string;
   }
   voice_->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:rokid.open.SpeechRequest.voice)
+  // @@protoc_insertion_point(field_set_pointer:rokid.open.speech.v2.SpeechRequest.voice)
 }
 inline ::std::string* SpeechRequest::mutable_voice() {
   set_has_voice();
   if (voice_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
     voice_ = new ::std::string;
   }
-  // @@protoc_insertion_point(field_mutable:rokid.open.SpeechRequest.voice)
+  // @@protoc_insertion_point(field_mutable:rokid.open.speech.v2.SpeechRequest.voice)
   return voice_;
 }
 inline ::std::string* SpeechRequest::release_voice() {
@@ -2900,7 +1174,7 @@ inline void SpeechRequest::set_allocated_voice(::std::string* voice) {
     clear_has_voice();
     voice_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   }
-  // @@protoc_insertion_point(field_set_allocated:rokid.open.SpeechRequest.voice)
+  // @@protoc_insertion_point(field_set_allocated:rokid.open.speech.v2.SpeechRequest.voice)
 }
 
 // optional string asr = 4;
@@ -2920,7 +1194,7 @@ inline void SpeechRequest::clear_asr() {
   clear_has_asr();
 }
 inline const ::std::string& SpeechRequest::asr() const {
-  // @@protoc_insertion_point(field_get:rokid.open.SpeechRequest.asr)
+  // @@protoc_insertion_point(field_get:rokid.open.speech.v2.SpeechRequest.asr)
   return *asr_;
 }
 inline void SpeechRequest::set_asr(const ::std::string& value) {
@@ -2929,7 +1203,7 @@ inline void SpeechRequest::set_asr(const ::std::string& value) {
     asr_ = new ::std::string;
   }
   asr_->assign(value);
-  // @@protoc_insertion_point(field_set:rokid.open.SpeechRequest.asr)
+  // @@protoc_insertion_point(field_set:rokid.open.speech.v2.SpeechRequest.asr)
 }
 inline void SpeechRequest::set_asr(const char* value) {
   set_has_asr();
@@ -2937,7 +1211,7 @@ inline void SpeechRequest::set_asr(const char* value) {
     asr_ = new ::std::string;
   }
   asr_->assign(value);
-  // @@protoc_insertion_point(field_set_char:rokid.open.SpeechRequest.asr)
+  // @@protoc_insertion_point(field_set_char:rokid.open.speech.v2.SpeechRequest.asr)
 }
 inline void SpeechRequest::set_asr(const char* value, size_t size) {
   set_has_asr();
@@ -2945,14 +1219,14 @@ inline void SpeechRequest::set_asr(const char* value, size_t size) {
     asr_ = new ::std::string;
   }
   asr_->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:rokid.open.SpeechRequest.asr)
+  // @@protoc_insertion_point(field_set_pointer:rokid.open.speech.v2.SpeechRequest.asr)
 }
 inline ::std::string* SpeechRequest::mutable_asr() {
   set_has_asr();
   if (asr_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
     asr_ = new ::std::string;
   }
-  // @@protoc_insertion_point(field_mutable:rokid.open.SpeechRequest.asr)
+  // @@protoc_insertion_point(field_mutable:rokid.open.speech.v2.SpeechRequest.asr)
   return asr_;
 }
 inline ::std::string* SpeechRequest::release_asr() {
@@ -2976,387 +1250,48 @@ inline void SpeechRequest::set_allocated_asr(::std::string* asr) {
     clear_has_asr();
     asr_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   }
-  // @@protoc_insertion_point(field_set_allocated:rokid.open.SpeechRequest.asr)
+  // @@protoc_insertion_point(field_set_allocated:rokid.open.speech.v2.SpeechRequest.asr)
 }
 
-// optional string lang = 5;
-inline bool SpeechRequest::has_lang() const {
+// optional .rokid.open.speech.v2.SpeechOptions options = 5;
+inline bool SpeechRequest::has_options() const {
   return (_has_bits_[0] & 0x00000010u) != 0;
 }
-inline void SpeechRequest::set_has_lang() {
+inline void SpeechRequest::set_has_options() {
   _has_bits_[0] |= 0x00000010u;
 }
-inline void SpeechRequest::clear_has_lang() {
+inline void SpeechRequest::clear_has_options() {
   _has_bits_[0] &= ~0x00000010u;
 }
-inline void SpeechRequest::clear_lang() {
-  if (lang_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    lang_->clear();
-  }
-  clear_has_lang();
+inline void SpeechRequest::clear_options() {
+  if (options_ != NULL) options_->::rokid::open::speech::v2::SpeechOptions::Clear();
+  clear_has_options();
 }
-inline const ::std::string& SpeechRequest::lang() const {
-  // @@protoc_insertion_point(field_get:rokid.open.SpeechRequest.lang)
-  return *lang_;
+inline const ::rokid::open::speech::v2::SpeechOptions& SpeechRequest::options() const {
+  // @@protoc_insertion_point(field_get:rokid.open.speech.v2.SpeechRequest.options)
+  return options_ != NULL ? *options_ : *default_instance_->options_;
 }
-inline void SpeechRequest::set_lang(const ::std::string& value) {
-  set_has_lang();
-  if (lang_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    lang_ = new ::std::string;
-  }
-  lang_->assign(value);
-  // @@protoc_insertion_point(field_set:rokid.open.SpeechRequest.lang)
+inline ::rokid::open::speech::v2::SpeechOptions* SpeechRequest::mutable_options() {
+  set_has_options();
+  if (options_ == NULL) options_ = new ::rokid::open::speech::v2::SpeechOptions;
+  // @@protoc_insertion_point(field_mutable:rokid.open.speech.v2.SpeechRequest.options)
+  return options_;
 }
-inline void SpeechRequest::set_lang(const char* value) {
-  set_has_lang();
-  if (lang_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    lang_ = new ::std::string;
-  }
-  lang_->assign(value);
-  // @@protoc_insertion_point(field_set_char:rokid.open.SpeechRequest.lang)
+inline ::rokid::open::speech::v2::SpeechOptions* SpeechRequest::release_options() {
+  clear_has_options();
+  ::rokid::open::speech::v2::SpeechOptions* temp = options_;
+  options_ = NULL;
+  return temp;
 }
-inline void SpeechRequest::set_lang(const char* value, size_t size) {
-  set_has_lang();
-  if (lang_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    lang_ = new ::std::string;
-  }
-  lang_->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:rokid.open.SpeechRequest.lang)
-}
-inline ::std::string* SpeechRequest::mutable_lang() {
-  set_has_lang();
-  if (lang_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    lang_ = new ::std::string;
-  }
-  // @@protoc_insertion_point(field_mutable:rokid.open.SpeechRequest.lang)
-  return lang_;
-}
-inline ::std::string* SpeechRequest::release_lang() {
-  clear_has_lang();
-  if (lang_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    return NULL;
+inline void SpeechRequest::set_allocated_options(::rokid::open::speech::v2::SpeechOptions* options) {
+  delete options_;
+  options_ = options;
+  if (options) {
+    set_has_options();
   } else {
-    ::std::string* temp = lang_;
-    lang_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-    return temp;
+    clear_has_options();
   }
-}
-inline void SpeechRequest::set_allocated_lang(::std::string* lang) {
-  if (lang_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete lang_;
-  }
-  if (lang) {
-    set_has_lang();
-    lang_ = lang;
-  } else {
-    clear_has_lang();
-    lang_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  }
-  // @@protoc_insertion_point(field_set_allocated:rokid.open.SpeechRequest.lang)
-}
-
-// optional string codec = 6;
-inline bool SpeechRequest::has_codec() const {
-  return (_has_bits_[0] & 0x00000020u) != 0;
-}
-inline void SpeechRequest::set_has_codec() {
-  _has_bits_[0] |= 0x00000020u;
-}
-inline void SpeechRequest::clear_has_codec() {
-  _has_bits_[0] &= ~0x00000020u;
-}
-inline void SpeechRequest::clear_codec() {
-  if (codec_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    codec_->clear();
-  }
-  clear_has_codec();
-}
-inline const ::std::string& SpeechRequest::codec() const {
-  // @@protoc_insertion_point(field_get:rokid.open.SpeechRequest.codec)
-  return *codec_;
-}
-inline void SpeechRequest::set_codec(const ::std::string& value) {
-  set_has_codec();
-  if (codec_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    codec_ = new ::std::string;
-  }
-  codec_->assign(value);
-  // @@protoc_insertion_point(field_set:rokid.open.SpeechRequest.codec)
-}
-inline void SpeechRequest::set_codec(const char* value) {
-  set_has_codec();
-  if (codec_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    codec_ = new ::std::string;
-  }
-  codec_->assign(value);
-  // @@protoc_insertion_point(field_set_char:rokid.open.SpeechRequest.codec)
-}
-inline void SpeechRequest::set_codec(const char* value, size_t size) {
-  set_has_codec();
-  if (codec_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    codec_ = new ::std::string;
-  }
-  codec_->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:rokid.open.SpeechRequest.codec)
-}
-inline ::std::string* SpeechRequest::mutable_codec() {
-  set_has_codec();
-  if (codec_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    codec_ = new ::std::string;
-  }
-  // @@protoc_insertion_point(field_mutable:rokid.open.SpeechRequest.codec)
-  return codec_;
-}
-inline ::std::string* SpeechRequest::release_codec() {
-  clear_has_codec();
-  if (codec_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    return NULL;
-  } else {
-    ::std::string* temp = codec_;
-    codec_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-    return temp;
-  }
-}
-inline void SpeechRequest::set_allocated_codec(::std::string* codec) {
-  if (codec_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete codec_;
-  }
-  if (codec) {
-    set_has_codec();
-    codec_ = codec;
-  } else {
-    clear_has_codec();
-    codec_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  }
-  // @@protoc_insertion_point(field_set_allocated:rokid.open.SpeechRequest.codec)
-}
-
-// optional string vt = 7;
-inline bool SpeechRequest::has_vt() const {
-  return (_has_bits_[0] & 0x00000040u) != 0;
-}
-inline void SpeechRequest::set_has_vt() {
-  _has_bits_[0] |= 0x00000040u;
-}
-inline void SpeechRequest::clear_has_vt() {
-  _has_bits_[0] &= ~0x00000040u;
-}
-inline void SpeechRequest::clear_vt() {
-  if (vt_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    vt_->clear();
-  }
-  clear_has_vt();
-}
-inline const ::std::string& SpeechRequest::vt() const {
-  // @@protoc_insertion_point(field_get:rokid.open.SpeechRequest.vt)
-  return *vt_;
-}
-inline void SpeechRequest::set_vt(const ::std::string& value) {
-  set_has_vt();
-  if (vt_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    vt_ = new ::std::string;
-  }
-  vt_->assign(value);
-  // @@protoc_insertion_point(field_set:rokid.open.SpeechRequest.vt)
-}
-inline void SpeechRequest::set_vt(const char* value) {
-  set_has_vt();
-  if (vt_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    vt_ = new ::std::string;
-  }
-  vt_->assign(value);
-  // @@protoc_insertion_point(field_set_char:rokid.open.SpeechRequest.vt)
-}
-inline void SpeechRequest::set_vt(const char* value, size_t size) {
-  set_has_vt();
-  if (vt_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    vt_ = new ::std::string;
-  }
-  vt_->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:rokid.open.SpeechRequest.vt)
-}
-inline ::std::string* SpeechRequest::mutable_vt() {
-  set_has_vt();
-  if (vt_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    vt_ = new ::std::string;
-  }
-  // @@protoc_insertion_point(field_mutable:rokid.open.SpeechRequest.vt)
-  return vt_;
-}
-inline ::std::string* SpeechRequest::release_vt() {
-  clear_has_vt();
-  if (vt_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    return NULL;
-  } else {
-    ::std::string* temp = vt_;
-    vt_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-    return temp;
-  }
-}
-inline void SpeechRequest::set_allocated_vt(::std::string* vt) {
-  if (vt_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete vt_;
-  }
-  if (vt) {
-    set_has_vt();
-    vt_ = vt;
-  } else {
-    clear_has_vt();
-    vt_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  }
-  // @@protoc_insertion_point(field_set_allocated:rokid.open.SpeechRequest.vt)
-}
-
-// optional string framework_options = 8;
-inline bool SpeechRequest::has_framework_options() const {
-  return (_has_bits_[0] & 0x00000080u) != 0;
-}
-inline void SpeechRequest::set_has_framework_options() {
-  _has_bits_[0] |= 0x00000080u;
-}
-inline void SpeechRequest::clear_has_framework_options() {
-  _has_bits_[0] &= ~0x00000080u;
-}
-inline void SpeechRequest::clear_framework_options() {
-  if (framework_options_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    framework_options_->clear();
-  }
-  clear_has_framework_options();
-}
-inline const ::std::string& SpeechRequest::framework_options() const {
-  // @@protoc_insertion_point(field_get:rokid.open.SpeechRequest.framework_options)
-  return *framework_options_;
-}
-inline void SpeechRequest::set_framework_options(const ::std::string& value) {
-  set_has_framework_options();
-  if (framework_options_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    framework_options_ = new ::std::string;
-  }
-  framework_options_->assign(value);
-  // @@protoc_insertion_point(field_set:rokid.open.SpeechRequest.framework_options)
-}
-inline void SpeechRequest::set_framework_options(const char* value) {
-  set_has_framework_options();
-  if (framework_options_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    framework_options_ = new ::std::string;
-  }
-  framework_options_->assign(value);
-  // @@protoc_insertion_point(field_set_char:rokid.open.SpeechRequest.framework_options)
-}
-inline void SpeechRequest::set_framework_options(const char* value, size_t size) {
-  set_has_framework_options();
-  if (framework_options_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    framework_options_ = new ::std::string;
-  }
-  framework_options_->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:rokid.open.SpeechRequest.framework_options)
-}
-inline ::std::string* SpeechRequest::mutable_framework_options() {
-  set_has_framework_options();
-  if (framework_options_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    framework_options_ = new ::std::string;
-  }
-  // @@protoc_insertion_point(field_mutable:rokid.open.SpeechRequest.framework_options)
-  return framework_options_;
-}
-inline ::std::string* SpeechRequest::release_framework_options() {
-  clear_has_framework_options();
-  if (framework_options_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    return NULL;
-  } else {
-    ::std::string* temp = framework_options_;
-    framework_options_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-    return temp;
-  }
-}
-inline void SpeechRequest::set_allocated_framework_options(::std::string* framework_options) {
-  if (framework_options_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete framework_options_;
-  }
-  if (framework_options) {
-    set_has_framework_options();
-    framework_options_ = framework_options;
-  } else {
-    clear_has_framework_options();
-    framework_options_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  }
-  // @@protoc_insertion_point(field_set_allocated:rokid.open.SpeechRequest.framework_options)
-}
-
-// optional string skill_options = 9;
-inline bool SpeechRequest::has_skill_options() const {
-  return (_has_bits_[0] & 0x00000100u) != 0;
-}
-inline void SpeechRequest::set_has_skill_options() {
-  _has_bits_[0] |= 0x00000100u;
-}
-inline void SpeechRequest::clear_has_skill_options() {
-  _has_bits_[0] &= ~0x00000100u;
-}
-inline void SpeechRequest::clear_skill_options() {
-  if (skill_options_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    skill_options_->clear();
-  }
-  clear_has_skill_options();
-}
-inline const ::std::string& SpeechRequest::skill_options() const {
-  // @@protoc_insertion_point(field_get:rokid.open.SpeechRequest.skill_options)
-  return *skill_options_;
-}
-inline void SpeechRequest::set_skill_options(const ::std::string& value) {
-  set_has_skill_options();
-  if (skill_options_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    skill_options_ = new ::std::string;
-  }
-  skill_options_->assign(value);
-  // @@protoc_insertion_point(field_set:rokid.open.SpeechRequest.skill_options)
-}
-inline void SpeechRequest::set_skill_options(const char* value) {
-  set_has_skill_options();
-  if (skill_options_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    skill_options_ = new ::std::string;
-  }
-  skill_options_->assign(value);
-  // @@protoc_insertion_point(field_set_char:rokid.open.SpeechRequest.skill_options)
-}
-inline void SpeechRequest::set_skill_options(const char* value, size_t size) {
-  set_has_skill_options();
-  if (skill_options_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    skill_options_ = new ::std::string;
-  }
-  skill_options_->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:rokid.open.SpeechRequest.skill_options)
-}
-inline ::std::string* SpeechRequest::mutable_skill_options() {
-  set_has_skill_options();
-  if (skill_options_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    skill_options_ = new ::std::string;
-  }
-  // @@protoc_insertion_point(field_mutable:rokid.open.SpeechRequest.skill_options)
-  return skill_options_;
-}
-inline ::std::string* SpeechRequest::release_skill_options() {
-  clear_has_skill_options();
-  if (skill_options_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    return NULL;
-  } else {
-    ::std::string* temp = skill_options_;
-    skill_options_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-    return temp;
-  }
-}
-inline void SpeechRequest::set_allocated_skill_options(::std::string* skill_options) {
-  if (skill_options_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
-    delete skill_options_;
-  }
-  if (skill_options) {
-    set_has_skill_options();
-    skill_options_ = skill_options;
-  } else {
-    clear_has_skill_options();
-    skill_options_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
-  }
-  // @@protoc_insertion_point(field_set_allocated:rokid.open.SpeechRequest.skill_options)
+  // @@protoc_insertion_point(field_set_allocated:rokid.open.speech.v2.SpeechRequest.options)
 }
 
 // -------------------------------------------------------------------
@@ -3378,49 +1313,74 @@ inline void SpeechResponse::clear_id() {
   clear_has_id();
 }
 inline ::google::protobuf::int32 SpeechResponse::id() const {
-  // @@protoc_insertion_point(field_get:rokid.open.SpeechResponse.id)
+  // @@protoc_insertion_point(field_get:rokid.open.speech.v2.SpeechResponse.id)
   return id_;
 }
 inline void SpeechResponse::set_id(::google::protobuf::int32 value) {
   set_has_id();
   id_ = value;
-  // @@protoc_insertion_point(field_set:rokid.open.SpeechResponse.id)
+  // @@protoc_insertion_point(field_set:rokid.open.speech.v2.SpeechResponse.id)
 }
 
-// required .rokid.open.SpeechErrorCode result = 2;
-inline bool SpeechResponse::has_result() const {
+// required .rokid.open.speech.v2.RespType type = 2;
+inline bool SpeechResponse::has_type() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void SpeechResponse::set_has_result() {
+inline void SpeechResponse::set_has_type() {
   _has_bits_[0] |= 0x00000002u;
 }
-inline void SpeechResponse::clear_has_result() {
+inline void SpeechResponse::clear_has_type() {
   _has_bits_[0] &= ~0x00000002u;
+}
+inline void SpeechResponse::clear_type() {
+  type_ = 0;
+  clear_has_type();
+}
+inline ::rokid::open::speech::v2::RespType SpeechResponse::type() const {
+  // @@protoc_insertion_point(field_get:rokid.open.speech.v2.SpeechResponse.type)
+  return static_cast< ::rokid::open::speech::v2::RespType >(type_);
+}
+inline void SpeechResponse::set_type(::rokid::open::speech::v2::RespType value) {
+  assert(::rokid::open::speech::v2::RespType_IsValid(value));
+  set_has_type();
+  type_ = value;
+  // @@protoc_insertion_point(field_set:rokid.open.speech.v2.SpeechResponse.type)
+}
+
+// required .rokid.open.speech.v1.SpeechErrorCode result = 3;
+inline bool SpeechResponse::has_result() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void SpeechResponse::set_has_result() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void SpeechResponse::clear_has_result() {
+  _has_bits_[0] &= ~0x00000004u;
 }
 inline void SpeechResponse::clear_result() {
   result_ = 0;
   clear_has_result();
 }
-inline ::rokid::open::SpeechErrorCode SpeechResponse::result() const {
-  // @@protoc_insertion_point(field_get:rokid.open.SpeechResponse.result)
-  return static_cast< ::rokid::open::SpeechErrorCode >(result_);
+inline ::rokid::open::speech::v1::SpeechErrorCode SpeechResponse::result() const {
+  // @@protoc_insertion_point(field_get:rokid.open.speech.v2.SpeechResponse.result)
+  return static_cast< ::rokid::open::speech::v1::SpeechErrorCode >(result_);
 }
-inline void SpeechResponse::set_result(::rokid::open::SpeechErrorCode value) {
-  assert(::rokid::open::SpeechErrorCode_IsValid(value));
+inline void SpeechResponse::set_result(::rokid::open::speech::v1::SpeechErrorCode value) {
+  assert(::rokid::open::speech::v1::SpeechErrorCode_IsValid(value));
   set_has_result();
   result_ = value;
-  // @@protoc_insertion_point(field_set:rokid.open.SpeechResponse.result)
+  // @@protoc_insertion_point(field_set:rokid.open.speech.v2.SpeechResponse.result)
 }
 
-// optional string asr = 3;
+// optional string asr = 4;
 inline bool SpeechResponse::has_asr() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
+  return (_has_bits_[0] & 0x00000008u) != 0;
 }
 inline void SpeechResponse::set_has_asr() {
-  _has_bits_[0] |= 0x00000004u;
+  _has_bits_[0] |= 0x00000008u;
 }
 inline void SpeechResponse::clear_has_asr() {
-  _has_bits_[0] &= ~0x00000004u;
+  _has_bits_[0] &= ~0x00000008u;
 }
 inline void SpeechResponse::clear_asr() {
   if (asr_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
@@ -3429,7 +1389,7 @@ inline void SpeechResponse::clear_asr() {
   clear_has_asr();
 }
 inline const ::std::string& SpeechResponse::asr() const {
-  // @@protoc_insertion_point(field_get:rokid.open.SpeechResponse.asr)
+  // @@protoc_insertion_point(field_get:rokid.open.speech.v2.SpeechResponse.asr)
   return *asr_;
 }
 inline void SpeechResponse::set_asr(const ::std::string& value) {
@@ -3438,7 +1398,7 @@ inline void SpeechResponse::set_asr(const ::std::string& value) {
     asr_ = new ::std::string;
   }
   asr_->assign(value);
-  // @@protoc_insertion_point(field_set:rokid.open.SpeechResponse.asr)
+  // @@protoc_insertion_point(field_set:rokid.open.speech.v2.SpeechResponse.asr)
 }
 inline void SpeechResponse::set_asr(const char* value) {
   set_has_asr();
@@ -3446,7 +1406,7 @@ inline void SpeechResponse::set_asr(const char* value) {
     asr_ = new ::std::string;
   }
   asr_->assign(value);
-  // @@protoc_insertion_point(field_set_char:rokid.open.SpeechResponse.asr)
+  // @@protoc_insertion_point(field_set_char:rokid.open.speech.v2.SpeechResponse.asr)
 }
 inline void SpeechResponse::set_asr(const char* value, size_t size) {
   set_has_asr();
@@ -3454,14 +1414,14 @@ inline void SpeechResponse::set_asr(const char* value, size_t size) {
     asr_ = new ::std::string;
   }
   asr_->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:rokid.open.SpeechResponse.asr)
+  // @@protoc_insertion_point(field_set_pointer:rokid.open.speech.v2.SpeechResponse.asr)
 }
 inline ::std::string* SpeechResponse::mutable_asr() {
   set_has_asr();
   if (asr_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
     asr_ = new ::std::string;
   }
-  // @@protoc_insertion_point(field_mutable:rokid.open.SpeechResponse.asr)
+  // @@protoc_insertion_point(field_mutable:rokid.open.speech.v2.SpeechResponse.asr)
   return asr_;
 }
 inline ::std::string* SpeechResponse::release_asr() {
@@ -3485,18 +1445,18 @@ inline void SpeechResponse::set_allocated_asr(::std::string* asr) {
     clear_has_asr();
     asr_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   }
-  // @@protoc_insertion_point(field_set_allocated:rokid.open.SpeechResponse.asr)
+  // @@protoc_insertion_point(field_set_allocated:rokid.open.speech.v2.SpeechResponse.asr)
 }
 
-// optional string nlp = 4;
+// optional string nlp = 5;
 inline bool SpeechResponse::has_nlp() const {
-  return (_has_bits_[0] & 0x00000008u) != 0;
+  return (_has_bits_[0] & 0x00000010u) != 0;
 }
 inline void SpeechResponse::set_has_nlp() {
-  _has_bits_[0] |= 0x00000008u;
+  _has_bits_[0] |= 0x00000010u;
 }
 inline void SpeechResponse::clear_has_nlp() {
-  _has_bits_[0] &= ~0x00000008u;
+  _has_bits_[0] &= ~0x00000010u;
 }
 inline void SpeechResponse::clear_nlp() {
   if (nlp_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
@@ -3505,7 +1465,7 @@ inline void SpeechResponse::clear_nlp() {
   clear_has_nlp();
 }
 inline const ::std::string& SpeechResponse::nlp() const {
-  // @@protoc_insertion_point(field_get:rokid.open.SpeechResponse.nlp)
+  // @@protoc_insertion_point(field_get:rokid.open.speech.v2.SpeechResponse.nlp)
   return *nlp_;
 }
 inline void SpeechResponse::set_nlp(const ::std::string& value) {
@@ -3514,7 +1474,7 @@ inline void SpeechResponse::set_nlp(const ::std::string& value) {
     nlp_ = new ::std::string;
   }
   nlp_->assign(value);
-  // @@protoc_insertion_point(field_set:rokid.open.SpeechResponse.nlp)
+  // @@protoc_insertion_point(field_set:rokid.open.speech.v2.SpeechResponse.nlp)
 }
 inline void SpeechResponse::set_nlp(const char* value) {
   set_has_nlp();
@@ -3522,7 +1482,7 @@ inline void SpeechResponse::set_nlp(const char* value) {
     nlp_ = new ::std::string;
   }
   nlp_->assign(value);
-  // @@protoc_insertion_point(field_set_char:rokid.open.SpeechResponse.nlp)
+  // @@protoc_insertion_point(field_set_char:rokid.open.speech.v2.SpeechResponse.nlp)
 }
 inline void SpeechResponse::set_nlp(const char* value, size_t size) {
   set_has_nlp();
@@ -3530,14 +1490,14 @@ inline void SpeechResponse::set_nlp(const char* value, size_t size) {
     nlp_ = new ::std::string;
   }
   nlp_->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:rokid.open.SpeechResponse.nlp)
+  // @@protoc_insertion_point(field_set_pointer:rokid.open.speech.v2.SpeechResponse.nlp)
 }
 inline ::std::string* SpeechResponse::mutable_nlp() {
   set_has_nlp();
   if (nlp_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
     nlp_ = new ::std::string;
   }
-  // @@protoc_insertion_point(field_mutable:rokid.open.SpeechResponse.nlp)
+  // @@protoc_insertion_point(field_mutable:rokid.open.speech.v2.SpeechResponse.nlp)
   return nlp_;
 }
 inline ::std::string* SpeechResponse::release_nlp() {
@@ -3561,18 +1521,18 @@ inline void SpeechResponse::set_allocated_nlp(::std::string* nlp) {
     clear_has_nlp();
     nlp_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   }
-  // @@protoc_insertion_point(field_set_allocated:rokid.open.SpeechResponse.nlp)
+  // @@protoc_insertion_point(field_set_allocated:rokid.open.speech.v2.SpeechResponse.nlp)
 }
 
-// optional string action = 5;
+// optional string action = 6;
 inline bool SpeechResponse::has_action() const {
-  return (_has_bits_[0] & 0x00000010u) != 0;
+  return (_has_bits_[0] & 0x00000020u) != 0;
 }
 inline void SpeechResponse::set_has_action() {
-  _has_bits_[0] |= 0x00000010u;
+  _has_bits_[0] |= 0x00000020u;
 }
 inline void SpeechResponse::clear_has_action() {
-  _has_bits_[0] &= ~0x00000010u;
+  _has_bits_[0] &= ~0x00000020u;
 }
 inline void SpeechResponse::clear_action() {
   if (action_ != &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
@@ -3581,7 +1541,7 @@ inline void SpeechResponse::clear_action() {
   clear_has_action();
 }
 inline const ::std::string& SpeechResponse::action() const {
-  // @@protoc_insertion_point(field_get:rokid.open.SpeechResponse.action)
+  // @@protoc_insertion_point(field_get:rokid.open.speech.v2.SpeechResponse.action)
   return *action_;
 }
 inline void SpeechResponse::set_action(const ::std::string& value) {
@@ -3590,7 +1550,7 @@ inline void SpeechResponse::set_action(const ::std::string& value) {
     action_ = new ::std::string;
   }
   action_->assign(value);
-  // @@protoc_insertion_point(field_set:rokid.open.SpeechResponse.action)
+  // @@protoc_insertion_point(field_set:rokid.open.speech.v2.SpeechResponse.action)
 }
 inline void SpeechResponse::set_action(const char* value) {
   set_has_action();
@@ -3598,7 +1558,7 @@ inline void SpeechResponse::set_action(const char* value) {
     action_ = new ::std::string;
   }
   action_->assign(value);
-  // @@protoc_insertion_point(field_set_char:rokid.open.SpeechResponse.action)
+  // @@protoc_insertion_point(field_set_char:rokid.open.speech.v2.SpeechResponse.action)
 }
 inline void SpeechResponse::set_action(const char* value, size_t size) {
   set_has_action();
@@ -3606,14 +1566,14 @@ inline void SpeechResponse::set_action(const char* value, size_t size) {
     action_ = new ::std::string;
   }
   action_->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:rokid.open.SpeechResponse.action)
+  // @@protoc_insertion_point(field_set_pointer:rokid.open.speech.v2.SpeechResponse.action)
 }
 inline ::std::string* SpeechResponse::mutable_action() {
   set_has_action();
   if (action_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
     action_ = new ::std::string;
   }
-  // @@protoc_insertion_point(field_mutable:rokid.open.SpeechResponse.action)
+  // @@protoc_insertion_point(field_mutable:rokid.open.speech.v2.SpeechResponse.action)
   return action_;
 }
 inline ::std::string* SpeechResponse::release_action() {
@@ -3637,31 +1597,7 @@ inline void SpeechResponse::set_allocated_action(::std::string* action) {
     clear_has_action();
     action_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   }
-  // @@protoc_insertion_point(field_set_allocated:rokid.open.SpeechResponse.action)
-}
-
-// optional bool finish = 6;
-inline bool SpeechResponse::has_finish() const {
-  return (_has_bits_[0] & 0x00000020u) != 0;
-}
-inline void SpeechResponse::set_has_finish() {
-  _has_bits_[0] |= 0x00000020u;
-}
-inline void SpeechResponse::clear_has_finish() {
-  _has_bits_[0] &= ~0x00000020u;
-}
-inline void SpeechResponse::clear_finish() {
-  finish_ = false;
-  clear_has_finish();
-}
-inline bool SpeechResponse::finish() const {
-  // @@protoc_insertion_point(field_get:rokid.open.SpeechResponse.finish)
-  return finish_;
-}
-inline void SpeechResponse::set_finish(bool value) {
-  set_has_finish();
-  finish_ = value;
-  // @@protoc_insertion_point(field_set:rokid.open.SpeechResponse.finish)
+  // @@protoc_insertion_point(field_set_allocated:rokid.open.speech.v2.SpeechResponse.action)
 }
 
 // optional string extra = 7;
@@ -3681,7 +1617,7 @@ inline void SpeechResponse::clear_extra() {
   clear_has_extra();
 }
 inline const ::std::string& SpeechResponse::extra() const {
-  // @@protoc_insertion_point(field_get:rokid.open.SpeechResponse.extra)
+  // @@protoc_insertion_point(field_get:rokid.open.speech.v2.SpeechResponse.extra)
   return *extra_;
 }
 inline void SpeechResponse::set_extra(const ::std::string& value) {
@@ -3690,7 +1626,7 @@ inline void SpeechResponse::set_extra(const ::std::string& value) {
     extra_ = new ::std::string;
   }
   extra_->assign(value);
-  // @@protoc_insertion_point(field_set:rokid.open.SpeechResponse.extra)
+  // @@protoc_insertion_point(field_set:rokid.open.speech.v2.SpeechResponse.extra)
 }
 inline void SpeechResponse::set_extra(const char* value) {
   set_has_extra();
@@ -3698,7 +1634,7 @@ inline void SpeechResponse::set_extra(const char* value) {
     extra_ = new ::std::string;
   }
   extra_->assign(value);
-  // @@protoc_insertion_point(field_set_char:rokid.open.SpeechResponse.extra)
+  // @@protoc_insertion_point(field_set_char:rokid.open.speech.v2.SpeechResponse.extra)
 }
 inline void SpeechResponse::set_extra(const char* value, size_t size) {
   set_has_extra();
@@ -3706,14 +1642,14 @@ inline void SpeechResponse::set_extra(const char* value, size_t size) {
     extra_ = new ::std::string;
   }
   extra_->assign(reinterpret_cast<const char*>(value), size);
-  // @@protoc_insertion_point(field_set_pointer:rokid.open.SpeechResponse.extra)
+  // @@protoc_insertion_point(field_set_pointer:rokid.open.speech.v2.SpeechResponse.extra)
 }
 inline ::std::string* SpeechResponse::mutable_extra() {
   set_has_extra();
   if (extra_ == &::google::protobuf::internal::GetEmptyStringAlreadyInited()) {
     extra_ = new ::std::string;
   }
-  // @@protoc_insertion_point(field_mutable:rokid.open.SpeechResponse.extra)
+  // @@protoc_insertion_point(field_mutable:rokid.open.speech.v2.SpeechResponse.extra)
   return extra_;
 }
 inline ::std::string* SpeechResponse::release_extra() {
@@ -3737,12 +1673,14 @@ inline void SpeechResponse::set_allocated_extra(::std::string* extra) {
     clear_has_extra();
     extra_ = const_cast< ::std::string*>(&::google::protobuf::internal::GetEmptyStringAlreadyInited());
   }
-  // @@protoc_insertion_point(field_set_allocated:rokid.open.SpeechResponse.extra)
+  // @@protoc_insertion_point(field_set_allocated:rokid.open.speech.v2.SpeechResponse.extra)
 }
 
 
 // @@protoc_insertion_point(namespace_scope)
 
+}  // namespace v2
+}  // namespace speech
 }  // namespace open
 }  // namespace rokid
 
@@ -3750,15 +1688,20 @@ inline void SpeechResponse::set_allocated_extra(::std::string* extra) {
 namespace google {
 namespace protobuf {
 
-template <> struct is_proto_enum< ::rokid::open::SpeechErrorCode> : ::google::protobuf::internal::true_type {};
+template <> struct is_proto_enum< ::rokid::open::speech::v2::RespType> : ::google::protobuf::internal::true_type {};
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::rokid::open::SpeechErrorCode>() {
-  return ::rokid::open::SpeechErrorCode_descriptor();
+inline const EnumDescriptor* GetEnumDescriptor< ::rokid::open::speech::v2::RespType>() {
+  return ::rokid::open::speech::v2::RespType_descriptor();
 }
-template <> struct is_proto_enum< ::rokid::open::ReqType> : ::google::protobuf::internal::true_type {};
+template <> struct is_proto_enum< ::rokid::open::speech::v2::Lang> : ::google::protobuf::internal::true_type {};
 template <>
-inline const EnumDescriptor* GetEnumDescriptor< ::rokid::open::ReqType>() {
-  return ::rokid::open::ReqType_descriptor();
+inline const EnumDescriptor* GetEnumDescriptor< ::rokid::open::speech::v2::Lang>() {
+  return ::rokid::open::speech::v2::Lang_descriptor();
+}
+template <> struct is_proto_enum< ::rokid::open::speech::v2::VadMode> : ::google::protobuf::internal::true_type {};
+template <>
+inline const EnumDescriptor* GetEnumDescriptor< ::rokid::open::speech::v2::VadMode>() {
+  return ::rokid::open::speech::v2::VadMode_descriptor();
 }
 
 }  // namespace google

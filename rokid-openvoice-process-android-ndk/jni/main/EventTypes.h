@@ -7,10 +7,11 @@ enum VoiceEvent{
     VOICE_COMING = 0,
     VOICE_LOCAL_WAKE,
     VOICE_START,
+    VOICE_DATA,
     VOICE_ACCEPT,
     VOICE_REJECT,
     VOICE_CANCEL,
-    VOICE_SLEEP,
+    VOICE_LOCAL_SLEEP,
 };
 
 enum ASRResultType{

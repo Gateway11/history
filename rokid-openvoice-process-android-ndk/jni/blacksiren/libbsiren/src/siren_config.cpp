@@ -13,7 +13,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <cstdio>
-#include <curl/curl.h>
+//#include <curl/curl.h>
 #include <netdb.h>
 #include <sys/param.h>
 #include <netinet/in.h>
@@ -55,10 +55,11 @@ static std::string getAddressByHostname(const char *hostname) {
 template <typename T>
 std::string build_printable_indx(const std::vector<T> &from) {
     std::string result;
-    std::ostringstream stm;
     for (T j : from) {
+        std::ostringstream stm;
         stm << j ;
         result.append(stm.str()).append(" ");
+//        result.append(std::to_string(j)).append(" ");
     }
     return result;
 }
@@ -98,6 +99,7 @@ config_error_t SirenConfigurationManager::loadConfigFromJSON(std::string &conten
     json_object *alg_raw_stream_bf_object = nullptr;
     json_object *alg_raw_stream_agc_object = nullptr;
 
+    json_object *alg_rs_enable_object = nullptr;
     json_object *alg_vt_enable_object = nullptr;
     json_object *alg_vad_enable_object = nullptr;
 
@@ -105,6 +107,7 @@ config_error_t SirenConfigurationManager::loadConfigFromJSON(std::string &conten
     json_object *alg_vad_baserange_object = nullptr;
     json_object *alg_vad_dynrange_min_object = nullptr;
     json_object *alg_vad_dynrange_max_object = nullptr;
+    json_object *alg_bf_scaling_object = nullptr;
 
     json_object *alg_need_i2s_delay_mics_object = nullptr;
     json_object *alg_i2s_delay_mics_object = nullptr;
@@ -617,6 +620,21 @@ config_error_t SirenConfigurationManager::loadConfigFromJSON(std::string &conten
         siren_printf(SIREN_WARNING, "cannot find key %s", KEY_ALG_RAW_STREAM_AGC);
         goto fail;
     }
+    
+    if (TRUE == json_object_object_get_ex(alg_config, KEY_ALG_RS_ENABLE, &alg_rs_enable_object)) {
+        if ((type = json_object_get_type(alg_rs_enable_object)) == json_type_boolean) {
+            siren_config.alg_config.alg_rs_enable = json_object_get_boolean(alg_rs_enable_object);
+            siren_printf(SIREN_INFO, "enable rs %d", siren_config.alg_config.alg_rs_enable);
+            //            json_object_put(alg_vt_enable_object);
+        } else {
+            siren_printf(SIREN_WARNING, "expect type boolean with key %s", KEY_ALG_RS_ENABLE);
+            //            json_object_put(alg_vt_enable_object);
+            goto fail;
+        }
+    } else {
+        siren_printf(SIREN_WARNING, "cannot find key %s", KEY_ALG_RS_ENABLE);
+        goto fail;
+    }
 
     if (TRUE == json_object_object_get_ex(alg_config, KEY_ALG_VT_ENABLE, &alg_vt_enable_object)) {
         if ((type = json_object_get_type(alg_vt_enable_object)) == json_type_boolean) {
@@ -718,6 +736,19 @@ config_error_t SirenConfigurationManager::loadConfigFromJSON(std::string &conten
     } else {
         siren_printf(SIREN_WARNING, "cannot find key %s", KEY_ALG_VAD_DYNRANGE_MAX);
         goto fail;
+    }
+
+    if (TRUE == json_object_object_get_ex(alg_config, KEY_ALG_BF_SCALING, &alg_bf_scaling_object)) {
+        if ((type = json_object_get_type(alg_bf_scaling_object)) == json_type_double) {
+            siren_config.alg_config.alg_bf_scaling = json_object_get_double(alg_bf_scaling_object);
+            siren_printf(SIREN_INFO, "bf scaling: %f", siren_config.alg_config.alg_bf_scaling);
+        } else {
+            siren_printf(SIREN_WARNING, "expect type float/double with key %s", KEY_ALG_BF_SCALING);
+            siren_config.alg_config.alg_bf_scaling = 1.0f;
+        }
+    } else {
+        siren_printf(SIREN_WARNING, "cannot find key %s", KEY_ALG_BF_SCALING);
+        siren_config.alg_config.alg_bf_scaling = 1.0f;
     }
 
 
