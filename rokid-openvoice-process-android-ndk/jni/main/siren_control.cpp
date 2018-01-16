@@ -78,6 +78,7 @@ int init_input(void *token) {
 }
 
 void release_input(void *token) {
+    mic_array_device->finish_stream(mic_array_device);
 }
 
 int start_input(void *token) {
@@ -94,6 +95,7 @@ int start_input(void *token) {
 void stop_input(void *token) {
     ALOGV("%s", __FUNCTION__);
     //	android_CloseAudioDevice(stream);
+    mic_array_device->stop_stream(mic_array_device);
 }
 
 int read_input(void *token, char *buff, int frame_cnt) {
