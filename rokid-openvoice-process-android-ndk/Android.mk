@@ -1,9 +1,9 @@
 LOCAL_PATH:= $(call my-dir)
 
 SDK_VERSION = $(shell if [ $(PLATFORM_SDK_VERSION) -ge 21 ]; then echo 23; else echo 19; fi)
-SHARED_LIBRARIES_PATH := libs/$(SDK_VERSION)/$(TARGET_CPU_ABI)
+DEPENDENT_LIBRARIES_PATH := libs/$(SDK_VERSION)/$(TARGET_CPU_ABI)
 ifndef ROKID_BLACKSIREN_CONFIG
-ROKID_BLACKSIREN_CONFIG := default
+ROKID_BLACKSIREN_CONFIG := rokid_dev_board
 endif
 
 $(shell mkdir -p $(TARGET_OUT_ETC))
@@ -33,20 +33,20 @@ include $(BUILD_MULTI_PREBUILT)
 
 include $(CLEAR_VARS)
 LOCAL_PREBUILT_LIBS := \
-		libopenvoice2:$(SHARED_LIBRARIES_PATH)/libopenvoice2.so \
-		libbsiren:$(SHARED_LIBRARIES_PATH)/libbsiren.so \
-		libopenvoice:$(SHARED_LIBRARIES_PATH)/libopenvoice.so \
+		libopenvoice2:$(DEPENDENT_LIBRARIES_PATH)/libopenvoice2.so \
+		libbsiren:$(DEPENDENT_LIBRARIES_PATH)/libbsiren.so \
+		libopenvoice:$(DEPENDENT_LIBRARIES_PATH)/libopenvoice.so \
 		libpoco:libs/$(PLATFORM_SDK_VERSION)/$(TARGET_CPU_ABI)/libpoco.so \
-		libprotobuf-rokid-cpp-full:$(SHARED_LIBRARIES_PATH)/libprotobuf-rokid-cpp-full.so \
-		libr2mvdrbf:$(SHARED_LIBRARIES_PATH)/libr2mvdrbf.so \
-		libr2ssp:$(SHARED_LIBRARIES_PATH)/libr2ssp.so \
-		libr2vt:$(SHARED_LIBRARIES_PATH)/libr2vt.so \
-		libspeech:$(SHARED_LIBRARIES_PATH)/libspeech.so \
-		libztvad:$(SHARED_LIBRARIES_PATH)/libztvad.so \
+		libprotobuf-rokid-cpp-full:$(DEPENDENT_LIBRARIES_PATH)/libprotobuf-rokid-cpp-full.so \
+		libr2mvdrbf:$(DEPENDENT_LIBRARIES_PATH)/libr2mvdrbf.so \
+		libr2ssp:$(DEPENDENT_LIBRARIES_PATH)/libr2ssp.so \
+		libr2vt:$(DEPENDENT_LIBRARIES_PATH)/libr2vt.so \
+		libspeech:$(DEPENDENT_LIBRARIES_PATH)/libspeech.so \
+		libztvad:$(DEPENDENT_LIBRARIES_PATH)/libztvad.so \
 		librokid_speech_jni:libs/$(TARGET_CPU_ABI)/librokid_speech_jni.so \
 		librokid_opus_jni:libs/$(TARGET_CPU_ABI)/librokid_opus_jni.so
 ifndef ALTER_MIC_ARRAY
-LOCAL_PREBUILT_LIBS += libmic_array:$(SHARED_LIBRARIES_PATH)/libmic_array.so
+LOCAL_PREBUILT_LIBS += libmic_array:$(DEPENDENT_LIBRARIES_PATH)/libmic_array.so
 endif
 include $(BUILD_MULTI_PREBUILT)
 
@@ -60,3 +60,5 @@ LOCAL_SRC_FILES := \
 LOCAL_JACK_ENABLED = disabled
 LOCAL_MODULE := BearKidAdapter
 include $(BUILD_STATIC_JAVA_LIBRARY)
+
+include $(LOCAL_PATH)/demo/Android.mk

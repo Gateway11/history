@@ -5,11 +5,11 @@ export PATH=$NDK_HOME:$PATH
 #cd $(pwd)/${0%/*}
 
 cd blacksiren/libjsonc/jni
-#ndk-build clean
+ndk-build clean
 ndk-build -j8
 
 cd ../../libbsiren/jni
-#ndk-build clean
+ndk-build clean
 ndk-build -j8
 
 cd ../../../

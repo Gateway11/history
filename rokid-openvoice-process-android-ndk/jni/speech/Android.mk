@@ -10,35 +10,48 @@ COMMON_CFLAGS := \
 include $(CLEAR_VARS)
 
 LOCAL_MODULE := libspeech
-
+LOCAL_MODULE_CLASS := SHARED_LIBRARIES
 LOCAL_CPP_EXTENSION := .cc
 
 LOCAL_C_INCLUDES := \
-	$(LOCAL_PATH)/include/$(ANDROID_VERSION) \
-	$(MY_LOCAL_PATH)/proto \
+	$(LOCAL_PATH)/boringssl/include \
 	$(MY_LOCAL_PATH)/include \
-	$(MY_LOCAL_PATH)/src/common
+	$(MY_LOCAL_PATH)/src/common \
+	$(MY_LOCAL_PATH)/nanopb \
+	$(MY_LOCAL_PATH)/nanopb-gen
 
-LOCAL_SRC_FILES := \
-	$(MY_LOCAL_PATH)/proto/speech_types.pb.cc \
-	$(MY_LOCAL_PATH)/proto/auth.pb.cc \
-	$(MY_LOCAL_PATH)/proto/tts.pb.cc \
-	$(MY_LOCAL_PATH)/proto/speech.pb.cc \
-	$(MY_LOCAL_PATH)/src/common/log.cc \
+COMMON_SRC := \
+	$(MY_LOCAL_PATH)/src/common/rlog.c \
+	$(MY_LOCAL_PATH)/src/common/log_plugin.cc \
 	$(MY_LOCAL_PATH)/src/common/speech_connection.cc \
-	$(MY_LOCAL_PATH)/src/speech/speech_impl.cc \
+	$(MY_LOCAL_PATH)/src/common/nanopb_encoder.cc \
+	$(MY_LOCAL_PATH)/src/common/nanopb_decoder.cc
+
+TTS_SRC := \
 	$(MY_LOCAL_PATH)/src/tts/tts_impl.cc
 
-ifneq ($(PLATFORM_SDK_VERSION), 23)
-LOCAL_CFLAGS += -D__STDC_FORMAT_MACROS
-endif
+SPEECH_SRC := \
+	$(MY_LOCAL_PATH)/src/speech/speech_impl.cc
 
+PB_SRC := \
+	$(MY_LOCAL_PATH)/nanopb-gen/auth.pb.c \
+	$(MY_LOCAL_PATH)/nanopb-gen/speech_types.pb.c \
+	$(MY_LOCAL_PATH)/nanopb-gen/speech.pb.c \
+	$(MY_LOCAL_PATH)/nanopb-gen/tts.pb.c \
+	$(MY_LOCAL_PATH)/nanopb/pb_common.c \
+	$(MY_LOCAL_PATH)/nanopb/pb_decode.c \
+	$(MY_LOCAL_PATH)/nanopb/pb_encode.c
+
+LOCAL_SRC_FILES := \
+	$(COMMON_SRC) \
+	$(TTS_SRC) \
+	$(SPEECH_SRC) \
+	$(PB_SRC)
+
+LOCAL_CPP_FEATURES := rtti exceptions
+LOCAL_CFLAGS := $(COMMON_CFLAGS)
+LOCAL_CPPFLAGS := -std=c++11
 LOCAL_LDLIBS += -llog -lz
-
-LOCAL_CPPFLAGS := $(COMMON_CFLAGS) -std=c++11 -fexceptions
-
-LOCAL_SHARED_LIBRARIES := libuWS libcrypto libprotobuf-rokid-cpp-full
-
+LOCAL_SHARED_LIBRARIES := libuWS
 LOCAL_EXPORT_C_INCLUDES := $(MY_LOCAL_PATH)/include
-
 include $(BUILD_SHARED_LIBRARY)

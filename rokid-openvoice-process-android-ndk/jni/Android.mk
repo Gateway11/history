@@ -2,12 +2,13 @@ LOCAL_PATH := $(call my-dir)
 
 include $(call all-subdir-makefiles)
 
+DEPENDENT_LIBRARIES_PATH := thirdlib/$(ANDROID_VERSION)/$(TARGET_ARCH_ABI)
+
 include $(CLEAR_VARS)
 LOCAL_MODULE := libmic_array
 LOCAL_SRC_FILES := main/mic_array.c
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/include
-LOCAL_SHARED_LIBRARIES := libtinyalsa
-LOCAL_LDLIBS := -llog
+LOCAL_LDLIBS := -llog -L$(DEPENDENT_LIBRARIES_PATH) -ltinyalsa
 include $(BUILD_SHARED_LIBRARY)
 
 include $(CLEAR_VARS)

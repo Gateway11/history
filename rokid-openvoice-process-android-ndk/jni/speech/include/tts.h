@@ -3,7 +3,7 @@
 #include <stdint.h>
 #include <string>
 #include <memory>
-#include "speech_types.h"
+#include "speech_common.h"
 
 namespace rokid {
 namespace speech {
@@ -52,6 +52,8 @@ public:
 	virtual void set_codec(Codec codec) = 0;
 	// default declaimer "zh"
 	virtual void set_declaimer(const std::string& declaimer) = 0;
+
+	virtual void set_samplerate(uint32_t samplerate) = 0;
 
 	static std::shared_ptr<TtsOptions> new_instance();
 };

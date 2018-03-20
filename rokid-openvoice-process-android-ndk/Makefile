@@ -1,3 +1,4 @@
 #!/bin/bash
 
-./apksigner/apksigner sign --key apksigner/security/platform.pk8 --cert apksigner/security/platform.x509.pem bin/rokid-openvoice-process-android-ndk.apk
+./signer/apksigner sign --key signer/security/platform.pk8 --cert signer/security/platform.x509.pem bin/rokid-openvoice-process-android-ndk.apk
+adb install -r bin/rokid-openvoice-process-android-ndk.apk

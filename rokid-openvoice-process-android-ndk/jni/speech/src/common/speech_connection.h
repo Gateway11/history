@@ -1,16 +1,18 @@
 #pragma once
 
 #include <assert.h>
-#include <chrono>
 #include <mutex>
 #include <condition_variable>
 #include <thread>
 #include <list>
-#include "speech_types.h"
+#include "speech_common.h"
+#ifdef __ANDROID__
 #include "Hub.h"
-#include "log.h"
-
-#define CONN_TAG "speech.Connection"
+#else
+#include <uWS/Hub.h>
+#endif
+#include "rlog.h"
+#include "alt_chrono.h"
 
 namespace rokid {
 namespace speech {
@@ -71,11 +73,12 @@ public:
 		std::string buf;
 		std::unique_lock<std::mutex> locker(req_mutex_);
 		if (!pbitem.SerializeToString(&buf)) {
-			Log::w(CONN_TAG, "send: protobuf serialize failed");
+			KLOGW(CONN_TAG, "send: protobuf serialize failed");
 			return ConnectionOpResult::INVALID_PB_OBJ;
 		}
+		KLOGV(CONN_TAG, "SpeechConnection.send: pb serialize result %lu bytes", buf.length());
 		if (!ensure_connection_available(locker, timeout)) {
-			Log::i(CONN_TAG, "send: connection not available");
+			KLOGI(CONN_TAG, "send: connection not available");
 			return ConnectionOpResult::CONNECTION_NOT_AVAILABLE;
 		}
 		ws_send(buf.data(), buf.length(), uWS::OpCode::BINARY);
@@ -104,12 +107,12 @@ public:
 						resp_data->length);
 				free(resp_data);
 				if (!r) {
-					Log::w(CONN_TAG, "recv: protobuf parse failed");
+					KLOGW(CONN_TAG, "recv: protobuf parse failed");
 					return ConnectionOpResult::INVALID_PB_DATA;
 				}
 				return ConnectionOpResult::SUCCESS;
 			}
-			Log::w(CONN_TAG, "recv: failed, connection broken");
+			KLOGI(CONN_TAG, "recv: failed, connection broken");
 			free(resp_data);
 			return ConnectionOpResult::CONNECTION_BROKEN;
 		}
@@ -150,7 +153,7 @@ private:
 
 	static std::string timestamp();
 
-	static std::string generate_sign(const char* key, const char* devtype,
+	std::string generate_sign(const char* key, const char* devtype,
 			const char* devid, const char* svc, const char* version,
 			const char* ts, const char* secret);
 
@@ -168,6 +171,10 @@ private:
 
 #ifdef SPEECH_STATISTIC
 	bool send_trace_info();
+
+	void ping(std::string* payload = NULL);
+#else
+	void ping();
 #endif
 
 private:
@@ -185,13 +192,16 @@ private:
 	uWS::WebSocket<uWS::CLIENT>* ws_;
 	PrepareOptions options_;
 	std::string service_type_;
-	std::chrono::steady_clock::time_point reconn_timepoint_;
-	std::chrono::steady_clock::time_point lastest_send_tp_;
-	std::chrono::steady_clock::time_point lastest_recv_tp_;
+	SteadyClock::time_point reconn_timepoint_;
+	SteadyClock::time_point lastest_ping_tp_;
+	SteadyClock::time_point lastest_recv_tp_;
 	ConnectStage stage_;
 #ifdef SPEECH_STATISTIC
 	std::list<TraceInfo> _trace_infos;
 #endif
+
+	const char* CONN_TAG;
+	char CONN_TAG_BUF[32];
 
 	static std::chrono::milliseconds ping_interval_;
 	static std::chrono::milliseconds no_resp_timeout_;

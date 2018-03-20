@@ -2,11 +2,12 @@
 
 #include <stdint.h>
 #include <condition_variable>
-#include <chrono>
 #include <mutex>
 #include <list>
+#include "alt_chrono.h"
 
 #define NOOP_TIMEOUT 10000
+#define NORESP_TIMEOUT 30000
 
 namespace rokid {
 namespace speech {
@@ -18,7 +19,8 @@ public:
 		int32_t id;
 		TStatus status;
 		TError error;
-		std::chrono::time_point<std::chrono::steady_clock> begin_timepoint;
+		SteadyClock::time_point begin_timepoint;
+		SteadyClock::time_point lastest_recv_timepoint;
 		bool calc_op_timeout;
 	} Operation;
 
@@ -27,6 +29,7 @@ public:
 		op->id = id;
 		op->status = status;
 		op->calc_op_timeout = false;
+		op->lastest_recv_timepoint = SteadyClock::now();
 		operations_.push_back(op);
 		if (status == TStatus::START)
 			current_op_ = op;
@@ -86,10 +89,12 @@ public:
 			operations_.pop_front();
 	}
 
-	void refresh_op_time() {
+	void refresh_op_time(bool recv) {
 		if (current_op_.get()) {
 			current_op_->calc_op_timeout = true;
-			current_op_->begin_timepoint = std::chrono::steady_clock::now();
+			current_op_->begin_timepoint = SteadyClock::now();
+			if (recv)
+				current_op_->lastest_recv_timepoint = current_op_->begin_timepoint;
 		}
 	}
 
@@ -98,12 +103,24 @@ public:
 			return NOOP_TIMEOUT;
 		if (!current_op_->calc_op_timeout)
 			return NOOP_TIMEOUT;
+		uint32_t t1, t2;
+		SteadyClock::time_point now = SteadyClock::now();
+
+		// cacl no operation timeout
 		std::chrono::duration<uint32_t, std::milli> dur =
 			std::chrono::duration_cast<std::chrono::duration<uint32_t, std::milli> >
-			(std::chrono::steady_clock::now() - current_op_->begin_timepoint);
+			(now - current_op_->begin_timepoint);
 		if (dur.count() > NOOP_TIMEOUT)
 			return 0;
-		return NOOP_TIMEOUT - dur.count();
+		t1 = NOOP_TIMEOUT - dur.count();
+
+		// cacl no resp timeout
+		dur = std::chrono::duration_cast<std::chrono::duration<uint32_t, std::milli> >
+			(now - current_op_->lastest_recv_timepoint);
+		if (dur.count() > NORESP_TIMEOUT)
+			return 0;
+		t2 = NORESP_TIMEOUT - dur.count();
+		return t1 > t2 ? t2 : t1;
 	}
 
 	std::shared_ptr<Operation>& current_op() {

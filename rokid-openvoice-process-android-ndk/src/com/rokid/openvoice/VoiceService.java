@@ -20,7 +20,6 @@ import android.os.Handler;
 import android.os.RemoteException;
 import android.util.Log;
 
-import com.rokid.openvoice.VoiceManager;
 import com.rokid.voicerec.BearKid;
 import com.rokid.voicerec.BearKidResult;
 import com.rokid.voicerec.CustomWord;
@@ -55,7 +54,7 @@ public class VoiceService extends android.app.Service{
     private Condition condition = lock.newCondition();
     private static SkillOptionHelper mSkillOption = new SkillOptionHelper();
     private LinkedList<BearKidResult> results = new LinkedList<BearKidResult>();
-    
+
     public Handler mHandler = new Handler(){
     	public void handleMessage(android.os.Message msg) {
     		switch (msg.what) {
@@ -81,10 +80,14 @@ public class VoiceService extends android.app.Service{
 			}
     	}
     };
+    
+    static{
+    	VoiceManager.init(); 
+    }
 
 	public VoiceService(){
 		Log.e(TAG, "VoiceService  created ");
-        VoiceManager.registCallback(new VoiceCallback(mHandler));
+		VoiceManager.registCallback(new VoiceCallback(mHandler));
 	}
 
 	@Override
@@ -122,8 +125,9 @@ public class VoiceService extends android.app.Service{
 				Log.i(TAG, "update stack: invalid arguments, cdomain = " + cdomain + ", sdomain = " + sdomain);
 			else
 				VoiceManager.updateStack(cdomain + ":" + (sdomain == null ? "" : sdomain));
+		} else if (cmd.equals("netchange")) {
+			VoiceManager.networkStateChange(intent.getBooleanExtra("isConnect", false));
 		}
-
 		return START_NOT_STICKY;
 	}
 	

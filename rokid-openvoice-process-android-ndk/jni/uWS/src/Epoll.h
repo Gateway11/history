@@ -43,7 +43,14 @@ struct Loop {
     void *preCbData, *postCbData;
 
     Loop(bool defaultLoop) {
+    #ifdef __ANDROID__
+    #if PLATFORM_SDK_VERSION <= 19
+        epfd = epoll_create(100);
+        fcntl(epfd,F_SETFL,FD_CLOEXEC);
+    #else
         epfd = epoll_create1(EPOLL_CLOEXEC);
+    #endif
+    #endif
         timepoint = std::chrono::system_clock::now();
     }
 
