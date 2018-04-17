@@ -108,4 +108,5 @@ public class BearKidResult implements Parcelable {
 	public static final int TYPE_NLP = 5;
 	public static final int TYPE_DEACTIVE = 6;
 	public static final int TYPE_EXCEPTION = 7;
+ 	public static final int TYPE_LOCAL_ACTIVATION = 8;
 }

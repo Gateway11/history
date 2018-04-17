@@ -1,0 +1,14 @@
+{
+	'host': 'apigwws.open.rokid.com',
+	'port': 443,
+	'branch': '/api',
+	'key': 'rokid_test_key',
+	'device_type_id': 'rokid_test_device_type_id',
+	'secret': 'rokid_test_secret',
+	'device_id': 'rokid_test_device_id',
+	'reconn': 4000,
+	'keepalive': 10000,
+	'noresp_timeout': 15000,
+	'codec': 'opu2',
+	'declaimer': 'zh'
+}

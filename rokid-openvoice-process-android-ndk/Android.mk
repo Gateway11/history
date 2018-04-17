@@ -36,15 +36,11 @@ LOCAL_PREBUILT_LIBS := \
 		libopenvoice2:$(DEPENDENT_LIBRARIES_PATH)/libopenvoice2.so \
 		libbsiren:$(DEPENDENT_LIBRARIES_PATH)/libbsiren.so \
 		libopenvoice:$(DEPENDENT_LIBRARIES_PATH)/libopenvoice.so \
-		libpoco:libs/$(PLATFORM_SDK_VERSION)/$(TARGET_CPU_ABI)/libpoco.so \
-		libprotobuf-rokid-cpp-full:$(DEPENDENT_LIBRARIES_PATH)/libprotobuf-rokid-cpp-full.so \
-		libr2mvdrbf:$(DEPENDENT_LIBRARIES_PATH)/libr2mvdrbf.so \
 		libr2ssp:$(DEPENDENT_LIBRARIES_PATH)/libr2ssp.so \
 		libr2vt:$(DEPENDENT_LIBRARIES_PATH)/libr2vt.so \
 		libspeech:$(DEPENDENT_LIBRARIES_PATH)/libspeech.so \
 		libztvad:$(DEPENDENT_LIBRARIES_PATH)/libztvad.so \
-		librokid_speech_jni:libs/$(TARGET_CPU_ABI)/librokid_speech_jni.so \
-		librokid_opus_jni:libs/$(TARGET_CPU_ABI)/librokid_opus_jni.so
+		libuWS:libs/$(PLATFORM_SDK_VERSION)/$(TARGET_CPU_ABI)/libuWS.so
 ifndef ALTER_MIC_ARRAY
 LOCAL_PREBUILT_LIBS += libmic_array:$(DEPENDENT_LIBRARIES_PATH)/libmic_array.so
 endif

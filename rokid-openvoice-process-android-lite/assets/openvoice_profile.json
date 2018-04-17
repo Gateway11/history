@@ -1,0 +1,15 @@
+{
+    "host": "apigwws.open.rokid.com",
+    "event_req_host": "apigwrest.open.rokid.com",
+    "port": "443",
+    "branch": "/api",
+    "key": "9C4D6BEB6448468FB73E75A2C33E6ADE",
+    "device_type_id": "98EA4B548AEB4A329D21615B9ED060E5",
+    "device_id": "0203021751000000",
+    "secret": "32F7A304CE8740C5BD61F587F7DD7B88",
+    "api_version":"1",
+    "lang": "zh",
+    "codec": "opu",
+    "vad_mode": "cloud",
+    "vend_timeout": 500
+}

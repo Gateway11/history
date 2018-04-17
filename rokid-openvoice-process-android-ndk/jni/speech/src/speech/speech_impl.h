@@ -29,9 +29,11 @@ public:
 	Codec codec;
 	VadMode vad_mode;
 	uint32_t vend_timeout;
+	uint32_t vad_begin;
 	uint32_t no_nlp:1;
 	uint32_t no_intermediate_asr:1;
-	uint32_t unused:30;
+	uint32_t no_trigger_confirm:1;
+	uint32_t unused:29;
 };
 
 class SpeechImpl : public Speech {

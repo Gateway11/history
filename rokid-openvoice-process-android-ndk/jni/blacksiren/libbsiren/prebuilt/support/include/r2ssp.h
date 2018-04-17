@@ -26,7 +26,7 @@ int r2ssp_ssp_exit();
  *
  */
 
-#define ZTSSP_AEC_FRAME_SAMPLE 256
+//#define ZTSSP_AEC_FRAME_SAMPLE 256//ygqin 20171201
 
 #define ZTSSP_AEC_MODE_DEFAULT	0
 
@@ -68,19 +68,40 @@ int r2ssp_aec_free(r2ssp_handle hAec);
  *
  */
 int r2ssp_aec_set_thread_affinities(r2ssp_handle hAec, int *thread_affinities, int thread_num);
+    /**
+     * init aec instance
+     *
+     * input:
+     *  hAec: aec handle
+     *  nSampleRate: sample rate of speech signal, such as: 16000
+     *  nChannelNum: Num ofchannels
+     *  nSpeakerNum:Num of speakers
+     
+     * return:
+     *  0: success; other: failed
+     */
+    
+int r2ssp_aec_init(r2ssp_handle hAec, int nSampleRate, int nChannelNum, int nSpeakerNum);
 
 /**
+ add new-api r2ssp_aec_init_mc by ygqin
  * init aec instance
  *
  * input:
  *  hAec: aec handle
  *  nSampleRate: sample rate of speech signal, such as: 16000
- *
+ *  nChannelNum: Num ofchannels
+ *  nSpeakerNum:Num of speakers
+ 
+ * nspeex_aec_tail:Filter length,such as:1024、512 etc
+                  根据实际使用场景设定，例如房间混响比较大可以设置2048，如果声音反射时间比较短可以设置512
+ * naec_frame_sample：length of frame
+                    该值可以控制aec MDF算法的块数Block=speex_aec_tail/aec_frame_sample，分块越多性能越佳，但是计算量越大
  * return:
  *  0: success; other: failed
  *
  */
-int r2ssp_aec_init(r2ssp_handle hAec, int nSampleRate, int nChannelNum, int nSpeakerNum);
+int r2ssp_aec_init_mc(r2ssp_handle hAec, int nSampleRate, int nChannelNum, int nSpeakerNum,int nspeex_aec_tail,int naec_frame_sample);
 
 /**
  * buffer one frame reference signal

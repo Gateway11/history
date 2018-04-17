@@ -10,17 +10,38 @@ import android.content.pm.ResolveInfo;
 import android.util.Log;
 
 public class ActionToComponent {
-	public static Intent newIntent(Context ctx, String action) {
+	public static Intent newIntentForActivity(Context ctx, String action) {
+		PackageManager pm = ctx.getPackageManager();
+		Intent intent = new Intent();
+		intent.setAction(action);
+		List<ResolveInfo> resolveInfos = pm.queryIntentActivities(intent, 0);
+		if (resolveInfos == null || resolveInfos.size() == 0) {
+			Log.w(TAG, "no match activity component found for action " + action);
+			return null;
+		}
+		if (resolveInfos.size() > 1) {
+			Log.w(TAG, "more than one activity components match for action " + action);
+			traceResolveInfoList(resolveInfos);
+			return null;
+		}
+		ResolveInfo info = resolveInfos.get(0);
+		ComponentName cname = new ComponentName(info.activityInfo.packageName, info.activityInfo.name);
+		intent = new Intent();
+		intent.setComponent(cname);
+		return intent;
+	}
+
+	public static Intent newIntentForService(Context ctx, String action) {
 		PackageManager pm = ctx.getPackageManager();
 		Intent intent = new Intent();
 		intent.setAction(action);
 		List<ResolveInfo> resolveInfos = pm.queryIntentServices(intent, 0);
 		if (resolveInfos == null || resolveInfos.size() == 0) {
-			Log.w(TAG, "no match component found for action " + action);
+			Log.w(TAG, "no match service component found for action " + action);
 			return null;
 		}
 		if (resolveInfos.size() > 1) {
-			Log.w(TAG, "more than one components match for action " + action);
+			Log.w(TAG, "more than one service components match for action " + action);
 			traceResolveInfoList(resolveInfos);
 			return null;
 		}

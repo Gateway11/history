@@ -7,6 +7,7 @@ public interface BearKidCallback {
 	//          EVENT_VOICE_INFO 'arg1' 无意义  'arg2' 音强信息
 	//          EVENT_ACTIVATION 'arg1' 接受激活或拒绝激活 'arg2' 无意义
 	//          EVENT_DEACTIVATE 'arg1' 无意义  'arg2' 无意义
+	//          EVENT_LOCAL_ACTIVATION 'arg1' 无意义  'arg2' 无意义
 	void onVoiceEvent(int event, int arg1, double arg2);
 
 	// 中间asr识别结果

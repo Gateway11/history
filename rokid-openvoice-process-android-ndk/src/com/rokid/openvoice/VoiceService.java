@@ -138,10 +138,9 @@ public class VoiceService extends android.app.Service{
 			newResult.type = BearKidResult.TYPE_LOCATION;
 			newResult.location = (float)sl;
 			break;
-//		case VOICE_LOCAL_WAKE:
-//			newResult.type = BearKidResult.TYPE_EXCEPTION;
-//			newResult.extype = 0;
-//			break;
+		case VOICE_LOCAL_WAKE:
+			newResult.type = BearKidResult.TYPE_LOCAL_ACTIVATION;
+			break;
 		case VOICE_DATA:
 			newResult.type = BearKidResult.TYPE_VOICE_INFO;
 			newResult.energy = energy;
@@ -194,13 +193,7 @@ public class VoiceService extends android.app.Service{
 	private void handleSpeechError(int id, int errcode){
 		BearKidResult newResult = new BearKidResult();
 		newResult.type = BearKidResult.TYPE_EXCEPTION;
-		switch (errcode) {
-		case SPEECH_TIMEOUT:
-			newResult.extype = 3;
-			break;
-		default:
-			newResult.extype = 4;
-		}
+		newResult.extype = (errcode >= SPEECH_SERVICE_UNAVAILABLE) ? 3 : 4;
 		addToTarget(newResult);
 	}
 	/**

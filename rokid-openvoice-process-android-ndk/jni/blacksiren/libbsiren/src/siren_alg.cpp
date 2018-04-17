@@ -454,25 +454,21 @@ int SirenAudioVBVProcessor::process(PreprocessVoicePackage *voicePackage,
             }
         }
 
+        energy = static_cast<double>(pImpl->getLastFrameEnergy());
+        threshold = static_cast<double>(pImpl->getLastFrameThreshold());
         if (len != 0 && hasVoice(prop)) {
             hasV = 1;
-            energy = static_cast<double>(pImpl->getLastFrameEnergy());
-            threshold = static_cast<double>(pImpl->getLastFrameThreshold());
             pProcessedVoiceResult = allocateProcessedVoiceResult(len, debug, prop, start, end,
                                     hasSL, hasV, hasVT, sl, energy, threshold, vt_energy);
             memcpy(pProcessedVoiceResult->data, ppR2ad_msg_block[i]->pMsgData, len);
         } else if (hasVT == 1) {
             hasV = 0;
             len = vt_word.size() + 1;
-            energy = static_cast<double>(pImpl->getLastFrameEnergy());
-            threshold = static_cast<double>(pImpl->getLastFrameThreshold());
             pProcessedVoiceResult = allocateProcessedVoiceResult(len, debug, prop, start, end,
                                     hasSL, hasV, hasVT, sl, energy, threshold, vt_energy);
             memcpy(pProcessedVoiceResult->data, vt_word.c_str(), len);
         } else {
             hasV = 0;
-            energy = 0.0;
-            threshold = 0.0;
             pProcessedVoiceResult = allocateProcessedVoiceResult(len, debug, prop, start, end,
                                     hasSL, hasV, hasVT, sl, energy, threshold, vt_energy);
         }

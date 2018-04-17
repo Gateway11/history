@@ -65,6 +65,12 @@ public:
 	virtual void set_no_nlp(bool value) = 0;
 	// default: false
 	virtual void set_no_intermediate_asr(bool value) = 0;
+	// 奇葩参数，传给服务端asr，设置丢多少ms的语音开头部分
+	// default: 0
+	virtual void set_vad_begin(uint32_t value) = 0;
+	// 禁用激活词云端二次确认
+	// default: false
+	virtual void set_no_trigger_confirm(bool value) = 0;
 
 	static std::shared_ptr<SpeechOptions> new_instance();
 };

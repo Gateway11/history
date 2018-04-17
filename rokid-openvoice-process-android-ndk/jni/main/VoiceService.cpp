@@ -120,7 +120,7 @@ void VoiceService::update_config(const string& device_id, const string& device_t
     }
 }
 
-int32_t VoiceService::vad_start() {
+int32_t VoiceService::vad_start(double threshold_energy) {
     if(mCurrentSpeechState == SPEECH_STATE_PREPARED) {
         VoiceOptions options;
         if(has_vt) {
@@ -132,7 +132,18 @@ int32_t VoiceService::vad_start() {
         }
         options.stack = appid;
         options.skill_options = get_skill_options();
+        ALOGV("vt word with %s", options.voice_trigger.c_str());
         ALOGV("skill options : %s", options.skill_options.c_str());
+
+        json_object *root = json_object_new_object();
+        char buff[64];
+        snprintf(buff, sizeof(buff), "%f", threshold_energy);
+        json_object_object_add(root, "threshold_energy", json_object_new_double_s(threshold_energy, buff));
+        std::string strJson = json_object_to_json_string(root);
+        json_object_put(root);
+
+        options.voice_extra = strJson;
+        ALOGV("threshold_energy : %f    voice extra : %s", threshold_energy, options.voice_extra.c_str());
         return _speech->start_voice(&options);
     }
     return -1;
@@ -209,7 +220,7 @@ void VoiceService::onEvent() {
                 break;
             case SIREN_EVENT_VAD_START:
                 if(session_id < 0) {
-                    session_id = vad_start();
+                    session_id = vad_start(_event->background_threshold);
                     _callback->voice_event(session_id, VoiceEvent::VOICE_START);
                     ALOGV("VAD_START\t\t ID  :  <<%d>>", session_id);
                 }
@@ -267,7 +278,7 @@ void VoiceService::onResponse() {
             if(TRUE == json_object_object_get_ex(nlp_obj, "activation", &activation_obj)){
                 activation = json_object_get_string(activation_obj);
                 json_object_put(nlp_obj);
-                ALOGV("result : activ \t %s", activation.c_str());
+                ALOGV("result : acti \t %s", activation.c_str());
                 _callback->voice_event(sr.id, transform_string_to_event(activation));
                 if(arbitration(activation)) {
                     set_siren_state(SIREN_STATE_SLEEP);

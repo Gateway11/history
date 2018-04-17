@@ -82,7 +82,7 @@ private:
     void onEvent();
     void onResponse();
     
-    int32_t vad_start();
+    int32_t vad_start(double threshold_energy);
     void voice_print(const voice_event_t *);
     void voice_event_callback(voice_event_t *voice_event);
     

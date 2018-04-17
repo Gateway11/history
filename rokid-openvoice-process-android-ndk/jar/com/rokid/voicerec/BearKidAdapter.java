@@ -5,6 +5,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
+import com.rokid.voicerec.BearKid;
+import com.rokid.voicerec.BearKidResult;
+import com.rokid.voicerec.CustomWord;
 
 public class BearKidAdapter implements Runnable, ServiceConnection {
 	public boolean initialize(Context ctx, String action, BearKidCallback cb) {
@@ -88,7 +91,7 @@ public class BearKidAdapter implements Runnable, ServiceConnection {
 		synchronized (this) {
 			if (bearKid != null)
 				return bearKid;
-			Intent intent = ActionToComponent.newIntent(context, bearKidAction);
+			Intent intent = ActionToComponent.newIntentForService(context, bearKidAction);
 			if (intent == null) {
 				working = false;
 				return null;
@@ -140,6 +143,9 @@ public class BearKidAdapter implements Runnable, ServiceConnection {
 		case BearKidResult.TYPE_EXCEPTION:
 			callback.onException(result.extype);
 			break;
+		case BearKidResult.TYPE_LOCAL_ACTIVATION:
+			callback.onVoiceEvent(EVENT_LOCAL_ACTIVATION, 0, 0.0);
+			break;
 		}
 	}
 
@@ -155,16 +161,16 @@ public class BearKidAdapter implements Runnable, ServiceConnection {
 	public static final int EVENT_LOCATION = 1;
 	// 声音信息：当前音强
 	public static final int EVENT_VOICE_INFO = 2;
-	// 语音激活确认: accept, reject
+	// 云端语音激活确认: accept, reject
 	public static final int EVENT_ACTIVATION = 3;
 	// 退出激活状态
 	public static final int EVENT_DEACTIVE = 4;
+	// 本地激活
+	public static final int EVENT_LOCAL_ACTIVATION = 5;
 
 	public static final int ACTIVATION_ACCEPT = 0;
 	public static final int ACTIVATION_REJECT = 1;
 
-	// 未连网状态下语音激活
-	public static final int EXCEPTION_ACTIVATE_NO_INET = 1;
 	// 激活状态下，语音识别过程取消
 	public static final int EXCEPTION_CANCEL = 2;
 	// 语音识别超时

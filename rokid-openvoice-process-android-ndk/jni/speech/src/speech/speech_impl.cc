@@ -17,6 +17,8 @@ static const uint32_t MODIFY_CODEC = 2;
 static const uint32_t MODIFY_VADMODE = 4;
 static const uint32_t MODIFY_NO_NLP = 8;
 static const uint32_t MODIFY_NO_INTERMEDIATE_ASR = 0x10;
+static const uint32_t MODIFY_VAD_BEGIN = 0x20;
+static const uint32_t MODIFY_NO_TRIGGER_CONFIRM = 0x40;
 
 class SpeechOptionsModifier : public SpeechOptionsHolder, public SpeechOptions {
 public:
@@ -51,6 +53,16 @@ public:
 		_mask |= MODIFY_NO_INTERMEDIATE_ASR;
 	}
 
+	void set_vad_begin(uint32_t value) {
+		this->vad_begin = value;
+		_mask |= MODIFY_VAD_BEGIN;
+	}
+
+	void set_no_trigger_confirm(bool value) {
+		this->no_trigger_confirm = value;
+		_mask |= MODIFY_NO_TRIGGER_CONFIRM;
+	}
+
 	void modify(SpeechOptionsHolder& options) {
 		if (_mask & MODIFY_LANG)
 			options.lang = lang;
@@ -64,14 +76,21 @@ public:
 			options.no_nlp = no_nlp;
 		if (_mask & MODIFY_NO_INTERMEDIATE_ASR)
 			options.no_intermediate_asr = no_intermediate_asr;
+		if (_mask & MODIFY_VAD_BEGIN)
+			options.vad_begin = vad_begin;
+		if (_mask & MODIFY_NO_TRIGGER_CONFIRM)
+			options.no_trigger_confirm = no_trigger_confirm;
 		KLOGD(tag__, "SpeechOptions modified to: vad(%s:%u), codec(%s), "
-				"lang(%s), no_nlp(%d), no_intermediate_asr(%d)",
+				"lang(%s), no_nlp(%d), no_intermediate_asr(%d), "
+				"vad_begin(%u), no_trigger_confirm(%d)",
 				options.vad_mode == VadMode::CLOUD ? "cloud" : "local",
 				options.vend_timeout,
 				options.codec == Codec::OPU ? "opu" : "pcm",
 				options.lang == Lang::EN ? "en" : "zh",
 				options.no_nlp,
-				options.no_intermediate_asr);
+				options.no_intermediate_asr,
+				options.vad_begin,
+				options.no_trigger_confirm);
 	}
 
 private:
@@ -429,6 +448,8 @@ void SpeechImpl::req_config(SpeechRequest& req,
 	sopt->set_vend_timeout(options_.vend_timeout);
 	sopt->set_no_nlp(options_.no_nlp);
 	sopt->set_no_intermediate_asr(options_.no_intermediate_asr);
+	sopt->set_vad_begin(options_.vad_begin);
+	sopt->set_no_trigger_confirm(options_.no_trigger_confirm);
 	if (options.get()) {
 		sopt->set_stack(options->stack);
 		sopt->set_voice_trigger(options->voice_trigger);
@@ -703,7 +724,9 @@ SpeechOptionsHolder::SpeechOptionsHolder() : lang(Lang::ZH),
 	vad_mode(VadMode::LOCAL),
 	vend_timeout(0),
 	no_nlp(0),
-	no_intermediate_asr(0) {
+	no_intermediate_asr(0),
+	vad_begin(0),
+	no_trigger_confirm(0) {
 }
 
 shared_ptr<SpeechOptions> SpeechOptions::new_instance() {

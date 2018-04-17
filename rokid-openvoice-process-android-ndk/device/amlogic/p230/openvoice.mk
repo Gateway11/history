@@ -12,6 +12,7 @@ PRODUCT_PACKAGES += \
 					libprotobuf-rokid-cpp-full \
 					libpoco \
 					libspeech \
+					libuWS \
 					librokid_speech_jni \
 					librokid_opus_jni
 
