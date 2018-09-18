@@ -88,7 +88,8 @@
 #define strtok_s strtok_r
 #endif
 
-#if (__ANDROID_API__ < 21)
+//#if (__ANDROID_API__ < 21)
+#if 0
 #ifdef __ARM_ARCH_ARM__
 
 #ifdef __LP64__
