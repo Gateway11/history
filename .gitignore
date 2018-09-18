@@ -8,7 +8,7 @@ project.properties
 bin/
 gen/
 obj/
-!jni/boringssl/src/crypto/obj
+!rokid-openvoice-process-android-ndk/jni/boringssl/src/crypto/obj
 values-
 **/jni/blacksiren/libbsiren/libs/
 **/jni/blacksiren/test/
