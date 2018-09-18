@@ -50,7 +50,9 @@ LOCAL_SRC_FILES := \
 LOCAL_CPP_FEATURES := rtti exceptions
 LOCAL_CFLAGS := $(COMMON_CFLAGS)
 LOCAL_CPPFLAGS := -std=c++11
-ifeq ($(ANDROID_VERSION), 19)
+
+PLATFORM_SDK_VERSION = $(shell if [ $(subst android-,,$(APP_PLATFORM)) -ge 21 ]; then echo 21; else echo 19; fi)
+ifeq ($(PLATFORM_SDK_VERSION), 19)
 	LOCAL_CPPFLAGS += -D__STDC_FORMAT_MACROS
 endif
 LOCAL_LDLIBS += -llog -lz

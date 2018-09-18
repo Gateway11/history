@@ -2,7 +2,7 @@ LOCAL_PATH := $(call my-dir)
 
 include $(call all-subdir-makefiles)
 
-DEPENDENT_LIBRARIES_PATH := thirdlib/$(ANDROID_VERSION)/$(TARGET_ARCH_ABI)
+DEPENDENT_LIBRARIES_PATH := thirdlib/$(TARGET_ARCH_ABI)
 
 include $(CLEAR_VARS)
 LOCAL_MODULE := libmic_array

@@ -1,7 +1,5 @@
 LOCAL_PATH:= $(call my-dir)
 
-SDK_VERSION = $(shell if [ $(PLATFORM_SDK_VERSION) -ge 21 ]; then echo 23; else echo 19; fi)
-DEPENDENT_LIBRARIES_PATH := libs/$(SDK_VERSION)/$(TARGET_CPU_ABI)
 ifndef ROKID_BLACKSIREN_CONFIG
 ROKID_BLACKSIREN_CONFIG := rokid_dev_board
 endif
@@ -33,14 +31,15 @@ include $(BUILD_MULTI_PREBUILT)
 
 include $(CLEAR_VARS)
 LOCAL_PREBUILT_LIBS := \
-		libopenvoice2:$(DEPENDENT_LIBRARIES_PATH)/libopenvoice2.so \
-		libbsiren:$(DEPENDENT_LIBRARIES_PATH)/libbsiren.so \
-		libopenvoice:$(DEPENDENT_LIBRARIES_PATH)/libopenvoice.so \
-		libr2ssp:$(DEPENDENT_LIBRARIES_PATH)/libr2ssp.so \
-		libr2vt:$(DEPENDENT_LIBRARIES_PATH)/libr2vt.so \
-		libspeech:$(DEPENDENT_LIBRARIES_PATH)/libspeech.so \
-		libztvad:$(DEPENDENT_LIBRARIES_PATH)/libztvad.so \
-		libuWS:libs/$(PLATFORM_SDK_VERSION)/$(TARGET_CPU_ABI)/libuWS.so
+		libc++_shared:libs/$(TARGET_CPU_ABI)/libc++_shared \
+		libopenvoice2:libs/$(TARGET_CPU_ABI)/libopenvoice2.so \
+		libbsiren:libs/$(TARGET_CPU_ABI)/libbsiren.so \
+		libopenvoice:libs/$(TARGET_CPU_ABI)/libopenvoice.so \
+		libr2ssp:libs/$(TARGET_CPU_ABI)/libr2ssp.so \
+		libr2vt:libs/$(TARGET_CPU_ABI)/libr2vt.so \
+		libspeech:libs/$(TARGET_CPU_ABI)/libspeech.so \
+		libztvad:libs/$(TARGET_CPU_ABI)/libztvad.so \
+		libuWS:libs/$(TARGET_CPU_ABI)/libuWS.so
 ifndef ALTER_MIC_ARRAY
 LOCAL_PREBUILT_LIBS += libmic_array:$(DEPENDENT_LIBRARIES_PATH)/libmic_array.so
 endif

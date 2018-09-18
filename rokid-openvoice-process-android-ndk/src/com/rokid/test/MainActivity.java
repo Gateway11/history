@@ -37,7 +37,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		findViewById(R.id.get_vt_words).setOnClickListener(this);
 	}
 	/**
-	 * am start --activity-single-top -n com.rokid.openvoice/com.rokid.test.MainActivity --es word "大傻逼" --es pinyin "da4sha3bi1"
+	 * am start --activity-single-top -n com.rokid.openvoice/com.rokid.test.MainActivity --es word "大天才" --es pinyin "da4tian1cai2"
 	 */
 	@Override
 	protected void onNewIntent(Intent intent) {
@@ -78,11 +78,11 @@ public class MainActivity extends Activity implements OnClickListener {
 			VoiceManager.updateStack(null);
 			break;
 		case R.id.add_vt_word:
-			Log.e(TAG, "add vt word result : " + VoiceManager.addVtWord(new VoiceManager.VtWord(1, "大傻逼", "da4sha3bi1")));
-			Log.e(TAG, "add vt word result : " + VoiceManager.addVtWord(new VoiceManager.VtWord(1, "小傻逼", "xiao3sha3bi1")));
+			Log.e(TAG, "add vt word result : " + VoiceManager.addVtWord(new VoiceManager.VtWord(1, "大天才", "da4tian1cai2")));
+			Log.e(TAG, "add vt word result : " + VoiceManager.addVtWord(new VoiceManager.VtWord(1, "小天才", "xiao3tian1cai2")));
 			break;
 		case R.id.remove_vt_word:
-			Log.e(TAG, "remove vt word result : " + VoiceManager.removeVtWord("大傻逼"));
+			Log.e(TAG, "remove vt word result : " + VoiceManager.removeVtWord("大天才"));
 			break;
 		case R.id.get_vt_words:
 			ArrayList<VoiceManager.VtWord> vtWords = VoiceManager.getVtWords();
