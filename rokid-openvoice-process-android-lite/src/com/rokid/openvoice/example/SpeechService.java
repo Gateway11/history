@@ -184,7 +184,7 @@ public class SpeechService extends Service implements Runnable,
 		public void run() {
 			activationReset();
 			speechReset(-1);
-			finish = true;
+			asrFinish = true;
 		}
 	};
 	
@@ -236,7 +236,7 @@ public class SpeechService extends Service implements Runnable,
 	public void onVadStart(float energy, float threshold) {
 		Log.d(TAG, "onVadStart: energy = " + energy + ", energy threshold = " + threshold);
 		if(session == -1){
-			finish = false;
+			asrFinish = false;
 			VoiceOptions options = new VoiceOptions();
 			if(isAutoStart){
 				options.voice_trigger = word;
@@ -272,7 +272,7 @@ public class SpeechService extends Service implements Runnable,
 	@Override
 	public void onAsrComplete(int session, String asr) {
 		Log.d(TAG, "onAsrComplete: asr \t" + asr);
-		finish = true;
+		asrFinish = true;
 		activationReset();
 		speechReset(session);
 	}
@@ -287,8 +287,8 @@ public class SpeechService extends Service implements Runnable,
 		Log.d(TAG, "onComplete: id \t" + session);
 		Log.d(TAG, "onComplete: nlp \t" + nlp);
 		Log.d(TAG, "onComplete: action \t" + action);
-		if(!finish){
-			finish = true;
+		if(!asrFinish){
+			asrFinish = true;
 			activationReset();
 			return;
 		}
@@ -381,7 +381,7 @@ public class SpeechService extends Service implements Runnable,
 	}
 	
 	private void speechReset(int session){
-		if((session == -1 || session == this.session) && !finish)
+		if((session == -1 || session == this.session) && !asrFinish)
 			mSpeech.cancel(this.session);
 		this.session = -1;
 		mHandler.removeCallbacks(timerRunnable);
@@ -411,7 +411,7 @@ public class SpeechService extends Service implements Runnable,
 	private OutputStream out = null;
 	
 	private boolean isAutoStart = false;
-	private boolean finish = false;
+	private boolean asrFinish = false;
 	private String appId = "";
 	private String word = "";
 	private int offset = 0;
